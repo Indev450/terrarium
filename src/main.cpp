@@ -48,31 +48,31 @@ int main()
         return -1;
     }
 
-    std::unique_ptr<Terrarium::BlockDef> dirt_def(new Terrarium::BlockDef);
+    std::shared_ptr<Terrarium::BlockDef> dirt_def(new Terrarium::BlockDef);
 
     dirt_def->sprite.setTexture(dirt_texture);
     dirt_def->slippery = 0.85;
 
-    std::unique_ptr<Terrarium::BlockDef> grass_def(new Terrarium::BlockDef);
+    std::shared_ptr<Terrarium::BlockDef> grass_def(new Terrarium::BlockDef);
 
     grass_def->sprite.setTexture(grass_texture);
     grass_def->slippery = 0.7;
 
-    Terrarium::blockid dirt_id = game.block_defs.add(std::move(dirt_def));
-    Terrarium::blockid grass_id = game.block_defs.add(std::move(grass_def));
+    Terrarium::blockid dirt_id = game.block_defs.add(dirt_def);
+    Terrarium::blockid grass_id = game.block_defs.add(grass_def);
 
-    std::unique_ptr<Terrarium::EntityPrefab> jumping_block_prefab = std::make_unique<Terrarium::EntityPrefab>();
+    std::shared_ptr<Terrarium::EntityPrefab> jumping_block_prefab = std::make_shared<Terrarium::EntityPrefab>();
     jumping_block_prefab->size = { 16, 16 };
 
     jumping_block_prefab->anims.setTexture(dirt_texture);
 
-    std::unique_ptr<Terrarium::EntityPrefab> player_prefab = std::make_unique<Terrarium::EntityPrefab>();
+    std::shared_ptr<Terrarium::EntityPrefab> player_prefab = std::make_shared<Terrarium::EntityPrefab>();
     player_prefab->size = { 24, 48 };
 
     player_prefab->anims.setTexture(player_texture);
 
-    Terrarium::entity_prefabid jumping_block_prefab_id = game.entity_mgr.addPrefab(std::move(jumping_block_prefab));
-    Terrarium::entity_prefabid player_prefab_id = game.entity_mgr.addPrefab(std::move(player_prefab));
+    Terrarium::entity_prefabid jumping_block_prefab_id = game.entity_mgr.addPrefab(jumping_block_prefab);
+    Terrarium::entity_prefabid player_prefab_id = game.entity_mgr.addPrefab(player_prefab);
 
     Terrarium::entityid jumping_block_eid = game.entity_mgr.create(jumping_block_prefab_id);
 
@@ -232,9 +232,9 @@ int main()
             fps_show_timer = 1;
         }
 
-        Terrarium::Entity *jumping_block = game.entity_mgr.get(jumping_block_eid);
+        std::shared_ptr<Terrarium::Entity> jumping_block = game.entity_mgr.get(jumping_block_eid);
 
-        if (jumping_block != nullptr) {
+        if (jumping_block) {
             if (jumping_block->collision_info.blockd) {
                 jumping_block->speed.x = Terrarium::Tile::SIZE*3;
                 jumping_block->speed.y = -Terrarium::Tile::SIZE*8;

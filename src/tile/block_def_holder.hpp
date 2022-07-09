@@ -14,7 +14,7 @@ namespace Terrarium {
         // or reference to "unknown" block. It makes easier to control
         // unknown block behavior.
         BlockDef &getOrUnknown(blockid block) {
-            BlockDef *def = get(block);
+            std::shared_ptr<BlockDef> def = get(block);
 
             if (def == nullptr) {
                 return unknown;

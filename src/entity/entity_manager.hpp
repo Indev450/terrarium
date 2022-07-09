@@ -15,12 +15,12 @@ namespace Terrarium {
         OverflowingMap<entity_prefabid, EntityPrefab> prefabs;
 
     public:
-        entity_prefabid addPrefab(std::unique_ptr<EntityPrefab> prefab);
+        entity_prefabid addPrefab(std::shared_ptr<EntityPrefab> prefab);
 
         entityid create(entity_prefabid prefab_id = 0);
 
         // Looks a little ugly, but probably will work without any overhead
-        inline Entity *get(entityid id) {
+        inline std::shared_ptr<Entity> get(entityid id) {
             return OverflowingMap<entityid, Entity>::get(id);
         }
 

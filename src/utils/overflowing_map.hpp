@@ -29,27 +29,27 @@ namespace Terrarium {
         }
 
     protected:
-        std::unordered_map<Key, std::unique_ptr<Value>> map;
+        std::unordered_map<Key, std::shared_ptr<Value>> map;
 
     public:
-        Key add(std::unique_ptr<Value> value) {
+        Key add(std::shared_ptr<Value> value) {
             Key key = getFreeKey();
 
             if (key == 0) {
                 return 0;
             }
 
-            map[key] = std::move(value);
+            map[key] = value;
 
             return key;
         }
 
-        Value *get(Key key) {
+        std::shared_ptr<Value> get(Key key) {
             if (isKeyFree(key)) {
                 return nullptr;
             }
 
-            return map[key].get();
+            return map[key];
         }
 
         void del(Key key) {

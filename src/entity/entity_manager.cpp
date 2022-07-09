@@ -5,22 +5,22 @@
 
 namespace Terrarium {
 
-    entity_prefabid EntityManager::addPrefab(std::unique_ptr<EntityPrefab> prefab) {
-        return prefabs.add(std::move(prefab));
+    entity_prefabid EntityManager::addPrefab(std::shared_ptr<EntityPrefab> prefab) {
+        return prefabs.add(prefab);
     }
 
     entityid EntityManager::create(entity_prefabid prefab_id) {
         Entity *e = new Entity();
 
-        entityid id = add(std::unique_ptr<Entity>(e));
+        entityid id = add(std::shared_ptr<Entity>(e));
 
         if (id != 0) {
             e->id = id;
 
             if (prefab_id != 0) {
-                EntityPrefab *prefab = prefabs.get(prefab_id);
+                std::shared_ptr<EntityPrefab> prefab = prefabs.get(prefab_id);
 
-                if (prefab == nullptr) {
+                if (!prefab) {
                     std::cerr<<"Terrarium::EntityManager::create: attempt to use prefab id=";
                     std::cerr<<prefab_id<<" that doesn't exist"<<std::endl;
                 } else {
