@@ -1,7 +1,10 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <unordered_set>
+
 #include "../tile/tile.hpp"
+#include "../utils/vector2i_hash.hpp"
 
 namespace Terrarium {
 
@@ -10,7 +13,8 @@ namespace Terrarium {
 
         unsigned int width, height;
 
-        bool updated = false;
+        // Store updated block positions to redraw them
+        std::unordered_set<sf::Vector2i, HashVector2i> updated_blocks;
 
     public:
         World(unsigned int _width, unsigned int _height):
@@ -55,7 +59,7 @@ namespace Terrarium {
 
             tiles[y*width + x].fg = block;
 
-            updated = true;
+            updated_blocks.emplace(x, y);
         }
 
         void setWall(int x, int y, blockid block) {
@@ -65,15 +69,20 @@ namespace Terrarium {
 
             tiles[y*width + x].bg = block;
 
-            updated = true;
+            updated_blocks.emplace(x, y);
         }
 
-        // Should be used ONLY in WorldRenderer
+        // To be used in WorldRenderer
         inline bool isUpdated() {
-            bool result = updated;
-            updated = false;
+            return !updated_blocks.empty();
+        }
 
-            return result;
+        inline bool isUpdated(sf::Vector2i pos) {
+            return updated_blocks.count(pos) != 0;
+        }
+
+        inline void resetUpdated() {
+            updated_blocks.clear();
         }
 
         inline unsigned int getWidth() {

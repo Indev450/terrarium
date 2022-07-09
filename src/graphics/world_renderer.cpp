@@ -3,7 +3,6 @@
 #include <SFML/Graphics/RenderStates.hpp>
 
 #include "world_renderer.hpp"
-#include "../tile/tile.hpp"
 #include "../utils/math.hpp"
 
 namespace Terrarium {
@@ -45,7 +44,7 @@ namespace Terrarium {
         for (int x = start_x; x < end_x; ++x) {
             for (int y = start_y; y < end_y; ++y) {
                 // If we already drawn that block, skip it, it is already on the texture
-                if (already_drawn.contains(x, y)) {
+                if (already_drawn.contains(x, y) && !game.world.isUpdated(sf::Vector2i(x, y))) {
                     continue;
                 }
 
@@ -63,6 +62,8 @@ namespace Terrarium {
         }
 
         first->display();
+
+        game.world.resetUpdated();
 
         sprite.setTexture(first->getTexture());
 
@@ -90,6 +91,12 @@ namespace Terrarium {
             def.sprite.setColor(sf::Color(255, 255, 255, 255));
 
             target.draw(def.sprite);
+        }
+
+        if (!tile.fg && !tile.bg) {
+            air_block.setPosition(x*Tile::SIZE, y*Tile::SIZE);
+
+            target.draw(air_block, sf::BlendNone);
         }
     }
 

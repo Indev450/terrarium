@@ -8,6 +8,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "../game.hpp"
+#include "../tile/tile.hpp"
 
 namespace Terrarium {
 
@@ -19,16 +20,20 @@ namespace Terrarium {
 
         sf::Sprite sprite;
 
+        sf::RectangleShape air_block;
+
         sf::Vector2i in_world_pos = { 0, 0 };
         sf::IntRect already_drawn = { -1, -1, 0, 0 };
         bool needs_update = true;
-        int step = 4;
+        int step;
 
         inline void renderTile(sf::RenderTexture &target, BlockDefHolder &block_defs, int x, int y, const Tile &tile);
 
     public:
         WorldRenderer(const sf::Vector2u &screen_size, int _step = 4):
-            step(_step) {
+            air_block(sf::Vector2f(Tile::SIZE, Tile::SIZE)), step(_step) {
+
+            air_block.setFillColor(sf::Color(0, 0, 0, 0));
 
             setScreenSize(screen_size);
         }

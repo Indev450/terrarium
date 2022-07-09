@@ -10,9 +10,9 @@ namespace Terrarium {
             return;
         }
 
-        Entity *player_entity = game.entity_mgr.get(entity_id);
+        std::shared_ptr<Entity> player_entity = game.entity_mgr.get(entity_id);
 
-        if (player_entity == nullptr) {
+        if (!player_entity) {
             return;
         }
 
@@ -47,9 +47,9 @@ namespace Terrarium {
         sf::Vector2f result(0, 0);
 
         if (entity_id != 0) {
-            Entity *player_entity = game.entity_mgr.get(entity_id);
+            std::shared_ptr<Entity> player_entity = game.entity_mgr.get(entity_id);
 
-            if (player_entity != nullptr) {
+            if (player_entity) {
                 result.x = player_entity->hitbox.left + player_entity->hitbox.width/2;
                 result.y = player_entity->hitbox.top + player_entity->hitbox.height/2;
             }
