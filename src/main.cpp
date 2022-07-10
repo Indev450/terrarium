@@ -9,7 +9,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "game.hpp"
+#include "graphics/gfx.hpp"
 #include "graphics/world_renderer.hpp"
+#include "ui/hotbar.hpp"
 
 const char *TITLE = "TerrariumEngine";
 
@@ -23,6 +25,8 @@ int main()
     // BEGIN TEST CODE
 
     Terrarium::GameState game(512, 512);
+
+    Terrarium::Gfx gfx;
 
     sf::Texture dirt_texture;
 
@@ -47,6 +51,26 @@ int main()
 
         return -1;
     }
+
+    if (!gfx.font.loadFromFile("assets/dpcomic.ttf")) {
+        std::cerr<<"Cannot load font"<<std::endl;
+    }
+
+    std::shared_ptr<Terrarium::ItemDef> dirt_item_def(new Terrarium::ItemDef);
+
+    dirt_item_def->name = "default:dirt";
+    dirt_item_def->description = "Dirt block";
+
+    dirt_item_def->inventory_image.setTexture(dirt_texture);
+
+    dirt_item_def->max_count = 999;
+
+    game.item_defs.add(dirt_item_def);
+
+    Terrarium::ItemStack dirt_item;
+    dirt_item.set(dirt_item_def, 64);
+
+    game.player.inventory.addItem(dirt_item);
 
     std::shared_ptr<Terrarium::BlockDef> dirt_def(new Terrarium::BlockDef);
 
@@ -102,21 +126,17 @@ int main()
 
     Terrarium::WorldRenderer world_renderer({ 1024, 800 }, 8);
 
+    Terrarium::HotbarRenderer hotbar_renderer(Terrarium::Player::HOTBAR_SIZE, gfx);
+
     sf::Clock clock;
 
     float fps_show_timer = 1;
-
-    sf::Font font;
-
-    if (!font.loadFromFile("assets/dpcomic.ttf")) {
-        std::cerr<<"Cannot load font"<<std::endl;
-    }
 
     sf::Text fps_text;
     fps_text.setCharacterSize(18);
     fps_text.setPosition(12, 12);
     fps_text.setFillColor(sf::Color::Black);
-    fps_text.setFont(font);
+    fps_text.setFont(gfx.font);
 
     while (window.isOpen()) {
         // Update input
@@ -150,6 +170,14 @@ int main()
 
                         case sf::Keyboard::Space:
                             game.player.jump = true;
+                        break;
+
+                        case sf::Keyboard::B:
+                            game.player.hotbar_scroll = -1;
+                        break;
+
+                        case sf::Keyboard::N:
+                            game.player.hotbar_scroll = 1;
                         break;
 
                         default:
@@ -213,6 +241,10 @@ int main()
                 }
                 break;
 
+                case sf::Event::MouseWheelScrolled:
+                    game.player.hotbar_scroll = -event.mouseWheelScroll.delta;
+                break;
+
                 default:
                 break;
             }
@@ -272,6 +304,8 @@ int main()
         game.entity_mgr.draw(game, window);
 
         window.draw(fps_text);
+
+        hotbar_renderer.render(window, game, sf::Vector2f(32, 32));
 
         window.display();
     }

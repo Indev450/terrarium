@@ -7,6 +7,7 @@ file(GLOB ENTITY_SOURCES "src/entity/*.cpp")
 file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
 file(GLOB PLAYER_SOURCES "src/player/*.cpp")
 file(GLOB ITEM_SOURCES "src/item/*.cpp")
+file(GLOB UI_SOURCES "src/ui/*.cpp")
 
 set(SOURCES
     src/main.cpp
@@ -14,6 +15,7 @@ set(SOURCES
     ${GRAPHICS_SOURCES}
     ${PLAYER_SOURCES}
     ${ITEM_SOURCES}
+    ${UI_SOURCES}
 )
 
 add_definitions("-Wall")

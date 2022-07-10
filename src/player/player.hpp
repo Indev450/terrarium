@@ -29,6 +29,8 @@ namespace Terrarium {
 
         sf::Vector2f mouse_pos;
 
+        static const unsigned int HOTBAR_SIZE = 8;
+
         float hotbar_scroll = 0;
 
         PlayerStats stats;
@@ -49,8 +51,15 @@ namespace Terrarium {
 
         sf::Vector2f getPosition(GameState &game);
 
+        inline std::shared_ptr<ItemStack> *getHotbar() {
+            return hotbar;
+        }
+
+        inline unsigned int getHotbarSelected() {
+            return hotbar_selected;
+        }
+
     private:
-        static const unsigned int HOTBAR_SIZE = 8;
 
         std::shared_ptr<ItemStack> hotbar[HOTBAR_SIZE];
         unsigned int hotbar_selected = 0;

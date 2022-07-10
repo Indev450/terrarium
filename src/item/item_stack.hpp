@@ -24,7 +24,7 @@ namespace Terrarium {
             other.count = add(other.count);
 
             if (!def) {
-                other.def = def;
+                def = other.def;
             }
         }
 

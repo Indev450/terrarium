@@ -8,6 +8,7 @@
 #include "entity/entity_manager.hpp"
 #include "world/world.hpp"
 #include "tile/block_def_holder.hpp"
+#include "item/item_def_manager.hpp"
 #include "player/player.hpp"
 #include "event/event.hpp"
 
@@ -21,6 +22,7 @@ namespace Terrarium {
         World world;
         EntityManager entity_mgr;
         BlockDefHolder block_defs;
+        ItemDefManager item_defs;
         Player player;
 
         std::queue<Event> events;
