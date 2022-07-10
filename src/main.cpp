@@ -254,6 +254,14 @@ int main()
         game.player.mouse_pos.x = game.camera.left + mouse_pos.x;
         game.player.mouse_pos.y = game.camera.top + mouse_pos.y;
 
+        while (!game.events.empty()) {
+            Terrarium::Event &event = game.events.front();
+
+            // ... do something with event
+
+            game.events.pop();
+        }
+
         // Draw
         window.clear(sf::Color::Blue);
 

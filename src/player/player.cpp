@@ -35,11 +35,99 @@ namespace Terrarium {
             player_entity->speed.y = -stats.jump_force;
         }
 
-        if (lmb) {
-            int block_x = floor(mouse_pos.x / Tile::SIZE);
-            int block_y = floor(mouse_pos.y / Tile::SIZE);
+        if (lmb && !alt_using_item) {
+            if (!hotbar[hotbar_selected]->empty()) {
+                ItemEvent *item_event = new ItemEvent();
 
-            game.world.setBlock(block_x, block_y, 0);
+                item_event->def = hotbar[hotbar_selected]->getDef();
+
+                item_event->user = player_entity;
+
+                item_event->position = mouse_pos;
+
+                game.events.emplace(Event::ItemUseStart, item_event);
+
+                using_item = true;
+            }
+        } else if (using_item) {
+            if (!hotbar[hotbar_selected]->empty()) {
+                ItemEvent *item_event = new ItemEvent();
+
+                item_event->def = hotbar[hotbar_selected]->getDef();
+
+                item_event->user = player_entity;
+
+                item_event->position = mouse_pos;
+
+                game.events.emplace(Event::ItemUseStop, item_event);
+
+                using_item = false;
+            }
+        }
+
+        if (rmb && !using_item) {
+            if (!hotbar[hotbar_selected]->empty()) {
+                ItemEvent *item_event = new ItemEvent();
+
+                item_event->def = hotbar[hotbar_selected]->getDef();
+
+                item_event->user = player_entity;
+
+                item_event->position = mouse_pos;
+
+                game.events.emplace(Event::ItemAltUseStart, item_event);
+
+                alt_using_item = true;
+            }
+        } else if (alt_using_item) {
+            if (!hotbar[hotbar_selected]->empty()) {
+                ItemEvent *item_event = new ItemEvent();
+
+                item_event->def = hotbar[hotbar_selected]->getDef();
+
+                item_event->user = player_entity;
+
+                item_event->position = mouse_pos;
+
+                game.events.emplace(Event::ItemAltUseStop, item_event);
+
+                alt_using_item = false;
+            }
+        }
+
+        if (hotbar_scroll != 0) {
+            // If we were using some item, send event so we stop
+            if (using_item || alt_using_item) {
+                ItemEvent *item_event = new ItemEvent();
+
+                item_event->def = hotbar[hotbar_selected]->getDef();
+
+                item_event->user = player_entity;
+
+                item_event->position = mouse_pos;
+
+                game.events.emplace(using_item ? Event::ItemUseStop : Event::ItemAltUseStop, item_event);
+
+                using_item = alt_using_item = false;
+            }
+
+            // Then we can safely scroll
+            if (hotbar_scroll > 0) {
+                ++hotbar_selected;
+
+                if (hotbar_selected == HOTBAR_SIZE) {
+                    hotbar_selected = 0;
+                }
+
+            } else {
+                if (hotbar_selected == 0) {
+                    hotbar_selected = HOTBAR_SIZE;
+                }
+
+                --hotbar_selected;
+            }
+
+            hotbar_scroll = 0;
         }
     }
 

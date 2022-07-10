@@ -5,6 +5,7 @@
 
 #include "../entity/entity.hpp"
 #include "../tile/tile.hpp"
+#include "../item/inventory.hpp"
 
 namespace Terrarium {
 
@@ -28,13 +29,34 @@ namespace Terrarium {
 
         sf::Vector2f mouse_pos;
 
+        float hotbar_scroll = 0;
+
         PlayerStats stats;
 
+        // For now it has same size as hotbar, but later i'll change it,
+        // so this is why i need separe hotbar array
+        Inventory inventory = Inventory(HOTBAR_SIZE);
+
         entityid entity_id = 0;
+
+        Player() {
+            for (unsigned int i = 0; i < HOTBAR_SIZE; ++i) {
+                hotbar[i] = inventory.get(i);
+            }
+        }
 
         void update(GameState &game, float dtime);
 
         sf::Vector2f getPosition(GameState &game);
+
+    private:
+        static const unsigned int HOTBAR_SIZE = 8;
+
+        std::shared_ptr<ItemStack> hotbar[HOTBAR_SIZE];
+        unsigned int hotbar_selected = 0;
+
+        bool using_item = false;
+        bool alt_using_item = false;
     };
 
 } // namespace Terrarium

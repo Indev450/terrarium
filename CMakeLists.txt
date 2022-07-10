@@ -6,12 +6,14 @@ project(terrarium VERSION 0.1)
 file(GLOB ENTITY_SOURCES "src/entity/*.cpp")
 file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
 file(GLOB PLAYER_SOURCES "src/player/*.cpp")
+file(GLOB ITEM_SOURCES "src/item/*.cpp")
 
 set(SOURCES
     src/main.cpp
     ${ENTITY_SOURCES}
     ${GRAPHICS_SOURCES}
     ${PLAYER_SOURCES}
+    ${ITEM_SOURCES}
 )
 
 add_definitions("-Wall")
