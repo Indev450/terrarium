@@ -28,29 +28,13 @@ int main()
 
     Terrarium::Gfx gfx;
 
-    sf::Texture dirt_texture;
+    std::string dirt_texture = "assets/dirt.png";
+    std::string grass_texture = "assets/grass.png";
+    std::string player_texture = "assets/player.png";
 
-    if (!dirt_texture.loadFromFile("assets/dirt.png")) {
-        std::cerr<<"Cannot load dirt texture"<<std::endl;
-
-        return -1;
-    }
-
-    sf::Texture grass_texture;
-
-    if (!grass_texture.loadFromFile("assets/grass.png")) {
-        std::cerr<<"Cannot load grass texture"<<std::endl;
-
-        return -1;
-    }
-
-    sf::Texture player_texture;
-
-    if (!player_texture.loadFromFile("assets/player.png")) {
-        std::cerr<<"Cannot load player texture"<<std::endl;
-
-        return -1;
-    }
+    gfx.loadTexture(dirt_texture);
+    gfx.loadTexture(grass_texture);
+    gfx.loadTexture(player_texture);
 
     if (!gfx.font.loadFromFile("assets/dpcomic.ttf")) {
         std::cerr<<"Cannot load font"<<std::endl;
@@ -61,7 +45,7 @@ int main()
     dirt_item_def->name = "default:dirt";
     dirt_item_def->description = "Dirt block";
 
-    dirt_item_def->inventory_image.setTexture(dirt_texture);
+    dirt_item_def->inventory_image.setTexture(gfx.getTexture(dirt_texture));
 
     dirt_item_def->max_count = 999;
 
@@ -74,12 +58,12 @@ int main()
 
     std::shared_ptr<Terrarium::BlockDef> dirt_def(new Terrarium::BlockDef);
 
-    dirt_def->sprite.setTexture(dirt_texture);
+    dirt_def->sprite.setTexture(gfx.getTexture(dirt_texture));
     dirt_def->slippery = 0.85;
 
     std::shared_ptr<Terrarium::BlockDef> grass_def(new Terrarium::BlockDef);
 
-    grass_def->sprite.setTexture(grass_texture);
+    grass_def->sprite.setTexture(gfx.getTexture(grass_texture));
     grass_def->slippery = 0.7;
 
     Terrarium::blockid dirt_id = game.block_defs.add(dirt_def);
@@ -88,12 +72,12 @@ int main()
     std::shared_ptr<Terrarium::EntityPrefab> jumping_block_prefab = std::make_shared<Terrarium::EntityPrefab>();
     jumping_block_prefab->size = { 16, 16 };
 
-    jumping_block_prefab->anims.setTexture(dirt_texture);
+    jumping_block_prefab->anims.setTexture(gfx.getTexture(dirt_texture));
 
     std::shared_ptr<Terrarium::EntityPrefab> player_prefab = std::make_shared<Terrarium::EntityPrefab>();
     player_prefab->size = { 24, 48 };
 
-    player_prefab->anims.setTexture(player_texture);
+    player_prefab->anims.setTexture(gfx.getTexture(player_texture));
 
     Terrarium::entity_prefabid jumping_block_prefab_id = game.entity_mgr.addPrefab(jumping_block_prefab);
     Terrarium::entity_prefabid player_prefab_id = game.entity_mgr.addPrefab(player_prefab);
