@@ -8,6 +8,7 @@ file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
 file(GLOB PLAYER_SOURCES "src/player/*.cpp")
 file(GLOB ITEM_SOURCES "src/item/*.cpp")
 file(GLOB UI_SOURCES "src/ui/*.cpp")
+file(GLOB LUA_API_SOURCES "src/modding/lua/*.cpp")
 
 set(SOURCES
     src/main.cpp
@@ -16,6 +17,7 @@ set(SOURCES
     ${PLAYER_SOURCES}
     ${ITEM_SOURCES}
     ${UI_SOURCES}
+    ${LUA_API_SOURCES}
 )
 
 add_definitions("-Wall")
@@ -28,4 +30,4 @@ configure_file(src/terrarium_config.hpp.in terrarium_config.hpp)
 target_include_directories(terrarium PUBLIC "${PROJECT_BINARY_DIR}")
 
 # Add libs
-target_link_libraries(terrarium sfml-system sfml-window sfml-graphics sfml-audio)
+target_link_libraries(terrarium sfml-system sfml-window sfml-graphics sfml-audio lua)

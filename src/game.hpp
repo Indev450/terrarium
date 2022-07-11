@@ -11,6 +11,7 @@
 #include "item/item_def_manager.hpp"
 #include "player/player.hpp"
 #include "event/event.hpp"
+#include "graphics/gfx.hpp"
 
 namespace Terrarium {
 
@@ -26,6 +27,8 @@ namespace Terrarium {
         Player player;
 
         std::queue<Event> events;
+
+        Gfx gfx;
 
         sf::FloatRect camera = { 0, 0, 0, 0 };
     };
