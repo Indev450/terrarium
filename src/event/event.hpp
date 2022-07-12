@@ -5,12 +5,12 @@
 #include <memory>
 
 #include "../entity/entity.hpp"
-#include "../item/item_def.hpp"
+#include "../item/item_stack.hpp"
 
 namespace Terrarium {
 
     struct ItemEvent {
-        std::shared_ptr<ItemDef> def;
+        std::shared_ptr<ItemStack> item_stack;
         std::weak_ptr<Entity> user;
 
         sf::Vector2f position;
@@ -42,6 +42,26 @@ namespace Terrarium {
         // would behave.
         Event(const Event &copy) = delete;
         Event &operator=(const Event &copy) = delete;
+
+        // Sadly, there is no easy way to convert enum value to string, so i have to use this
+        const char *getName() const {
+            #define ENUM_TOSTRING(value) case value: return #value
+
+            // Switch to warn myself if i add new event types and forget to stringify them
+            switch (type) {
+                ENUM_TOSTRING(ItemUseStart);
+                ENUM_TOSTRING(ItemUseStop);
+
+                ENUM_TOSTRING(ItemAltUseStart);
+                ENUM_TOSTRING(ItemAltUseStop);
+
+                ENUM_TOSTRING(ItemSelect);
+            }
+
+            // Execution flow should never reach this, but compiler still prints warning,
+            // so i add this return;
+            return nullptr;
+        }
 
         ~Event() {
             switch (type) {

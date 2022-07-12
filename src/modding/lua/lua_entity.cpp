@@ -2,6 +2,7 @@
 
 #include "lua_entity.hpp"
 #include "lua_util.hpp"
+#include "lua_interface.hpp"
 
 namespace Terrarium {
 
@@ -302,6 +303,15 @@ namespace Terrarium {
             lua_pushboolean(L, self->isCollide(*other));
 
             return 1;
+        }
+
+        void push_entity(lua_State *L, std::weak_ptr<Entity> entity) {
+            void *entity_ref_mem = lua_newuserdatauv(L, sizeof(LuaEntityUD), 0);
+
+            // Hope that calls constructor
+            new (entity_ref_mem) LuaEntityUD(entity);
+
+            luaL_setmetatable(L, LUA_ENTITYREF);
         }
 
     } // namespace LuaEntityAPI

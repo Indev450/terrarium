@@ -36,10 +36,10 @@ namespace Terrarium {
         }
 
         if (lmb && !alt_using_item) {
-            if (!hotbar[hotbar_selected]->empty()) {
+            if (!using_item && !hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->def = hotbar[hotbar_selected]->getDef();
+                item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = player_entity;
 
@@ -53,7 +53,7 @@ namespace Terrarium {
             if (!hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->def = hotbar[hotbar_selected]->getDef();
+                item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = player_entity;
 
@@ -66,10 +66,10 @@ namespace Terrarium {
         }
 
         if (rmb && !using_item) {
-            if (!hotbar[hotbar_selected]->empty()) {
+            if (!alt_using_item && !hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->def = hotbar[hotbar_selected]->getDef();
+                item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = player_entity;
 
@@ -83,7 +83,7 @@ namespace Terrarium {
             if (!hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->def = hotbar[hotbar_selected]->getDef();
+                item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = player_entity;
 
@@ -100,7 +100,7 @@ namespace Terrarium {
             if (using_item || alt_using_item) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->def = hotbar[hotbar_selected]->getDef();
+                item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = player_entity;
 

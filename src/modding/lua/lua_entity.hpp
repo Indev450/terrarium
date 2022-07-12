@@ -1,17 +1,21 @@
 #ifndef MODDING_LUA_ENTITY_HPP
 #define MODDING_LUA_ENTITY_HPP
 
-#include <stdexcept>
+#define LUA_ENTITYREF "EntityRef"
 
+#include <stdexcept>
+#include <memory>
+
+#include <lua.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include "lua_interface.hpp"
+#include "../../entity/entity.hpp"
 
 namespace Terrarium {
 
-    namespace LuaEntityAPI {
+    class LuaModdingInterface;
 
-        static const char *LUA_ENTITYREF = "EntityRef";
+    namespace LuaEntityAPI {
 
         // Userdata class. Hopefully it'll work well with weak_ptr...
         class LuaEntityUD {
@@ -80,6 +84,10 @@ namespace Terrarium {
 
         // bool EntityRef:is_collide(Entity other)
         int entity_is_collide(lua_State *L);
+
+        // Functions to call from C++
+
+        void push_entity(lua_State *L, std::weak_ptr<Entity> entity);
 
     }; // namespace LuaEntityAPI
 

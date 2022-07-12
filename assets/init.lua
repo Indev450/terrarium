@@ -20,3 +20,11 @@ core._update = function(dtime)
         entity:set_speed({x = 10*16, y = -20*16})
     end
 end
+
+core._on_event = function(event)
+    print("Event "..event.name.." happened!")
+
+    if event.name == "ItemUseStart" then
+        print("Using "..event.item_event.item_stack:get_item_name().." "..event.item_event.item_stack:get_item_count())
+    end
+end
