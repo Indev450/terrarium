@@ -35,10 +35,10 @@ namespace Terrarium {
 
         // Maybe i could iterate only over parts of texture that changed,
         // but i hope that doesn't impact on perfomance much
-        int start_x = static_cast<int>(stepify(floor(game.camera.left / Tile::SIZE), step));
+        int start_x = static_cast<int>(stepify(floor(game.camera.left), step));
         int end_x = start_x + static_cast<int>(ceil(screen_size.x / Tile::SIZE));
 
-        int start_y = static_cast<int>(stepify(floor(game.camera.top / Tile::SIZE), step));
+        int start_y = static_cast<int>(stepify(floor(game.camera.top), step));
         int end_y = start_y + static_cast<int>(ceil(screen_size.y / Tile::SIZE));
 
         for (int x = start_x; x < end_x; ++x) {
@@ -78,6 +78,7 @@ namespace Terrarium {
         if (tile.bg) {
             BlockDef &def = block_defs.getOrUnknown(tile.bg);
 
+            // Maybe i should use game.blocks_to_pixels? I don't wanna change function signature tho
             def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
             def.sprite.setColor(sf::Color(127, 127, 127, 255)); // Make wall darker
 
@@ -101,8 +102,8 @@ namespace Terrarium {
     }
 
     void WorldRenderer::updatePosition(const sf::FloatRect &camera) {
-        int new_world_x = stepify(floor(camera.left / Tile::SIZE), step);
-        int new_world_y = stepify(floor(camera.top / Tile::SIZE), step);
+        int new_world_x = stepify(floor(camera.left), step);
+        int new_world_y = stepify(floor(camera.top), step);
 
         if (new_world_x != in_world_pos.x || new_world_y != in_world_pos.y) {
             in_world_pos.x = new_world_x;
@@ -111,9 +112,10 @@ namespace Terrarium {
             needs_update = true;
         }
 
+        // Same about transform, as in renderTile
         sprite.setPosition(
-            stepify(camera.left, Tile::SIZE*step) - camera.left,
-            stepify(camera.top, Tile::SIZE*step) - camera.top);
+            stepify(camera.left*Tile::SIZE, Tile::SIZE*step) - camera.left*Tile::SIZE,
+            stepify(camera.top*Tile::SIZE, Tile::SIZE*step) - camera.top*Tile::SIZE);
     }
 
     void WorldRenderer::render(sf::RenderTarget &target) {

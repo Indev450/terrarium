@@ -49,7 +49,7 @@ namespace Terrarium {
                     pair.second->hitbox.top - game.camera.top,
                 };
 
-                pair.second->anims.draw(target, position);
+                pair.second->anims.draw(target, game.blocks_to_pixels.transformPoint(position));
             }
         }
     }

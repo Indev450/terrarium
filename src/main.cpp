@@ -71,12 +71,12 @@ int main()
     Terrarium::blockid grass_id = game->block_defs.add(grass_def);
 
     std::shared_ptr<Terrarium::EntityPrefab> jumping_block_prefab = std::make_shared<Terrarium::EntityPrefab>();
-    jumping_block_prefab->size = { 16, 16 };
+    jumping_block_prefab->size = { 1, 1 };
 
     jumping_block_prefab->anims.setTexture(game->gfx.getTexture(dirt_texture));
 
     std::shared_ptr<Terrarium::EntityPrefab> player_prefab = std::make_shared<Terrarium::EntityPrefab>();
-    player_prefab->size = { 24, 48 };
+    player_prefab->size = { 1.5, 3 };
 
     player_prefab->anims.setTexture(game->gfx.getTexture(player_texture));
 
@@ -135,8 +135,10 @@ int main()
 
                 case sf::Event::Resized:
                 {
-                    game->camera.width = event.size.width;
-                    game->camera.height = event.size.height;
+                    sf::Vector2f new_size = game->pixels_to_blocks.transformPoint(event.size.width, event.size.height);
+
+                    game->camera.width = new_size.x;
+                    game->camera.height = new_size.y;
 
                     world_renderer.setScreenSize({ event.size.width + Terrarium::Tile::SIZE, event.size.height + Terrarium::Tile::SIZE });
                 }
@@ -253,8 +255,8 @@ int main()
 
         if (jumping_block) {
             if (jumping_block->collision_info.blockd) {
-                jumping_block->speed.x = Terrarium::Tile::SIZE*3;
-                jumping_block->speed.y = -Terrarium::Tile::SIZE*8;
+                jumping_block->speed.x = 3;
+                jumping_block->speed.y = -8;
             }
         }
 
@@ -266,7 +268,8 @@ int main()
         game->camera.left = camera_pos.x;
         game->camera.top = camera_pos.y;
 
-        sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+        sf::Vector2i mouse_pos_pixels = sf::Mouse::getPosition(window);
+        sf::Vector2f mouse_pos = game->pixels_to_blocks.transformPoint(mouse_pos_pixels.x, mouse_pos_pixels.y);
 
         game->player.mouse_pos.x = game->camera.left + mouse_pos.x;
         game->player.mouse_pos.y = game->camera.top + mouse_pos.y;

@@ -23,7 +23,7 @@ namespace Terrarium {
     };
 
     struct PhysicsParams {
-        float gravity = 40*Tile::SIZE;
+        float gravity = 40;
         float slippery = 0;
 
         bool enable_collision = true;

@@ -4,6 +4,7 @@
 #include <queue>
 
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Transform.hpp>
 
 #include "entity/entity_manager.hpp"
 #include "world/world.hpp"
@@ -18,7 +19,10 @@ namespace Terrarium {
     struct GameState {
         GameState(unsigned int world_width, unsigned int world_height):
             world(world_width, world_height)
-        {}
+        {
+            blocks_to_pixels.scale(Tile::SIZE, Tile::SIZE);
+            pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
+        }
 
         World world;
         EntityManager entity_mgr;
@@ -31,6 +35,9 @@ namespace Terrarium {
         Gfx gfx;
 
         sf::FloatRect camera = { 0, 0, 0, 0 };
+
+        sf::Transform blocks_to_pixels;
+        sf::Transform pixels_to_blocks;
     };
 
 } // namespace Terrarium

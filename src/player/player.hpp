@@ -12,10 +12,10 @@ namespace Terrarium {
     class GameState;
 
     struct PlayerStats {
-        float jump_force = Tile::SIZE*25;
-        float acceleration = Tile::SIZE*16;
+        float jump_force = 25;
+        float acceleration = 16;
 
-        float max_speed = Tile::SIZE*16;
+        float max_speed = 16;
     };
 
     struct Player {

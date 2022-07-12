@@ -14,7 +14,7 @@ namespace Terrarium {
             speed.x *= physics.slippery;
         }
 
-        // FIXME - skipping blocks when speed.x * dtime > Tile::SIZE
+        // FIXME - skipping blocks when speed.x * dtime > 1
         hitbox.left += speed.x * dtime;
         if (physics.enable_collision) {
             collide(game, true);
@@ -36,11 +36,11 @@ namespace Terrarium {
             collision_info.blockd = false;
         }
 
-        int y_min = floor(hitbox.top / Tile::SIZE);
-        float y_max = (hitbox.top + hitbox.height) / Tile::SIZE;
+        int y_min = floor(hitbox.top);
+        float y_max = hitbox.top + hitbox.height;
 
-        int x_min = floor(hitbox.left / Tile::SIZE);
-        float x_max = (hitbox.left + hitbox.width) / Tile::SIZE;
+        int x_min = floor(hitbox.left);
+        float x_max = hitbox.left + hitbox.width;
 
         for (int y = y_min; y < y_max; ++y) {
             for (int x = x_min; x < x_max; ++x) {
@@ -57,10 +57,10 @@ namespace Terrarium {
                     if (by_x) {
 
                         if (speed.x > 0) {
-                            hitbox.left = x*Tile::SIZE - hitbox.width;
+                            hitbox.left = x - hitbox.width;
                             collision_info.blockr = true;
                         } else {
-                            hitbox.left = (x+1)*Tile::SIZE;
+                            hitbox.left = x + 1;
                             collision_info.blockl = true;
                         }
 
@@ -70,12 +70,12 @@ namespace Terrarium {
                     } else {
 
                         if (speed.y > 0) {
-                            hitbox.top = y*Tile::SIZE - hitbox.height;
+                            hitbox.top = y - hitbox.height;
                             collision_info.blockd = true;
 
                             physics.slippery = block_def.slippery;
                         } else {
-                            hitbox.top = (y+1)*Tile::SIZE;
+                            hitbox.top = y + 1;
                             collision_info.blocku = true;
                         }
 
