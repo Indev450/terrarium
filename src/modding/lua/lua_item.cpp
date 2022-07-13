@@ -68,16 +68,16 @@ namespace Terrarium {
                 return luaL_error(L, "expected table as item def");
             }
 
-            lua_getfield(L, -1, "description");
+            lua_getfield(L, 2, "description");
             item_def->description = luaL_checkstring(L, -1);
             lua_pop(L, 1);
 
-            lua_getfield(L, -1, "inventory_image");
+            lua_getfield(L, 2, "inventory_image");
             const char *inventory_image = luaL_checkstring(L, -1);
             item_def->inventory_image.setTexture(lua_interface->game->gfx.getTexture(inventory_image));
             lua_pop(L, 1);
 
-            lua_getfield(L, -1, "max_count");
+            lua_getfield(L, 2, "max_count");
             int max_count = luaL_checkinteger(L, -1);
 
             if (max_count < 1 || max_count > 65535) {
