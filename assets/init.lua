@@ -25,6 +25,14 @@ core._on_event = function(event)
     print("Event "..event.name.." happened!")
 
     if event.name == "ItemUseStart" then
-        print("Using "..event.item_event.item_stack:get_item_name().." "..event.item_event.item_stack:get_item_count())
+        if event.item_event.item_stack:get_item_name() == "default:dirt" then
+            local item_stack = event.item_event.item_stack
+            local position = event.item_event.position
+
+            if core._get_block(math.floor(position.x), math.floor(position.y)) == 0 then
+                item_stack:add(-1)
+                core._set_block(math.floor(position.x), math.floor(position.y), 1)
+            end
+        end
     end
 end
