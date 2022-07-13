@@ -25,6 +25,10 @@ namespace Terrarium {
             return OverflowingMap<entityid, Entity>::get(id);
         }
 
+        inline void del(entityid id) {
+            OverflowingMap<entityid, Entity>::del(id);
+        }
+
         void update(GameState &game, float dtime);
 
         void draw(GameState &game, sf::RenderTarget &target);

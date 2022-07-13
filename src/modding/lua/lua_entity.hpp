@@ -10,6 +10,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "../../entity/entity.hpp"
+#include "../../entity/entity_manager.hpp"
 #include "../../entity/entity_prefab.hpp"
 
 namespace Terrarium {
@@ -50,6 +51,8 @@ namespace Terrarium {
             const CollisionInfo &getCollisionInfo();
 
             bool isCollide(LuaEntityUD &other);
+
+            void kill(EntityManager &entity_mgr);
         };
 
         // Register all functions
@@ -88,6 +91,9 @@ namespace Terrarium {
 
         // bool EntityRef:is_collide(Entity other)
         int entity_is_collide(lua_State *L);
+
+        // void EntityRef:kill()
+        int entity_kill(lua_State *L);
 
         // Functions to call from C++
 

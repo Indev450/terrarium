@@ -64,6 +64,10 @@ namespace Terrarium {
             return self->hitbox.intersects(other->hitbox);
         }
 
+        void LuaEntityUD::kill(EntityManager &entity_mgr) {
+            entity_mgr.del(getID());
+        }
+
         void init(LuaModdingInterface &lua_interface) {
             lua_interface.registerFunction("_new_entity_prefab", new_entity_prefab);
             lua_interface.registerFunction("_override_entity_prefab", override_entity_prefab);
@@ -95,6 +99,9 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_is_collide);
             lua_setfield(L, -2, "is_collide");
+
+            lua_interface.pushClosure(entity_kill);
+            lua_setfield(L, -2, "kill");
 
             lua_setfield(L, -2, "__index"); // pop __index table
 
@@ -270,6 +277,16 @@ namespace Terrarium {
             lua_pushboolean(L, self->isCollide(*other));
 
             return 1;
+        }
+
+        int entity_kill(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+
+            entity_ref->kill(lua_interface->game->entity_mgr);
+
+            return 0;
         }
 
         void push_entity(lua_State *L, std::weak_ptr<Entity> entity) {
