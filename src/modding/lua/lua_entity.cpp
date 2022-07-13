@@ -175,7 +175,13 @@ namespace Terrarium {
         int entity_get_position(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
 
-            sf::Vector2f position = entity_ref->getPosition();
+            sf::Vector2f position;
+
+            try {
+                position = entity_ref->getPosition();
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
 
             lua_newtable(L);
 
@@ -205,7 +211,11 @@ namespace Terrarium {
             position.y = luaL_checknumber(L, -1);
             lua_pop(L, 1);
 
-            entity_ref->setPosition(position);
+            try {
+                entity_ref->setPosition(position);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
 
             return 0;
         }
@@ -213,7 +223,13 @@ namespace Terrarium {
         int entity_get_speed(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
 
-            sf::Vector2f speed = entity_ref->getSpeed();
+            sf::Vector2f speed;
+
+            try {
+                speed = entity_ref->getSpeed();
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
 
             lua_newtable(L);
 
@@ -243,7 +259,11 @@ namespace Terrarium {
             speed.y = luaL_checknumber(L, -1);
             lua_pop(L, 1);
 
-            entity_ref->setSpeed(speed);
+            try {
+                entity_ref->setSpeed(speed);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
 
             return 0;
         }
@@ -251,7 +271,13 @@ namespace Terrarium {
         int entity_get_collision_info(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
 
-            const CollisionInfo &collision_info = entity_ref->getCollisionInfo();
+            CollisionInfo collision_info;
+
+            try {
+                collision_info = entity_ref->getCollisionInfo();
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
 
             lua_newtable(L);
 
@@ -274,7 +300,11 @@ namespace Terrarium {
             LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
             LuaEntityUD *other = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 2, LUA_ENTITYREF));
 
-            lua_pushboolean(L, self->isCollide(*other));
+            try {
+                lua_pushboolean(L, self->isCollide(*other));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
 
             return 1;
         }
