@@ -16,6 +16,7 @@ namespace Terrarium {
 
     public:
         entity_prefabid addPrefab(std::shared_ptr<EntityPrefab> prefab);
+        void overridePrefab(entity_prefabid prefab_id, std::shared_ptr<EntityPrefab> prefab);
 
         entityid create(entity_prefabid prefab_id = 0);
 

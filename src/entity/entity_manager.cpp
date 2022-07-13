@@ -9,6 +9,10 @@ namespace Terrarium {
         return prefabs.add(prefab);
     }
 
+    void EntityManager::overridePrefab(entity_prefabid prefab_id, std::shared_ptr<EntityPrefab> prefab) {
+        prefabs.set(prefab_id, prefab);
+    }
+
     entityid EntityManager::create(entity_prefabid prefab_id) {
         Entity *e = new Entity();
 

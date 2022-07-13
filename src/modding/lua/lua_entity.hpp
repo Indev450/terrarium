@@ -10,6 +10,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "../../entity/entity.hpp"
+#include "../../entity/entity_prefab.hpp"
 
 namespace Terrarium {
 
@@ -59,6 +60,9 @@ namespace Terrarium {
         // int core._new_entity_prefab(EntityPrefabSpec prefab)
         int new_entity_prefab(lua_State *L);
 
+        // void core._override_entity_prefab(int prefab_id, EntityPrefabSpec prefab)
+        int override_entity_prefab(lua_State *L);
+
         // EntityRef core._new_entity([int prefab_id])
         int new_entity(lua_State *L);
 
@@ -88,6 +92,8 @@ namespace Terrarium {
         // Functions to call from C++
 
         void push_entity(lua_State *L, std::weak_ptr<Entity> entity);
+
+        std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx);
 
     }; // namespace LuaEntityAPI
 

@@ -66,6 +66,7 @@ namespace Terrarium {
 
         void init(LuaModdingInterface &lua_interface) {
             lua_interface.registerFunction("_new_entity_prefab", new_entity_prefab);
+            lua_interface.registerFunction("_override_entity_prefab", override_entity_prefab);
             lua_interface.registerFunction("_new_entity", new_entity);
 
             lua_State *L = lua_interface.getLuaState();
@@ -107,57 +108,23 @@ namespace Terrarium {
         int new_entity_prefab(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
-            std::shared_ptr<EntityPrefab> prefab = std::make_shared<EntityPrefab>();
-
-            // Stack should contain one argument - table with entity prefab values
-            if (!lua_istable(L, 1)) {
-                return luaL_error(L, "expected table as entity prefab");
-            }
-
-            lua_getfield(L, -1, "physics"); // push physics table
-
-            if (!lua_istable(L, -1)) {
-                return luaL_error(L, "expected table as prefab's physics");
-            }
-
-            lua_getfield(L, -1, "gravity"); // push value
-            prefab->physics.gravity = luaL_checknumber(L, -1);
-            lua_pop(L, 1); // pop value
-
-            lua_getfield(L, -1, "enable_collision"); // push value
-
-            // If it is not boolean, it is not big problem, but it is better to leave warning
-            if (!lua_isboolean(L, -1)) {
-                lua_warning(L, "<entity_prefab>.physics.enable_collision should be bool", false);
-            }
-
-            prefab->physics.enable_collision = lua_toboolean(L, -1);
-            lua_pop(L, 2); // pop value and physics table
-
-            lua_getfield(L, -1, "size"); // push size table
-
-            if (!lua_istable(L, -1)) {
-                return luaL_error(L, "expected table as prefab's size");
-            }
-
-            lua_getfield(L, -1, "width"); // push value
-            prefab->size.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1); // pop value
-
-            lua_getfield(L, -1, "height"); // push value
-            prefab->size.y = luaL_checknumber(L, -1);
-            lua_pop(L, 2); // pop value and size table
-
-            lua_getfield(L, -1, "image"); // push value
-            const char *image = luaL_checkstring(L, -1);
-            prefab->anims.setTexture(lua_interface->game->gfx.getTexture(image));
-            lua_pop(L, 1); // pop value
-
-            // TODO - read animations
+            std::shared_ptr<EntityPrefab> prefab = checkentityprefab(*lua_interface, 1);
 
             lua_pushinteger(L, lua_interface->game->entity_mgr.addPrefab(prefab));
 
             return 1;
+        }
+
+        int override_entity_prefab(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            entity_prefabid prefab_id = luaL_checkinteger(L, 1);
+
+            std::shared_ptr<EntityPrefab> prefab = checkentityprefab(*lua_interface, 2);
+
+            lua_interface->game->entity_mgr.overridePrefab(prefab_id, prefab);
+
+            return 0;
         }
 
         int new_entity(lua_State *L) {
@@ -312,6 +279,60 @@ namespace Terrarium {
             new (entity_ref_mem) LuaEntityUD(entity);
 
             luaL_setmetatable(L, LUA_ENTITYREF);
+        }
+
+        std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx) {
+            lua_State *L = lua_interface.getLuaState();
+
+            std::shared_ptr<EntityPrefab> prefab = std::make_shared<EntityPrefab>();
+
+            // Stack should contain one argument - table with entity prefab values
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "expected table as entity prefab");
+            }
+
+            lua_getfield(L, idx, "physics"); // push physics table
+
+            if (!lua_istable(L, -1)) {
+                luaL_error(L, "expected table as prefab's physics");
+            }
+
+            lua_getfield(L, -1, "gravity"); // push value
+            prefab->physics.gravity = luaL_checknumber(L, -1);
+            lua_pop(L, 1); // pop value
+
+            lua_getfield(L, -1, "enable_collision"); // push value
+
+            // If it is not boolean, it is not big problem, but it is better to leave warning
+            if (!lua_isboolean(L, -1)) {
+                lua_warning(L, "<entity_prefab>.physics.enable_collision should be bool", false);
+            }
+
+            prefab->physics.enable_collision = lua_toboolean(L, -1);
+            lua_pop(L, 2); // pop value and physics table
+
+            lua_getfield(L, idx, "size"); // push size table
+
+            if (!lua_istable(L, -1)) {
+                luaL_error(L, "expected table as prefab's size");
+            }
+
+            lua_getfield(L, -1, "width"); // push value
+            prefab->size.x = luaL_checknumber(L, -1);
+            lua_pop(L, 1); // pop value
+
+            lua_getfield(L, -1, "height"); // push value
+            prefab->size.y = luaL_checknumber(L, -1);
+            lua_pop(L, 2); // pop value and size table
+
+            lua_getfield(L, idx, "image"); // push value
+            const char *image = luaL_checkstring(L, -1);
+            prefab->anims.setTexture(lua_interface.game->gfx.getTexture(image));
+            lua_pop(L, 1); // pop value
+
+            // TODO - read animations
+
+            return prefab;
         }
 
     } // namespace LuaEntityAPI

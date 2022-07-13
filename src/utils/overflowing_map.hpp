@@ -52,6 +52,10 @@ namespace Terrarium {
             return map[key];
         }
 
+        void set(Key key, std::shared_ptr<Value> value) {
+            map[key] = value;
+        }
+
         void del(Key key) {
             map.erase(key);
         }
