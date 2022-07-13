@@ -1,5 +1,5 @@
 #ifndef INVENTORY_HPP
-#define INVENTORY_HPP_INCLUDED
+#define INVENTORY_HPP
 
 #include <vector>
 #include <memory>
