@@ -11,7 +11,7 @@ namespace Terrarium {
 
     struct ItemEvent {
         std::shared_ptr<ItemStack> item_stack;
-        std::weak_ptr<Entity> user;
+        std::weak_ptr<Player> user;
 
         sf::Vector2f position;
     };

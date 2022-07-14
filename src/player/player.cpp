@@ -38,7 +38,7 @@ namespace Terrarium {
 
                 // Can't pass `this` because that will make multiple unrelated
                 // smart pointers, which can cause segfault
-                item_event->user = game.entity_mgr.get(id);
+                item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
                 item_event->position = controls.mouse_pos;
 
@@ -52,7 +52,7 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = game.entity_mgr.get(id);
+                item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
                 item_event->position = controls.mouse_pos;
 
@@ -68,7 +68,7 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = game.entity_mgr.get(id);
+                item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
                 item_event->position = controls.mouse_pos;
 
@@ -82,7 +82,7 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = game.entity_mgr.get(id);
+                item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
                 item_event->position = controls.mouse_pos;
 
@@ -99,7 +99,7 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = game.entity_mgr.get(id);
+                item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
                 item_event->position = controls.mouse_pos;
 

@@ -103,7 +103,7 @@ namespace Terrarium {
         LuaItemAPI::push_itemstack(L, item_event.item_stack);
         lua_setfield(L, -2, "item_stack");
 
-        LuaEntityAPI::push_entity(L, item_event.user);
+        LuaPlayerAPI::push_player(L, item_event.user);
         lua_setfield(L, -2, "user");
 
         LuaUtil::push_vector2f(L, item_event.position);
