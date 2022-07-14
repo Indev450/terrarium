@@ -75,12 +75,15 @@ namespace Terrarium {
 
             lua_State *L = lua_interface.getLuaState();
 
-            luaL_newmetatable(L, LUA_ENTITYREF); // push metatable
+            luaL_newmetatable(L, LUA_ENTITYREF.c_str()); // push metatable
 
             lua_newtable(L); // push __index table
 
             lua_pushcfunction(L, entity_is_valid);
             lua_setfield(L, -2, "is_valid");
+
+            lua_pushboolean(L, false);
+            lua_setfield(L, -2, "is_player");
 
             lua_pushcfunction(L, entity_get_position);
             lua_setfield(L, -2, "get_position");
@@ -159,13 +162,13 @@ namespace Terrarium {
             // Hope that calls constructor
             new (entity_ref_mem) LuaEntityUD(entity);
 
-            luaL_setmetatable(L, LUA_ENTITYREF);
+            luaL_setmetatable(L, LUA_ENTITYREF.c_str());
 
             return 1;
         }
 
         int entity_is_valid(lua_State *L) {
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             lua_pushboolean(L, entity_ref->isValid());
 
@@ -173,7 +176,7 @@ namespace Terrarium {
         }
 
         int entity_get_position(lua_State *L) {
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             sf::Vector2f position;
 
@@ -195,7 +198,7 @@ namespace Terrarium {
         }
 
         int entity_set_position(lua_State *L) {
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             if (!lua_istable(L, 2)) {
                 return luaL_error(L, "expected table argument");
@@ -221,7 +224,7 @@ namespace Terrarium {
         }
 
         int entity_get_speed(lua_State *L) {
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             sf::Vector2f speed;
 
@@ -243,7 +246,7 @@ namespace Terrarium {
         }
 
         int entity_set_speed(lua_State *L) {
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             if (!lua_istable(L, 2)) {
                 return luaL_error(L, "expected table argument");
@@ -269,7 +272,7 @@ namespace Terrarium {
         }
 
         int entity_get_collision_info(lua_State *L) {
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             CollisionInfo collision_info;
 
@@ -297,8 +300,8 @@ namespace Terrarium {
         }
 
         int entity_is_collide(lua_State *L) {
-            LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
-            LuaEntityUD *other = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 2, LUA_ENTITYREF));
+            LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *other = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 2, LUA_ENTITYREF));
 
             try {
                 lua_pushboolean(L, self->isCollide(*other));
@@ -312,7 +315,7 @@ namespace Terrarium {
         int entity_kill(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
-            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(luaL_checkudata(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             entity_ref->kill(lua_interface->game->entity_mgr);
 
@@ -325,7 +328,7 @@ namespace Terrarium {
             // Hope that calls constructor
             new (entity_ref_mem) LuaEntityUD(entity);
 
-            luaL_setmetatable(L, LUA_ENTITYREF);
+            luaL_setmetatable(L, LUA_ENTITYREF.c_str());
         }
 
         std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx) {

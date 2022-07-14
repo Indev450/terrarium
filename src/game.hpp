@@ -28,7 +28,7 @@ namespace Terrarium {
         EntityManager entity_mgr;
         BlockDefHolder block_defs;
         ItemDefManager item_defs;
-        Player player;
+        std::shared_ptr<Player> player;
 
         std::queue<Event> events;
 

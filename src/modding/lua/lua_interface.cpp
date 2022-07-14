@@ -5,6 +5,7 @@
 #include "lua_entity.hpp"
 #include "lua_item.hpp"
 #include "lua_block.hpp"
+#include "lua_player.hpp"
 
 namespace Terrarium {
 
@@ -19,6 +20,7 @@ namespace Terrarium {
         LuaEntityAPI::init(*this);
         LuaItemAPI::init(*this);
         LuaBlockAPI::init(*this);
+        LuaPlayerAPI::init(*this);
 
         if (!LuaUtil::run_script(L, "assets/init.lua")) {
             throw std::runtime_error("could not execute assets/init.lua");

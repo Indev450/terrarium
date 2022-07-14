@@ -28,12 +28,12 @@ namespace Terrarium {
 
         target.draw(background);
 
-        std::shared_ptr<ItemStack> *hotbar = game.player.getHotbar();
+        std::shared_ptr<ItemStack> *hotbar = game.player->getHotbar();
 
-        for (unsigned int i = 0; i < game.player.HOTBAR_SIZE; ++i) {
+        for (unsigned int i = 0; i < game.player->HOTBAR_SIZE; ++i) {
             sf::Vector2f cell_position = position + sf::Vector2f((CELL_SIZE * i) + (i+1) * SPACE, SPACE);
 
-            if (i == game.player.getHotbarSelected()) {
+            if (i == game.player->getHotbarSelected()) {
                 cell.setOutlineColor(SELECTED_CELL_COLOR);
             } else {
                 cell.setOutlineColor(CELL_COLOR);

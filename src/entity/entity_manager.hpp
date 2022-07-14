@@ -1,7 +1,7 @@
 #ifndef ENTITY_MANAGER_HPP
 #define ENTITY_MANAGER_HPP
 
-#include <vector>
+#include <iostream>
 
 #include "../utils/overflowing_map.hpp"
 #include "entity.hpp"
@@ -18,7 +18,33 @@ namespace Terrarium {
         entity_prefabid addPrefab(std::shared_ptr<EntityPrefab> prefab);
         void overridePrefab(entity_prefabid prefab_id, std::shared_ptr<EntityPrefab> prefab);
 
-        entityid create(entity_prefabid prefab_id = 0);
+        // EntityType should be derived from Entity
+        template<class EntityType = Entity>
+        entityid create(entity_prefabid prefab_id = 0) {
+            EntityType *e = new EntityType();
+
+            entityid id = add(std::shared_ptr<Entity>(e));
+
+            if (id != 0) {
+                e->id = id;
+
+                if (prefab_id != 0) {
+                    std::shared_ptr<EntityPrefab> prefab = prefabs.get(prefab_id);
+
+                    if (!prefab) {
+                        std::cerr<<"Terrarium::EntityManager::create: attempt to use prefab id=";
+                        std::cerr<<prefab_id<<" that doesn't exist"<<std::endl;
+                    } else {
+                        prefab->initEntity(*e);
+                    }
+                }
+            }
+
+            // If id == 0, Entity stored in std::unique_ptr should be deleted, so
+            // we don't need to free 'e' manually
+
+            return id;
+        }
 
         // Looks a little ugly, but probably will work without any overhead
         inline std::shared_ptr<Entity> get(entityid id) {

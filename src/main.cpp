@@ -52,11 +52,6 @@ int main()
 
     game->item_defs.add(dirt_item_def);
 
-    Terrarium::ItemStack dirt_item;
-    dirt_item.set(dirt_item_def, 64);
-
-    game->player.inventory.addItem(dirt_item);
-
     std::shared_ptr<Terrarium::BlockDef> dirt_def(new Terrarium::BlockDef);
 
     dirt_def->sprite.setTexture(game->gfx.getTexture(dirt_texture));
@@ -85,7 +80,13 @@ int main()
 
     Terrarium::entityid jumping_block_eid = game->entity_mgr.create(jumping_block_prefab_id);
 
-    game->player.entity_id = game->entity_mgr.create(player_prefab_id);
+    Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);
+    game->player = std::dynamic_pointer_cast<Terrarium::Player>(game->entity_mgr.get(player_id));
+
+    Terrarium::ItemStack dirt_item;
+    dirt_item.set(dirt_item_def, 64);
+
+    game->player->inventory->addItem(dirt_item);
 
     srand(time(NULL));
 
@@ -148,23 +149,23 @@ int main()
                 {
                     switch (event.key.code) {
                         case sf::Keyboard::A:
-                            game->player.left = true;
+                            game->player->controls.left = true;
                         break;
 
                         case sf::Keyboard::D:
-                            game->player.right = true;
+                            game->player->controls.right = true;
                         break;
 
                         case sf::Keyboard::Space:
-                            game->player.jump = true;
+                            game->player->controls.jump = true;
                         break;
 
                         case sf::Keyboard::B:
-                            game->player.hotbar_scroll = -1;
+                            game->player->hotbar_scroll = -1;
                         break;
 
                         case sf::Keyboard::N:
-                            game->player.hotbar_scroll = 1;
+                            game->player->hotbar_scroll = 1;
                         break;
 
                         default:
@@ -177,15 +178,15 @@ int main()
                 {
                     switch (event.key.code) {
                         case sf::Keyboard::A:
-                            game->player.left = false;
+                            game->player->controls.left = false;
                         break;
 
                         case sf::Keyboard::D:
-                            game->player.right = false;
+                            game->player->controls.right = false;
                         break;
 
                         case sf::Keyboard::Space:
-                            game->player.jump = false;
+                            game->player->controls.jump = false;
                         break;
 
                         default:
@@ -198,11 +199,11 @@ int main()
                 {
                     switch (event.mouseButton.button) {
                         case sf::Mouse::Left:
-                            game->player.lmb = true;
+                            game->player->controls.lmb = true;
                         break;
 
                         case sf::Mouse::Right:
-                            game->player.rmb = true;
+                            game->player->controls.rmb = true;
                         break;
 
                         default:
@@ -215,11 +216,11 @@ int main()
                 {
                     switch (event.mouseButton.button) {
                         case sf::Mouse::Left:
-                            game->player.lmb = false;
+                            game->player->controls.lmb = false;
                         break;
 
                         case sf::Mouse::Right:
-                            game->player.rmb = false;
+                            game->player->controls.rmb = false;
                         break;
 
                         default:
@@ -229,7 +230,7 @@ int main()
                 break;
 
                 case sf::Event::MouseWheelScrolled:
-                    game->player.hotbar_scroll = -event.mouseWheelScroll.delta;
+                    game->player->hotbar_scroll = -event.mouseWheelScroll.delta;
                 break;
 
                 default:
@@ -260,19 +261,17 @@ int main()
             }
         }
 
-        game->player.update(*game, dtime);
-
         game->entity_mgr.update(*game, dtime);
 
-        sf::Vector2f camera_pos = game->player.getPosition(*game) - sf::Vector2f(game->camera.width/2, game->camera.height/2);
+        sf::Vector2f camera_pos = game->player->getPosition(*game) - sf::Vector2f(game->camera.width/2, game->camera.height/2);
         game->camera.left = camera_pos.x;
         game->camera.top = camera_pos.y;
 
         sf::Vector2i mouse_pos_pixels = sf::Mouse::getPosition(window);
         sf::Vector2f mouse_pos = game->pixels_to_blocks.transformPoint(mouse_pos_pixels.x, mouse_pos_pixels.y);
 
-        game->player.mouse_pos.x = game->camera.left + mouse_pos.x;
-        game->player.mouse_pos.y = game->camera.top + mouse_pos.y;
+        game->player->controls.mouse_pos.x = game->camera.left + mouse_pos.x;
+        game->player->controls.mouse_pos.y = game->camera.top + mouse_pos.y;
 
         while (!game->events.empty()) {
             Terrarium::Event &event = game->events.front();

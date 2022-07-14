@@ -18,7 +18,7 @@ namespace Terrarium {
         float max_speed = 16;
     };
 
-    struct Player {
+    struct PlayerControls {
         bool left = false;
         bool right = false;
 
@@ -28,8 +28,22 @@ namespace Terrarium {
         bool rmb = false;
 
         sf::Vector2f mouse_pos;
+    };
 
+    class Player: public Entity {
+    public:
+        // Need it there because it required for hotbar[] array
         static const unsigned int HOTBAR_SIZE = 8;
+
+    private:
+        std::shared_ptr<ItemStack> hotbar[HOTBAR_SIZE];
+        unsigned int hotbar_selected = 0;
+
+        bool using_item = false;
+        bool alt_using_item = false;
+
+    public:
+        PlayerControls controls;
 
         float hotbar_scroll = 0;
 
@@ -37,17 +51,15 @@ namespace Terrarium {
 
         // For now it has same size as hotbar, but later i'll change it,
         // so this is why i need separe hotbar array
-        Inventory inventory = Inventory(HOTBAR_SIZE);
-
-        entityid entity_id = 0;
+        std::shared_ptr<Inventory> inventory = std::make_shared<Inventory>(HOTBAR_SIZE);
 
         Player() {
             for (unsigned int i = 0; i < HOTBAR_SIZE; ++i) {
-                hotbar[i] = inventory.get(i);
+                hotbar[i] = inventory->get(i);
             }
         }
 
-        void update(GameState &game, float dtime);
+        void update(GameState &game, float dtime) override;
 
         sf::Vector2f getPosition(GameState &game);
 
@@ -58,14 +70,6 @@ namespace Terrarium {
         inline unsigned int getHotbarSelected() {
             return hotbar_selected;
         }
-
-    private:
-
-        std::shared_ptr<ItemStack> hotbar[HOTBAR_SIZE];
-        unsigned int hotbar_selected = 0;
-
-        bool using_item = false;
-        bool alt_using_item = false;
     };
 
 } // namespace Terrarium

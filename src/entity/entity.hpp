@@ -29,7 +29,10 @@ namespace Terrarium {
         bool enable_collision = true;
     };
 
-    struct Entity {
+    class Entity {
+        void collide(GameState &game, bool by_x);
+
+    public:
         sf::FloatRect hitbox = {0, 0, 0, 0};
 
         CollisionInfo collision_info;
@@ -42,10 +45,7 @@ namespace Terrarium {
 
         AnimationMap anims;
 
-        void update(GameState &game, float dtime);
-
-    private:
-        void collide(GameState &game, bool by_x);
+        virtual void update(GameState &game, float dtime);
     };
 
 } // namespace Terrarium

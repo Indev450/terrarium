@@ -5,45 +5,42 @@
 
 namespace Terrarium {
 
+    // I need to "define" this const here... For some reason. C++ weird...
+    const unsigned int Player::HOTBAR_SIZE; // How is this "definition"?!
+
     void Player::update(GameState &game, float dtime) {
-        if (entity_id == 0) {
-            return;
-        }
+        Entity::update(game, dtime);
 
-        std::shared_ptr<Entity> player_entity = game.entity_mgr.get(entity_id);
+        if ((controls.left && speed.x < 0) || (controls.right && speed.x > 0))
+            physics.slippery = 1;
 
-        if (!player_entity) {
-            return;
-        }
-
-        if ((left && player_entity->speed.x < 0) || (right && player_entity->speed.x > 0))
-            player_entity->physics.slippery = 1;
-
-        if (left) {
-            player_entity->speed.x = std::max(
-                player_entity->speed.x - stats.acceleration * dtime,
+        if (controls.left) {
+            speed.x = std::max(
+                speed.x - stats.acceleration * dtime,
                 -stats.max_speed);
         }
 
-        if (right) {
-            player_entity->speed.x = std::min(
-                player_entity->speed.x + stats.acceleration * dtime,
+        if (controls.right) {
+            speed.x = std::min(
+                speed.x + stats.acceleration * dtime,
                 stats.max_speed);
         }
 
-        if (jump && player_entity->collision_info.blockd) {
-            player_entity->speed.y = -stats.jump_force;
+        if (controls.jump && collision_info.blockd) {
+            speed.y = -stats.jump_force;
         }
 
-        if (lmb && !alt_using_item) {
+        if (controls.lmb && !alt_using_item) {
             if (!using_item && !hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = player_entity;
+                // Can't pass `this` because that will make multiple unrelated
+                // smart pointers, which can cause segfault
+                item_event->user = game.entity_mgr.get(id);
 
-                item_event->position = mouse_pos;
+                item_event->position = controls.mouse_pos;
 
                 game.events.emplace(Event::ItemUseStart, item_event);
 
@@ -55,9 +52,9 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = player_entity;
+                item_event->user = game.entity_mgr.get(id);
 
-                item_event->position = mouse_pos;
+                item_event->position = controls.mouse_pos;
 
                 game.events.emplace(Event::ItemUseStop, item_event);
 
@@ -65,15 +62,15 @@ namespace Terrarium {
             }
         }
 
-        if (rmb && !using_item) {
+        if (controls.rmb && !using_item) {
             if (!alt_using_item && !hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = player_entity;
+                item_event->user = game.entity_mgr.get(id);
 
-                item_event->position = mouse_pos;
+                item_event->position = controls.mouse_pos;
 
                 game.events.emplace(Event::ItemAltUseStart, item_event);
 
@@ -85,9 +82,9 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = player_entity;
+                item_event->user = game.entity_mgr.get(id);
 
-                item_event->position = mouse_pos;
+                item_event->position = controls.mouse_pos;
 
                 game.events.emplace(Event::ItemAltUseStop, item_event);
 
@@ -102,9 +99,9 @@ namespace Terrarium {
 
                 item_event->item_stack = hotbar[hotbar_selected];
 
-                item_event->user = player_entity;
+                item_event->user = game.entity_mgr.get(id);
 
-                item_event->position = mouse_pos;
+                item_event->position = controls.mouse_pos;
 
                 game.events.emplace(using_item ? Event::ItemUseStop : Event::ItemAltUseStop, item_event);
 
@@ -132,16 +129,10 @@ namespace Terrarium {
     }
 
     sf::Vector2f Player::getPosition(GameState &game) {
-        sf::Vector2f result(0, 0);
+        sf::Vector2f result;
 
-        if (entity_id != 0) {
-            std::shared_ptr<Entity> player_entity = game.entity_mgr.get(entity_id);
-
-            if (player_entity) {
-                result.x = player_entity->hitbox.left + player_entity->hitbox.width/2;
-                result.y = player_entity->hitbox.top + player_entity->hitbox.height/2;
-            }
-        }
+        result.x = hitbox.left + hitbox.width/2;
+        result.y = hitbox.top + hitbox.height/2;
 
         return result;
     }

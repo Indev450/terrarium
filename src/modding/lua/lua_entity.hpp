@@ -1,10 +1,9 @@
 #ifndef MODDING_LUA_ENTITY_HPP
 #define MODDING_LUA_ENTITY_HPP
 
-#define LUA_ENTITYREF "EntityRef"
-
 #include <stdexcept>
 #include <memory>
+#include <string>
 
 #include <lua.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -19,8 +18,11 @@ namespace Terrarium {
 
     namespace LuaEntityAPI {
 
+        static const std::string LUA_ENTITYREF = "EntityRef";
+
         // Userdata class. Hopefully it'll work well with weak_ptr...
         class LuaEntityUD {
+        protected:
             std::weak_ptr<Entity> entity_ref;
 
             // If entity ref is expired, throw exception, otherwise return

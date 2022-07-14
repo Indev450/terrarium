@@ -2,6 +2,7 @@
 #define MODDING_LUA_UTIL_HPP
 
 #include <iostream>
+#include <string>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -21,6 +22,20 @@ namespace Terrarium {
             obj->~T();
 
             return 0;
+        }
+
+        // Like luaL_checkudata, but instead of strict checking <metatable>.__name equals name,
+        // this function checks <metatable>.__name starts with name. With that, inheritance
+        // can be organized like this:
+        // "Base" - base class
+        // "Base.Derived" - derived class
+        //
+        // Found this solution at http://lua-users.org/lists/lua-l/2005-06/msg00000.html
+        // (from stackoverflow answer)
+        void *checksubclass(lua_State *L, int idx, const std::string &base);
+
+        inline std::string subclass(const std::string &base, const std::string &derived) {
+            return base + "." + derived;
         }
 
         // Print error message occured in pcall and pop it
