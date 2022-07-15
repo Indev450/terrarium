@@ -2,6 +2,7 @@
 
 #include "lua_block.hpp"
 #include "lua_interface.hpp"
+#include "lua_util.hpp"
 #include "../../tile/block_def.hpp"
 
 namespace Terrarium {
@@ -34,12 +35,7 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             lua_getfield(L, 1, "slippery");
-            float slippery = luaL_checknumber(L, -1);
-
-            // Probably slippery > 1, like 1.2 can be funny?
-            if (slippery < 0 || slippery > 1) {
-                return luaL_error(L, "block slippery should be in range from 0 to 1");
-            }
+            float slippery = LuaUtil::checknumber_ranged(L, -1, 0, 1);
 
             block_def->slippery = slippery;
             lua_pop(L, 1);
@@ -112,13 +108,9 @@ namespace Terrarium {
             int x = luaL_checkinteger(L, 1);
             int y = luaL_checkinteger(L, 2);
 
-            int got_block_id = luaL_checkinteger(L, 3);
+            blockid block_id = LuaUtil::checkinteger_ranged<blockid>(L, 3);
 
-            if (got_block_id < 0 || got_block_id > 65535) {
-                return luaL_error(L, "block id should be in range from 0 to 65535");
-            }
-
-            lua_interface->game->world.setBlock(x, y, static_cast<blockid>(got_block_id));
+            lua_interface->game->world.setBlock(x, y, block_id);
 
             return 0;
         }
@@ -129,13 +121,9 @@ namespace Terrarium {
             int x = luaL_checkinteger(L, 1);
             int y = luaL_checkinteger(L, 2);
 
-            int got_block_id = luaL_checkinteger(L, 3);
+            blockid block_id = LuaUtil::checkinteger_ranged<blockid>(L, 3);
 
-            if (got_block_id < 0 || got_block_id > 65535) {
-                return luaL_error(L, "block id should be in range from 0 to 65535");
-            }
-
-            lua_interface->game->world.setWall(x, y, static_cast<blockid>(got_block_id));
+            lua_interface->game->world.setWall(x, y, block_id);
 
             return 0;
         }

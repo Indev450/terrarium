@@ -108,14 +108,11 @@ namespace Terrarium {
         int inventory_resize(lua_State *L) {
             LuaInventoryUD *inventory_ref = reinterpret_cast<LuaInventoryUD*>(luaL_checkudata(L, 1, LUA_INVENTORY));
 
-            int size = luaL_checkinteger(L, 2);
-
-            if (size < 1) {
-                return luaL_error(L, "inventory size should be > 0");
-            }
+            // Allows zero sized inventories
+            unsigned int size = LuaUtil::checkinteger_ranged<unsigned int>(L, 2);
 
             try {
-                inventory_ref->resize(static_cast<unsigned int>(size));
+                inventory_ref->resize(size);
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }
@@ -138,11 +135,7 @@ namespace Terrarium {
         int inventory_get(lua_State *L) {
             LuaInventoryUD *inventory_ref = reinterpret_cast<LuaInventoryUD*>(luaL_checkudata(L, 1, LUA_INVENTORY));
 
-            int i = luaL_checkinteger(L, 2);
-
-            if (i < 0) {
-                return luaL_error(L, "inventory index should be >= 0");
-            }
+            unsigned int i = LuaUtil::checkinteger_ranged<unsigned int>(L, 2);
 
             try {
                 std::shared_ptr<ItemStack> item_stack = inventory_ref->get(i);
@@ -180,11 +173,7 @@ namespace Terrarium {
 
             std::shared_ptr<ItemDef> type = item_by_name(*lua_interface, 2);
 
-            int count = luaL_checkinteger(L, 3);
-
-            if (count < 0) {
-                return luaL_error(L, "items count should be >= 0");
-            }
+            unsigned int count = LuaUtil::checkinteger_ranged<unsigned int>(L, 3);
 
             try {
                 lua_pushinteger(L, inventory_ref->takeItems(type, count));

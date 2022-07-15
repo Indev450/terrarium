@@ -78,13 +78,13 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             lua_getfield(L, 2, "max_count");
-            int max_count = luaL_checkinteger(L, -1);
+            uint16_t max_count = LuaUtil::checkinteger_ranged<uint16_t>(L, -1);
 
-            if (max_count < 1 || max_count > 65535) {
-                return luaL_error(L, "max item count should be in range from 1 to 65535");
+            if (max_count == 0) {
+                return luaL_error(L, "max item count cannot be 0");
             }
 
-            item_def->max_count = static_cast<uint16_t>(max_count);
+            item_def->max_count = max_count;
 
             lua_interface->game->item_defs.add(item_def);
 
@@ -111,13 +111,7 @@ namespace Terrarium {
             uint16_t count = 1;
 
             if (lua_gettop(L) != 2) {
-                int got_count = luaL_checkinteger(L, 3);
-
-                if (got_count < 0 || got_count > 65535) {
-                    return luaL_error(L, "item count should be in range from 0 to 65535");
-                }
-
-                count = static_cast<uint16_t>(got_count);
+                count = LuaUtil::checkinteger_ranged<uint16_t>(L, 3);
             }
 
             item_stack->istack->set(lua_interface->game->item_defs.get(name), count);

@@ -4,6 +4,16 @@ namespace Terrarium {
 
     namespace LuaUtil {
 
+        lua_Number checknumber_ranged(lua_State *L, int idx, lua_Number min, lua_Number max) {
+            lua_Number num = luaL_checknumber(L, idx);
+
+            if (num < min || num > max) {
+                luaL_error(L, "function argument #%d expected to be in range from %f to %f", idx, min, max);
+            }
+
+            return num;
+        }
+
         void *checksubclass(lua_State *L, int idx, const std::string &base) {
             if (lua_getmetatable(L, idx)) { // If object has metatable, push it
                 lua_getfield(L, -1, "__name"); // push __name

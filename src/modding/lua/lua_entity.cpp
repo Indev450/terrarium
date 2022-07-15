@@ -128,7 +128,7 @@ namespace Terrarium {
         int override_entity_prefab(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
-            entity_prefabid prefab_id = luaL_checkinteger(L, 1);
+            entity_prefabid prefab_id = LuaUtil::checkinteger_ranged<entity_prefabid>(L, 1);
 
             std::shared_ptr<EntityPrefab> prefab = checkentityprefab(*lua_interface, 2);
 
