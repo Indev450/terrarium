@@ -13,6 +13,7 @@ namespace Terrarium {
         std::vector<sf::IntRect> frames;
         unsigned int current_frame = 0;
         float time_per_frame = 0;
+        float timer = 0;
 
         void update(float dtime) {
             timer += dtime;
@@ -33,9 +34,6 @@ namespace Terrarium {
 
             return frames[current_frame];
         }
-
-    private:
-        float timer = 0;
     };
 
 }

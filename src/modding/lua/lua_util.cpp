@@ -116,6 +116,68 @@ namespace Terrarium {
             return rect;
         }
 
+        // Code duplication :(
+        // I don't know how to avoid it
+        sf::IntRect checkintrect(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            sf::IntRect rect;
+
+            idx = lua_absindex(L, idx);
+
+            lua_getfield(L, idx, "x");
+            rect.left = luaL_checkinteger(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "y");
+            rect.top = luaL_checkinteger(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "width");
+            rect.width = luaL_checkinteger(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "height");
+            rect.height = luaL_checkinteger(L, -1);
+            lua_pop(L, 1);
+
+            return rect;
+        }
+
+        Animation checkanimation(lua_State *L, int idx) {
+            Animation anim;
+
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            idx = lua_absindex(L, idx);
+
+            lua_getfield(L, idx, "time_per_frame");
+            anim.time_per_frame = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "frames");
+
+            if (!lua_istable(L, -1)) {
+                luaL_error(L, "<animation>.frames expected to be table");
+            }
+
+            lua_pushnil(L); // push first key
+            while (lua_next(L, -2) != 0) { // pop key, push key, value
+
+                anim.frames.push_back(checkintrect(L, -1));
+
+                lua_pop(L, 1); // pop value
+            }
+
+            lua_pop(L, 1); // pop frames table
+
+            return anim;
+        }
+
     } // namespace LuaUtil
 
 } // namespace Terrarium

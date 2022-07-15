@@ -10,6 +10,8 @@
 
 #include <lua.hpp>
 
+#include "../../graphics/animation.hpp"
+
 namespace Terrarium {
 
     namespace LuaUtil {
@@ -77,6 +79,10 @@ namespace Terrarium {
         void push_floatrect(lua_State *L, const sf::FloatRect &rect);
 
         sf::FloatRect checkfloatrect(lua_State *L, int idx);
+
+        sf::IntRect checkintrect(lua_State *L, int idx);
+
+        Animation checkanimation(lua_State *L, int idx);
 
     }
 

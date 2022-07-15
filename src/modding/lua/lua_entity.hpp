@@ -62,6 +62,10 @@ namespace Terrarium {
 
             void setGravity(float gravity);
 
+            const std::string &getAnimation();
+
+            void setAnimation(const std::string &name, bool restart);
+
             void kill(EntityManager &entity_mgr);
         };
 
@@ -113,6 +117,12 @@ namespace Terrarium {
 
         // void EntityRef:set_gravity(float gravity)
         int entity_set_gravity(lua_State *L);
+
+        // string EntityRef:get_animation()
+        int entity_get_animation(lua_State *L);
+
+        // void EntityRef:set_animation(string name[, bool restart = false])
+        int entity_set_animation(lua_State *L);
 
         // void EntityRef:kill()
         int entity_kill(lua_State *L);

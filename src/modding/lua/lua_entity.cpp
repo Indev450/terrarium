@@ -88,6 +88,18 @@ namespace Terrarium {
             entity->physics.gravity = gravity;
         }
 
+        const std::string &LuaEntityUD::getAnimation() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return entity->anims.get();
+        }
+
+        void LuaEntityUD::setAnimation(const std::string &name, bool restart) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.set(name, restart);
+        }
+
         void LuaEntityUD::kill(EntityManager &entity_mgr) {
             entity_mgr.del(getID());
         }
@@ -138,6 +150,12 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_set_gravity);
             lua_setfield(L, -2, "set_gravity");
+
+            lua_pushcfunction(L, entity_get_animation);
+            lua_setfield(L, -2, "get_animation");
+
+            lua_pushcfunction(L, entity_set_animation);
+            lua_setfield(L, -2, "set_animation");
 
             lua_interface.pushClosure(entity_kill);
             lua_setfield(L, -2, "kill");
@@ -396,6 +414,38 @@ namespace Terrarium {
             return 1;
         }
 
+        int entity_get_animation(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                lua_pushstring(L, entity_ref->getAnimation().c_str());
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_set_animation(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                const char *name = luaL_checkstring(L, 2);
+                bool restart = false;
+
+                // Optional restart argument
+                if (lua_gettop(L) != 2) {
+                    restart = LuaUtil::checkboolean(L, 3);
+                }
+
+                entity_ref->setAnimation(name, restart);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
         int entity_kill(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
@@ -416,9 +466,9 @@ namespace Terrarium {
         }
 
         std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx) {
-            idx = lua_absindex(L, idx);
-
             lua_State *L = lua_interface.getLuaState();
+
+            idx = lua_absindex(L, idx);
 
             std::shared_ptr<EntityPrefab> prefab = std::make_shared<EntityPrefab>();
 
@@ -460,7 +510,21 @@ namespace Terrarium {
             prefab->anims.setTexture(lua_interface.game->gfx.getTexture(image));
             lua_pop(L, 1); // pop value
 
-            // TODO - read animations
+            lua_getfield(L, idx, "animations"); // push value
+
+            if (!lua_istable(L, -1)) {
+                luaL_error(L, "expected table as prefab's animations list");
+            }
+
+            lua_pushnil(L);
+            while (lua_next(L, -2) != 0) {
+                const char *name = luaL_checkstring(L, -2);
+                prefab->anims.add(name, LuaUtil::checkanimation(L, -1));
+
+                lua_pop(L, 1);
+            }
+
+            lua_pop(L, 1); // pop value
 
             return prefab;
         }
