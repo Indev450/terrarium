@@ -66,6 +66,8 @@ namespace Terrarium {
 
             void setAnimation(const std::string &name, bool restart);
 
+            void setMirror(bool mirror);
+
             void kill(EntityManager &entity_mgr);
         };
 
@@ -123,6 +125,9 @@ namespace Terrarium {
 
         // void EntityRef:set_animation(string name[, bool restart = false])
         int entity_set_animation(lua_State *L);
+
+        // void EntityRef:set_mirror(bool mirror)
+        int entity_set_mirror(lua_State *L);
 
         // void EntityRef:kill()
         int entity_kill(lua_State *L);

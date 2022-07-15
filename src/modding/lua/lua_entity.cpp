@@ -100,6 +100,12 @@ namespace Terrarium {
             entity->anims.set(name, restart);
         }
 
+        void LuaEntityUD::setMirror(bool mirror) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.setMirror(mirror);
+        }
+
         void LuaEntityUD::kill(EntityManager &entity_mgr) {
             entity_mgr.del(getID());
         }
@@ -156,6 +162,9 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_set_animation);
             lua_setfield(L, -2, "set_animation");
+
+            lua_pushcfunction(L, entity_set_mirror);
+            lua_setfield(L, -2, "set_mirror");
 
             lua_interface.pushClosure(entity_kill);
             lua_setfield(L, -2, "kill");
@@ -387,7 +396,7 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            return 1;
+            return 0;
         }
 
         int entity_get_gravity(lua_State *L) {
@@ -411,7 +420,7 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            return 1;
+            return 0;
         }
 
         int entity_get_animation(lua_State *L) {
@@ -439,6 +448,18 @@ namespace Terrarium {
                 }
 
                 entity_ref->setAnimation(name, restart);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_set_mirror(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->setMirror(LuaUtil::checkboolean(L, 2));
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }

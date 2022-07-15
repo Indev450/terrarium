@@ -16,6 +16,7 @@ namespace Terrarium {
         Animation *current = nullptr;
         std::string current_name;
         sf::Sprite sprite;
+        bool mirror = false;
 
     public:
         inline void setTexture(const sf::Texture &texture) {
@@ -24,6 +25,10 @@ namespace Terrarium {
 
         inline const std::string &get() {
             return current_name;
+        }
+
+        inline void setMirror(bool mirror) {
+            this->mirror = mirror;
         }
 
         void add(const std::string &name, const Animation &anim) {
@@ -58,7 +63,14 @@ namespace Terrarium {
                         return;
                 }
 
-                sprite.setTextureRect(current->getRect());
+                sf::IntRect rect = current->getRect();
+
+                if (mirror) {
+                    rect.left += rect.width;
+                    rect.width *= -1;
+                }
+
+                sprite.setTextureRect(rect);
             }
         }
 
