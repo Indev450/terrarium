@@ -30,9 +30,9 @@ namespace Terrarium {
 
             if (pair != anims.end()) {
                 current = &pair->second;
+            } else {
+                current = nullptr;
             }
-
-            current = nullptr;
         }
 
         void update(float dtime) {
