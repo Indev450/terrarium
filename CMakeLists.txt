@@ -8,7 +8,10 @@ file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
 file(GLOB PLAYER_SOURCES "src/player/*.cpp")
 file(GLOB ITEM_SOURCES "src/item/*.cpp")
 file(GLOB UI_SOURCES "src/ui/*.cpp")
+file(GLOB MAPGEN_SOURCES "src/mapgen/*.cpp")
 file(GLOB LUA_API_SOURCES "src/modding/lua/*.cpp")
+
+file(GLOB LIB_PERLIN_SOURCES "src/lib/perlin/*.cpp")
 
 set(SOURCES
     src/main.cpp
@@ -17,7 +20,10 @@ set(SOURCES
     ${PLAYER_SOURCES}
     ${ITEM_SOURCES}
     ${UI_SOURCES}
+    ${MAPGEN_SOURCES}
     ${LUA_API_SOURCES}
+
+    ${LIB_PERLIN_SOURCES}
 )
 
 add_definitions("-Wall")

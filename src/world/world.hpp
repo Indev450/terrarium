@@ -13,6 +13,7 @@ namespace Terrarium {
 
         unsigned int width, height;
 
+        float save_updated_blocks = true;
         // Store updated block positions to redraw them
         std::unordered_set<sf::Vector2i, HashVector2i> updated_blocks;
 
@@ -59,7 +60,9 @@ namespace Terrarium {
 
             tiles[y*width + x].fg = block;
 
-            updated_blocks.emplace(x, y);
+            if (save_updated_blocks) {
+                updated_blocks.emplace(x, y);
+            }
         }
 
         void setWall(int x, int y, blockid block) {
@@ -69,7 +72,19 @@ namespace Terrarium {
 
             tiles[y*width + x].bg = block;
 
-            updated_blocks.emplace(x, y);
+            if (save_updated_blocks) {
+                updated_blocks.emplace(x, y);
+            }
+        }
+
+        // To be used in mapgen (mapgen usually changes EVERY world block)
+        // so saving every change is huge waste of memory
+        inline void stopSavingUpdatedBlocks() {
+            save_updated_blocks = false;
+        }
+
+        inline void startSavingUpdatedBlocks() {
+            save_updated_blocks = true;
         }
 
         // To be used in WorldRenderer

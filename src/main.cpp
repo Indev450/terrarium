@@ -1,7 +1,6 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
-#include <cstdlib> // for rand()
 #include <ctime> // for time()
 
 #include <terrarium_config.hpp>
@@ -12,6 +11,7 @@
 #include "graphics/gfx.hpp"
 #include "graphics/world_renderer.hpp"
 #include "ui/hotbar.hpp"
+#include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
 const char *TITLE = "TerrariumEngine";
@@ -25,7 +25,7 @@ int main()
 
     // BEGIN TEST CODE
 
-    std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(512, 512);
+    std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(2000, 1000);
 
     std::string dirt_texture = "assets/dirt.png";
     std::string grass_texture = "assets/grass.png";
@@ -88,27 +88,38 @@ int main()
 
     game->player->inventory->addItem(dirt_item);
 
-    srand(time(NULL));
+    Terrarium::MapgenPerlin mapgen(time(nullptr));
 
-    for (unsigned int x = 0; x < game->world.getWidth(); ++x) {
-        for (unsigned int y = game->world.getHeight()/10; y < game->world.getHeight(); ++y) {
-            if (rand() % 2 == 0) {
-                game->world.setBlock(x, y, dirt_id);
-            }
+    mapgen.settings.ground_gen_scale = 1./20;
 
-            if (rand() % 4 == 0) {
-                game->world.setBlock(x, y, grass_id);
-            }
+    mapgen.settings.cave_gen_scale_x = 1./20;
+    mapgen.settings.cave_gen_scale_y = 1./20;
 
-            if (rand() % 2 == 0) {
-                game->world.setWall(x, y, dirt_id);
-            }
+    mapgen.settings.biome_gen_scale_x = 1./300;
+    mapgen.settings.biome_gen_scale_y = 1./200;
 
-            if (rand() % 4 == 0) {
-                game->world.setWall(x, y, grass_id);
-            }
-        }
-    }
+    mapgen.settings.min_block_density = 0.4;
+    mapgen.settings.min_wall_density = 0.2;
+
+    mapgen.settings.filler = { dirt_id, dirt_id };
+
+    Terrarium::Biome grass_biome;
+
+    grass_biome.humidity_min = -0.4;
+    grass_biome.humidity_max = 0.8;
+
+    grass_biome.heat_min = -0.6;
+    grass_biome.heat_max = 0.8;
+
+    grass_biome.top = { grass_id, grass_id };
+
+    grass_biome.filler = { dirt_id, dirt_id };
+
+    grass_biome.stone = { dirt_id, dirt_id };
+
+    mapgen.addBiome(grass_biome);
+
+    mapgen.run(game->world);
 
     Terrarium::WorldRenderer world_renderer({ 1024, 800 }, 8);
 
