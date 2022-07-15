@@ -88,6 +88,34 @@ namespace Terrarium {
             lua_setfield(L, -2, "height");
         }
 
+        sf::FloatRect checkfloatrect(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            sf::FloatRect rect;
+
+            idx = lua_absindex(L, idx);
+
+            lua_getfield(L, idx, "x");
+            rect.left = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "y");
+            rect.top = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "width");
+            rect.width = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "height");
+            rect.height = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            return rect;
+        }
+
     } // namespace LuaUtil
 
 } // namespace Terrarium

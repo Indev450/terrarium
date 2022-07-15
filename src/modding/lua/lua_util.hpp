@@ -76,6 +76,8 @@ namespace Terrarium {
 
         void push_floatrect(lua_State *L, const sf::FloatRect &rect);
 
+        sf::FloatRect checkfloatrect(lua_State *L, int idx);
+
     }
 
 }
