@@ -26,6 +26,10 @@ namespace Terrarium {
             return 0;
         }
 
+        // Converts value at given index into boolean. Warns if it was not boolean,
+        // but not raises error, unlike other check* functions
+        bool checkboolean(lua_State *L, int idx);
+
         // Like luaL_checkinteger, but also checks if number is within numeric_limits
         // bounds. For example, if template argument is uint8_t, function will check
         // number to be in range from 0 to 255.

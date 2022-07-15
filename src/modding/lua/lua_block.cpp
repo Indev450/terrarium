@@ -41,12 +41,7 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             lua_getfield(L, 1, "is_solid");
-
-            if (!lua_isboolean(L, -1)) {
-                lua_warning(L, "<block_def>.is_solid should be bool", false);
-            }
-
-            block_def->is_solid = lua_toboolean(L, -1);
+            block_def->is_solid = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
 
             lua_pushinteger(L, lua_interface->game->block_defs.add(block_def));

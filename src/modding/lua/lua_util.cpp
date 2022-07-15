@@ -4,6 +4,18 @@ namespace Terrarium {
 
     namespace LuaUtil {
 
+        bool checkboolean(lua_State *L, int idx) {
+            if (!lua_isboolean(L, idx)) {
+                std::string msg = "function argument #";
+                msg += std::to_string(idx);
+                msg += " expected to be boolean";
+
+                lua_warning(L, msg.c_str(), false);
+            }
+
+            return lua_toboolean(L, idx);
+        }
+
         lua_Number checknumber_ranged(lua_State *L, int idx, lua_Number min, lua_Number max) {
             lua_Number num = luaL_checknumber(L, idx);
 
