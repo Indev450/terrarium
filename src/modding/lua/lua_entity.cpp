@@ -64,6 +64,30 @@ namespace Terrarium {
             return self->hitbox.intersects(other->hitbox);
         }
 
+        bool LuaEntityUD::isCollisionEnabled() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return entity->physics.enable_collision;
+        }
+
+        void LuaEntityUD::setCollisionEnabled(bool enable_collision) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->physics.enable_collision = enable_collision;
+        }
+
+        float LuaEntityUD::getGravity() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return entity->physics.gravity;
+        }
+
+        void LuaEntityUD::setGravity(float gravity) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->physics.gravity = gravity;
+        }
+
         void LuaEntityUD::kill(EntityManager &entity_mgr) {
             entity_mgr.del(getID());
         }
@@ -102,6 +126,18 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_is_collide);
             lua_setfield(L, -2, "is_collide");
+
+            lua_pushcfunction(L, entity_is_collision_enabled);
+            lua_setfield(L, -2, "is_collision_enabled");
+
+            lua_pushcfunction(L, entity_set_collision_enabled);
+            lua_setfield(L, -2, "set_collision_enabled");
+
+            lua_pushcfunction(L, entity_get_gravity);
+            lua_setfield(L, -2, "get_gravity");
+
+            lua_pushcfunction(L, entity_set_gravity);
+            lua_setfield(L, -2, "set_gravity");
 
             lua_interface.pushClosure(entity_kill);
             lua_setfield(L, -2, "kill");
@@ -312,6 +348,54 @@ namespace Terrarium {
             return 1;
         }
 
+        int entity_is_collision_enabled(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                lua_pushboolean(L, entity_ref->isCollisionEnabled());
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_set_collision_enabled(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->setCollisionEnabled(LuaUtil::checkboolean(L, 2));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_get_gravity(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                lua_pushnumber(L, entity_ref->getGravity());
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_set_gravity(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->setGravity(luaL_checknumber(L, 2));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
         int entity_kill(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
@@ -352,13 +436,7 @@ namespace Terrarium {
             lua_pop(L, 1); // pop value
 
             lua_getfield(L, -1, "enable_collision"); // push value
-
-            // If it is not boolean, it is not big problem, but it is better to leave warning
-            if (!lua_isboolean(L, -1)) {
-                lua_warning(L, "<entity_prefab>.physics.enable_collision should be bool", false);
-            }
-
-            prefab->physics.enable_collision = lua_toboolean(L, -1);
+            prefab->physics.enable_collision = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 2); // pop value and physics table
 
             lua_getfield(L, idx, "size"); // push size table

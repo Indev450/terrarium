@@ -54,6 +54,14 @@ namespace Terrarium {
 
             bool isCollide(LuaEntityUD &other);
 
+            bool isCollisionEnabled();
+
+            void setCollisionEnabled(bool enable_collision);
+
+            float getGravity();
+
+            void setGravity(float gravity);
+
             void kill(EntityManager &entity_mgr);
         };
 
@@ -93,6 +101,18 @@ namespace Terrarium {
 
         // bool EntityRef:is_collide(Entity other)
         int entity_is_collide(lua_State *L);
+
+        // bool EntityRef:is_collision_enabled()
+        int entity_is_collision_enabled(lua_State *L);
+
+        // void EntityRef:set_collision_enabled(bool collision_enabled)
+        int entity_set_collision_enabled(lua_State *L);
+
+        // float EntityRef:get_gravity()
+        int entity_get_gravity(lua_State *L);
+
+        // void EntityRef:set_gravity(float gravity)
+        int entity_set_gravity(lua_State *L);
 
         // void EntityRef:kill()
         int entity_kill(lua_State *L);
