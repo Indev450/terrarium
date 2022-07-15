@@ -98,6 +98,12 @@ namespace Terrarium {
             lua_pushcfunction(L, player_get_player_inventory);
             lua_setfield(L, -2, "get_player_inventory");
 
+            // For now, this function just access global game state to get
+            // the camera. Maybe, if multiplayer will be added, it will
+            // access some kind of "player's camera" instead.
+            lua_interface.pushClosure(player_get_player_camera);
+            lua_setfield(L, -2, "get_player_camera");
+
             lua_setfield(L, -2, "__index"); // pop index table
 
             // Add destructor
@@ -230,6 +236,14 @@ namespace Terrarium {
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }
+        }
+
+        int player_get_player_camera(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            LuaUtil::push_floatrect(L, lua_interface->game->camera);
+
+            return 1;
         }
 
         void push_player(lua_State *L, std::weak_ptr<Player> player_ref) {

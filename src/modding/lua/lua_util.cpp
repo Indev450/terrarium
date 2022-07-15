@@ -60,6 +60,22 @@ namespace Terrarium {
             lua_setfield(L, -2, "y");
         }
 
+        void push_floatrect(lua_State *L, const sf::FloatRect &rect) {
+            lua_newtable(L);
+
+            lua_pushnumber(L, rect.left);
+            lua_setfield(L, -2, "x");
+
+            lua_pushnumber(L, rect.top);
+            lua_setfield(L, -2, "y");
+
+            lua_pushnumber(L, rect.width);
+            lua_setfield(L, -2, "width");
+
+            lua_pushnumber(L, rect.height);
+            lua_setfield(L, -2, "height");
+        }
+
     } // namespace LuaUtil
 
 } // namespace Terrarium

@@ -6,6 +6,7 @@
 #include <limits>
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include <lua.hpp>
 
@@ -68,6 +69,8 @@ namespace Terrarium {
         bool run_script(lua_State *L, const char *path);
 
         void push_vector2f(lua_State *L, const sf::Vector2f &vec);
+
+        void push_floatrect(lua_State *L, const sf::FloatRect &rect);
 
     }
 

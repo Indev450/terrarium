@@ -79,6 +79,9 @@ namespace Terrarium {
         // InventoryRef PlayerRef:get_player_inventory()
         int player_get_player_inventory(lua_State *L);
 
+        // FloatRect PlayerRef:get_player_camera()
+        int player_get_player_camera(lua_State *L);
+
         // Also inherits all methods from EntityRef
 
         // Functions to call from C++
