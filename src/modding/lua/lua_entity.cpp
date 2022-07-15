@@ -416,6 +416,8 @@ namespace Terrarium {
         }
 
         std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx) {
+            idx = lua_absindex(L, idx);
+
             lua_State *L = lua_interface.getLuaState();
 
             std::shared_ptr<EntityPrefab> prefab = std::make_shared<EntityPrefab>();
