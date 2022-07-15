@@ -2,6 +2,7 @@
 #define ANIMATION_HPP
 
 #include <vector>
+#include <string>
 
 #include <cassert>
 
@@ -15,6 +16,9 @@ namespace Terrarium {
         float time_per_frame = 0;
         float timer = 0;
 
+        std::string next;
+        bool ended = false;
+
         void update(float dtime) {
             timer += dtime;
 
@@ -25,6 +29,7 @@ namespace Terrarium {
 
                 if (current_frame == frames.size()) {
                     current_frame = 0;
+                    ended = true;
                 }
             }
         }

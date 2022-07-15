@@ -159,6 +159,14 @@ namespace Terrarium {
             anim.time_per_frame = luaL_checknumber(L, -1);
             lua_pop(L, 1);
 
+            lua_getfield(L, idx, "next");
+
+            if (!lua_isnil(L, -1)) {
+                anim.next = luaL_checkstring(L, -1);
+            }
+
+            lua_pop(L, 1);
+
             lua_getfield(L, idx, "frames");
 
             if (!lua_istable(L, -1)) {

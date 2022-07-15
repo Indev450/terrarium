@@ -51,6 +51,13 @@ namespace Terrarium {
             if (current != nullptr) {
                 current->update(dtime);
 
+                if (!current->next.empty() && current->ended) {
+                    set(current->next);
+
+                    if (current == nullptr)
+                        return;
+                }
+
                 sprite.setTextureRect(current->getRect());
             }
         }
