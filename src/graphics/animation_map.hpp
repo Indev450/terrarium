@@ -14,6 +14,7 @@ namespace Terrarium {
     class AnimationMap {
         std::unordered_map<std::string, Animation> anims;
         Animation *current = nullptr;
+        std::string current_name;
         sf::Sprite sprite;
 
     public:
@@ -21,15 +22,26 @@ namespace Terrarium {
             sprite.setTexture(texture);
         }
 
+        inline const std::string &get() {
+            return current_name;
+        }
+
         void add(const std::string &name, const Animation &anim) {
             anims[name] = anim;
         }
 
-        void set(const std::string &name) {
+        void set(const std::string &name, bool restart = false) {
             auto pair = anims.find(name);
+
+            current_name = name;
 
             if (pair != anims.end()) {
                 current = &pair->second;
+
+                if (restart) {
+                    current->current_frame = 0;
+                    current->timer = 0;
+                }
             } else {
                 current = nullptr;
             }
