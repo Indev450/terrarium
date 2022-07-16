@@ -31,7 +31,7 @@ namespace Terrarium {
 
             lua_getfield(L, 1, "image");
             const char *image = luaL_checkstring(L, -1);
-            block_def->sprite.setTexture(lua_interface->game->gfx.getTexture(image));
+            block_def->sprite.setTexture(lua_interface->game->gfx.textures.get(image));
             lua_pop(L, 1);
 
             lua_getfield(L, 1, "slippery");

@@ -528,7 +528,7 @@ namespace Terrarium {
 
             lua_getfield(L, idx, "image"); // push value
             const char *image = luaL_checkstring(L, -1);
-            prefab->anims.setTexture(lua_interface.game->gfx.getTexture(image));
+            prefab->anims.setTexture(lua_interface.game->gfx.textures.get(image));
             lua_pop(L, 1); // pop value
 
             lua_getfield(L, idx, "animations"); // push value

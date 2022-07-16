@@ -74,7 +74,7 @@ namespace Terrarium {
 
             lua_getfield(L, 2, "inventory_image");
             const char *inventory_image = luaL_checkstring(L, -1);
-            item_def->inventory_image.setTexture(lua_interface->game->gfx.getTexture(inventory_image));
+            item_def->inventory_image.setTexture(lua_interface->game->gfx.textures.get(inventory_image));
             lua_pop(L, 1);
 
             lua_getfield(L, 2, "max_count");
