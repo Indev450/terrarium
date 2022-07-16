@@ -47,12 +47,16 @@ namespace Terrarium {
         static const int HUMIDITY;
         static const int HEAT;
 
-        void generate(World &world);
+        void generate(World &world) override;
 
     public:
         MapgenPerlinSettings settings;
 
         MapgenPerlin(unsigned int seed);
+
+        void setFiller(const Tile &filler) override {
+            settings.filler = filler;
+        }
     };
 
 }

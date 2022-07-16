@@ -121,6 +121,8 @@ int main()
 
     mapgen.addBiome(grass_biome);
 
+    lua_interface.initMapgen(mapgen);
+
     mapgen.run(game->world);
 
     Terrarium::WorldRenderer world_renderer({ 1024, 800 }, 8);

@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "../game.hpp"
+#include "../mapgen/mapgen_base.hpp"
 
 namespace Terrarium {
 
@@ -17,6 +18,7 @@ namespace Terrarium {
 
         virtual void update(float dtime) {};
         virtual void handleEvent(Event &event) {};
+        virtual void initMapgen(MapgenBase &mapgen) {};
     };
 
 } // namespace Terrarium

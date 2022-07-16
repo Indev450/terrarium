@@ -61,7 +61,7 @@ namespace Terrarium {
                         if (world.getBlock(x, y) != 0) {
                             if (findAir(world, x, y, it->top_depth, FOREGROUND)) {
                                 world.setBlock(x, y, it->top.fg);
-                            } else if (findAir(world, x, y, it->filled_depth, FOREGROUND)) {
+                            } else if (findAir(world, x, y, it->filler_depth, FOREGROUND)) {
                                 world.setBlock(x, y, it->filler.fg);
                             } else {
                                 world.setBlock(x, y, it->stone.fg);
@@ -71,7 +71,7 @@ namespace Terrarium {
                         if (world.getWall(x, y) != 0) {
                             if (findAir(world, x, y, it->top_depth, BACKGROUND)) {
                                 world.setWall(x, y, it->top.bg);
-                            } else if (findAir(world, x, y, it->filled_depth, BACKGROUND)) {
+                            } else if (findAir(world, x, y, it->filler_depth, BACKGROUND)) {
                                 world.setWall(x, y, it->filler.bg);
                             } else {
                                 world.setWall(x, y, it->stone.bg);

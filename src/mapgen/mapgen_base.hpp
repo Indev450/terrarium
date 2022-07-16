@@ -20,7 +20,7 @@ namespace Terrarium {
         unsigned int top_depth = 1;
 
         Tile filler = { 0, 0 };
-        unsigned int filled_depth = 1;
+        unsigned int filler_depth = 1;
 
         Tile stone = { 0, 0 };
 
@@ -72,6 +72,8 @@ namespace Terrarium {
         }
 
     public:
+        virtual void setFiller(const Tile &filler) = 0;
+
         void addBiome(const Biome &biome) {
             biomes.push_back(biome);
         }

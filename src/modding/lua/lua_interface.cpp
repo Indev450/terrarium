@@ -6,6 +6,7 @@
 #include "lua_item.hpp"
 #include "lua_block.hpp"
 #include "lua_player.hpp"
+#include "lua_mapgen.hpp"
 
 namespace Terrarium {
 
@@ -77,6 +78,47 @@ namespace Terrarium {
 
         } else {
             lua_pop(L, 1); // pops _on_event
+        }
+
+        lua_pop(L, 1); // pops core
+    }
+
+    void LuaModdingInterface::initMapgen(MapgenBase &mapgen) {
+        lua_getglobal(L, "core");
+
+        lua_getfield(L, -1, "_get_mapgen_data");
+
+        if (lua_isfunction(L, -1)) {
+            if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
+                LuaUtil::printerr(L);
+            } else {
+                if (!lua_istable(L, -1)) {
+                    throw std::runtime_error("core._get_mapgen_data() should return table");
+                }
+
+                lua_getfield(L, -1, "filler");
+                mapgen.setFiller(LuaMapgenAPI::checktile(L, -1));
+                lua_pop(L, 1);
+
+                lua_getfield(L, -1, "biomes");
+
+                if (!lua_istable(L, -1)) {
+                    throw std::runtime_error("table returned by core._get_mapgen_data() should have 'biomes' table");
+                }
+
+                lua_pushnil(L);
+                while (lua_next(L, -2) != 0) {
+                    mapgen.addBiome(LuaMapgenAPI::checkbiome(L, -1));
+
+                    lua_pop(L, 1);
+                }
+
+                lua_pop(L, 2); // pops biomes and "mapgen data" table
+            }
+
+
+        } else {
+            lua_pop(L, 1); // pops _get_mapgen_data
         }
 
         lua_pop(L, 1); // pops core

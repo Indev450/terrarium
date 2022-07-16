@@ -17,6 +17,7 @@ namespace Terrarium {
 
         void update(float dtime) override;
         void handleEvent(Event &event) override;
+        void initMapgen(MapgenBase &mapgen) override;
 
         // Makes closure with 1 upvalue - `this` pointer and leaves it on stack top
         void pushClosure(lua_CFunction fn);
