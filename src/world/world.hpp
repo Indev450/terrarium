@@ -13,7 +13,7 @@ namespace Terrarium {
 
         unsigned int width, height;
 
-        float save_updated_blocks = true;
+        bool save_updated_blocks = true;
         // Store updated block positions to redraw them
         std::unordered_set<sf::Vector2i, HashVector2i> updated_blocks;
 
