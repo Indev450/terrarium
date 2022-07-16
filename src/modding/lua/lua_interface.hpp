@@ -1,9 +1,13 @@
 #ifndef MODDING_LUA_INTERFACE_HPP
 #define MODDING_LUA_INTERFACE_HPP
 
+#include <filesystem>
+
 #include <lua.hpp>
 
 #include "../interface.hpp"
+
+namespace fs = std::filesystem;
 
 namespace Terrarium {
 
@@ -25,6 +29,8 @@ namespace Terrarium {
         // Adds a function into core module in lua. Function is pushed as C closure,
         // with 1 upvalue - light userdata, which is `this` pointer
         void registerFunction(const char *name, lua_CFunction fn);
+
+        void loadMods(const fs::path &path);
 
         inline lua_State *getLuaState() { return L; }
     };

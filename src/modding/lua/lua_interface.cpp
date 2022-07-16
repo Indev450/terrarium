@@ -1,4 +1,7 @@
 #include <stdexcept>
+#include <string>
+#include <system_error>
+#include <iostream>
 
 #include "lua_interface.hpp"
 #include "lua_util.hpp"
@@ -7,6 +10,8 @@
 #include "lua_block.hpp"
 #include "lua_player.hpp"
 #include "lua_mapgen.hpp"
+
+#include "../../utils/path_guard.hpp"
 
 namespace Terrarium {
 
@@ -26,6 +31,8 @@ namespace Terrarium {
         if (!LuaUtil::run_script(L, "assets/init.lua")) {
             throw std::runtime_error("could not execute assets/init.lua");
         }
+
+        loadMods("mods");
     }
 
     void LuaModdingInterface::update(float dtime) {
@@ -122,6 +129,53 @@ namespace Terrarium {
         }
 
         lua_pop(L, 1); // pops core
+    }
+
+    void LuaModdingInterface::loadMods(const fs::path &path) {
+        const fs::path working_dir = fs::current_path();
+
+        PathGuard guard(working_dir);
+
+        const fs::path mods_path = working_dir / path;
+
+        std::error_code ec;
+
+        if (!fs::is_directory(mods_path, ec)) {
+            std::string msg = "Terrarium::LuaModdingInterface::loadMods: cannot open ";
+            msg += mods_path.c_str();
+            msg += ": ";
+            msg += ec.message();
+            throw std::runtime_error(msg);
+        }
+
+        for (const auto &entry: fs::directory_iterator(mods_path)) {
+            if (entry.is_directory(ec)) {
+                try {
+                    fs::current_path(entry);
+
+                    const fs::path textures_dir = entry.path() / "textures";
+
+                    // If there is textures directory, load it
+                    if (fs::is_directory(textures_dir, ec)) {
+                        game->gfx.textures.addSearchPath(textures_dir);
+
+                        for (const auto &texture_path: fs::directory_iterator(textures_dir)) {
+                            game->gfx.textures.load(texture_path.path().filename());
+                        }
+                    }
+
+                    LuaUtil::run_script(L, (entry.path() / "init.lua").c_str());
+                } catch (const fs::filesystem_error &e) {
+                    std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
+                    std::cerr<<entry;
+                    std::cerr<<": "<<e.what()<<std::endl;
+                }
+            } else {
+                std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
+                std::cerr<<entry;
+                std::cerr<<": "<<ec.message()<<std::endl;
+            }
+        }
     }
 
     void LuaModdingInterface::pushClosure(lua_CFunction fn) {
