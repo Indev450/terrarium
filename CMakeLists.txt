@@ -27,6 +27,7 @@ set(SOURCES
 )
 
 add_definitions("-Wall")
+add_definitions("-g")
 add_executable(terrarium ${SOURCES})
 
 # Config file
