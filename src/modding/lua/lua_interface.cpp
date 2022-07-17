@@ -28,8 +28,8 @@ namespace Terrarium {
         LuaBlockAPI::init(*this);
         LuaPlayerAPI::init(*this);
 
-        if (!LuaUtil::run_script(L, "assets/init.lua")) {
-            throw std::runtime_error("could not execute assets/init.lua");
+        if (!LuaUtil::run_script(L, "wrappers/init.lua")) {
+            throw std::runtime_error("could not initialize lua wrappers");
         }
 
         loadMods("mods");

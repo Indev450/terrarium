@@ -27,69 +27,23 @@ int main()
 
     std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(2000, 1000);
 
-    std::string dirt_texture = "dirt.png";
-    std::string grass_texture = "grass.png";
-    std::string player_texture = "player.png";
-
-    game->gfx.textures.addSearchPath("assets/");
-
-    game->gfx.textures.load(dirt_texture);
-    game->gfx.textures.load(grass_texture);
-    game->gfx.textures.load(player_texture);
-
     if (!game->gfx.font.loadFromFile("assets/dpcomic.ttf")) {
         std::cerr<<"Cannot load font"<<std::endl;
     }
 
-    Terrarium::LuaModdingInterface lua_interface(game);
-
-    std::shared_ptr<Terrarium::ItemDef> dirt_item_def(new Terrarium::ItemDef);
-
-    dirt_item_def->name = "default:dirt";
-    dirt_item_def->description = "Dirt block";
-
-    dirt_item_def->inventory_image.setTexture(game->gfx.textures.get(dirt_texture));
-
-    dirt_item_def->max_count = 999;
-
-    game->item_defs.add(dirt_item_def);
-
-    std::shared_ptr<Terrarium::BlockDef> dirt_def(new Terrarium::BlockDef);
-
-    dirt_def->sprite.setTexture(game->gfx.textures.get(dirt_texture));
-    dirt_def->slippery = 0.85;
-
-    std::shared_ptr<Terrarium::BlockDef> grass_def(new Terrarium::BlockDef);
-
-    grass_def->sprite.setTexture(game->gfx.textures.get(grass_texture));
-    grass_def->slippery = 0.7;
-
-    Terrarium::blockid dirt_id = game->block_defs.add(dirt_def);
-    Terrarium::blockid grass_id = game->block_defs.add(grass_def);
-
-    std::shared_ptr<Terrarium::EntityPrefab> jumping_block_prefab = std::make_shared<Terrarium::EntityPrefab>();
-    jumping_block_prefab->size = { 1, 1 };
-
-    jumping_block_prefab->anims.setTexture(game->gfx.textures.get(dirt_texture));
-
+    // Add player prefab, with id 1.
     std::shared_ptr<Terrarium::EntityPrefab> player_prefab = std::make_shared<Terrarium::EntityPrefab>();
-    player_prefab->size = { 1.5, 3 };
-
-    player_prefab->anims.setTexture(game->gfx.textures.get(player_texture));
-
-    Terrarium::entity_prefabid jumping_block_prefab_id = game->entity_mgr.addPrefab(jumping_block_prefab);
     Terrarium::entity_prefabid player_prefab_id = game->entity_mgr.addPrefab(player_prefab);
 
-    Terrarium::entityid jumping_block_eid = game->entity_mgr.create(jumping_block_prefab_id);
+    // Lua interface runs mods, that can override player prefab
+    Terrarium::LuaModdingInterface lua_interface(game);
 
+    // Now player gets spawned. Hopefully with a normal prefab...
     Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);
     game->player = std::dynamic_pointer_cast<Terrarium::Player>(game->entity_mgr.get(player_id));
 
-    Terrarium::ItemStack dirt_item;
-    dirt_item.set(dirt_item_def, 64);
-
-    game->player->inventory->addItem(dirt_item);
-
+    // Create mapgen. I think mapgen can be configured when game will have
+    // menu and settings, so i will leave hardcoded settings for now
     Terrarium::MapgenPerlin mapgen(time(nullptr));
 
     mapgen.settings.ground_gen_scale = 1./20;
@@ -103,34 +57,25 @@ int main()
     mapgen.settings.min_block_density = 0.4;
     mapgen.settings.min_wall_density = 0.2;
 
-    mapgen.settings.filler = { dirt_id, dirt_id };
-
-    Terrarium::Biome grass_biome;
-
-    grass_biome.humidity_min = -0.4;
-    grass_biome.humidity_max = 0.8;
-
-    grass_biome.heat_min = -0.6;
-    grass_biome.heat_max = 0.8;
-
-    grass_biome.top = { grass_id, grass_id };
-
-    grass_biome.filler = { dirt_id, dirt_id };
-
-    grass_biome.stone = { dirt_id, dirt_id };
-
-    mapgen.addBiome(grass_biome);
-
+    // In theory, i could leave mapgen configuration to lua, but i'm planning
+    // to add more different mapgens in future (just like in minetest),
+    // and i currently haven't figured "protocol" for polymorphic mapgen configuration.
     lua_interface.initMapgen(mapgen);
 
+    // Mapgen currently is kinda slow, maybe its good idea to run it in
+    // different thread and draw some kind of "Generating map, please wait..."
+    // in GUI
     mapgen.run(game->world);
 
-    Terrarium::WorldRenderer world_renderer({ 1024, 800 }, 8);
+    // Maybe world renderer step needs to be configured too
+    Terrarium::WorldRenderer world_renderer({ 800, 640 }, 8);
 
+    // TODO - add some kind of HUD api
     Terrarium::HotbarRenderer hotbar_renderer(Terrarium::Player::HOTBAR_SIZE, game->gfx);
 
     sf::Clock clock;
 
+    // For testing, currently. Maybe this needs to be added in HUD too
     float fps_show_timer = 1;
 
     sf::Text fps_text;
@@ -265,15 +210,6 @@ int main()
             fps_text.setString(oss.str());
 
             fps_show_timer = 1;
-        }
-
-        std::shared_ptr<Terrarium::Entity> jumping_block = game->entity_mgr.get(jumping_block_eid);
-
-        if (jumping_block) {
-            if (jumping_block->collision_info.blockd) {
-                jumping_block->speed.x = 3;
-                jumping_block->speed.y = -8;
-            }
         }
 
         game->entity_mgr.update(*game, dtime);
