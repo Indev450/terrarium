@@ -26,9 +26,9 @@ terrarium.register_biome("default:grassland", {
 })
 
 terrarium.register_biome("default:grassland_overgrowth", {
-    humidity_min = 0.2,
+    humidity_min = 0.6,
 
-    heat_min = 0.2,
+    heat_min = 0.4,
 
     top = {
         block = "default:grass",
