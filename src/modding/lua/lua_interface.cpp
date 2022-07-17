@@ -29,6 +29,7 @@
 #include "lua_util.hpp"
 #include "lua_entity.hpp"
 #include "lua_item.hpp"
+#include "lua_inventory.hpp"
 #include "lua_block.hpp"
 #include "lua_player.hpp"
 #include "lua_mapgen.hpp"
@@ -47,6 +48,7 @@ namespace Terrarium {
 
         LuaEntityAPI::init(*this);
         LuaItemAPI::init(*this);
+        LuaInventoryAPI::init(*this);
         LuaBlockAPI::init(*this);
         LuaPlayerAPI::init(*this);
 
@@ -148,6 +150,25 @@ namespace Terrarium {
 
         } else {
             lua_pop(L, 1); // pops _get_mapgen_data
+        }
+
+        lua_pop(L, 1); // pops core
+    }
+
+    void LuaModdingInterface::onPlayerJoin(std::shared_ptr<Player> player) {
+        lua_getglobal(L, "core");
+
+        lua_getfield(L, -1, "_on_player_join");
+
+        if (lua_isfunction(L, -1)) {
+            LuaPlayerAPI::push_player(L, player);
+
+            // Pops _on_player_join and player
+            if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+                LuaUtil::printerr(L);
+            }
+        } else {
+            lua_pop(L, 1); // pops _on_player_join
         }
 
         lua_pop(L, 1); // pops core

@@ -89,6 +89,8 @@ int main()
     // in GUI
     mapgen.run(game->world);
 
+    lua_interface.onPlayerJoin(game->player);
+
     // Maybe world renderer step needs to be configured too
     Terrarium::WorldRenderer world_renderer({ 800, 640 }, 8);
 
