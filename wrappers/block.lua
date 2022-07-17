@@ -33,7 +33,7 @@ local block_defaults = {
     is_solid = true,
 
     description = "Block",
-    max_items = 999,
+    max_count = 999,
 }
 
 function terrarium.register_block(name, def)
