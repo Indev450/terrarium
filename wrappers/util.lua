@@ -78,8 +78,6 @@ function deep_copy(obj, seen)
 end
 
 function apply_defaults(table, defaults)
-    print(debug.traceback())
-
     for key, value in pairs(defaults) do
         table[key] = table[key] or deep_copy(defaults[key])
     end
