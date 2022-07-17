@@ -7,6 +7,7 @@ local function add_block_item(name, def)
         local y = math.floor(position.y)
 
         if core._get_block(x, y) == 0 then
+            itemstack:add(-1)
             core._set_block(x, y, def.block_id)
         end
     end
@@ -16,6 +17,7 @@ local function add_block_item(name, def)
         local y = math.floor(position.y)
 
         if core._get_wall(x, y) == 0 then
+            itemstack:add(-1)
             core._set_wall(x, y, def.block_id)
         end
     end
