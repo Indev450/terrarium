@@ -1,4 +1,6 @@
 /*
+ * Copyright 2022 Inner Devil
+ *
  * This file is part of TerrariumEngine
  *
  * TerrariumEngine is free software; you can redistribute it and/or modify
