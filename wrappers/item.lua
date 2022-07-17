@@ -7,6 +7,7 @@ local function create_use_context(user_name, itemstack, position, item_name)
         item_name = item_name,
         start_position = position,
         use_time = 0,
+        dtime = 0,
     }
 end
 
@@ -158,16 +159,19 @@ core._update_hooks["item"] = function(dtime)
 
         if use_ctx ~= nil then
             use_ctx.use_time = use_ctx.use_time + dtime
+            use_ctx.dtime = dtime
             terrarium.registered_items[use_ctx.item_name].on_use(user, use_ctx.itemstack, position, use_ctx)
         end
 
         if alt_use_ctx ~= nil then
             alt_use_ctx.use_time = alt_use_ctx.use_time + dtime
+            alt_use_ctx.dtime = dtime
             terrarium.registered_items[alt_use_ctx.item_name].on_alt_use(user, alt_use_ctx.itemstack, position, alt_use_ctx)
         end
 
         if wield_ctx ~= nil then
             wield_ctx.use_time = wield_ctx.use_time + dtime
+            wield_ctx.dtime = dtime
             terrarium.registered_items[wield_ctx.item_name].on_wield(user, wield_ctx.itemstack, position, wield_ctx)
         end
     end
