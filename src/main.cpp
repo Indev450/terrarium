@@ -25,8 +25,6 @@
 #include <memory>
 #include <ctime> // for time()
 
-#include <terrarium_config.hpp>
-
 #include <SFML/Graphics.hpp>
 
 #include "game.hpp"
@@ -35,6 +33,11 @@
 #include "ui/hotbar.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
+
+// Those were in terrarium_config.hpp, but i anyway wasn't using any configuration
+// in cmake other than version, so maybe it is not bad to set version here?
+#define TERRARIUM_VERSION_MAJOR 0
+#define TERRARIUM_VERSION_MINOR 1
 
 const char *TITLE = "TerrariumEngine";
 

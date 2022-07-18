@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(terrarium VERSION 0.1)
 
-# Maybe i could just write list of files
+find_package(Lua 5.4 REQUIRED)
+find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
+
 file(GLOB ENTITY_SOURCES "src/entity/*.cpp")
 file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
 file(GLOB PLAYER_SOURCES "src/player/*.cpp")
@@ -10,10 +12,9 @@ file(GLOB ITEM_SOURCES "src/item/*.cpp")
 file(GLOB UI_SOURCES "src/ui/*.cpp")
 file(GLOB MAPGEN_SOURCES "src/mapgen/*.cpp")
 file(GLOB LUA_API_SOURCES "src/modding/lua/*.cpp")
-
 file(GLOB LIB_PERLIN_SOURCES "src/lib/perlin/*.cpp")
 
-set(SOURCES
+add_executable(terrarium
     src/main.cpp
     ${ENTITY_SOURCES}
     ${GRAPHICS_SOURCES}
@@ -22,19 +23,10 @@ set(SOURCES
     ${UI_SOURCES}
     ${MAPGEN_SOURCES}
     ${LUA_API_SOURCES}
-
     ${LIB_PERLIN_SOURCES}
 )
 
-add_definitions("-Wall")
-add_definitions("-g")
-add_executable(terrarium ${SOURCES})
-
-# Config file
-configure_file(src/terrarium_config.hpp.in terrarium_config.hpp)
-
-# Add config header to includes
+target_compile_options(terrarium PRIVATE -Wall -g)
+target_include_directories(terrarium PRIVATE ${LUA_INCLUDE_DIR})
+target_link_libraries(terrarium sfml-system sfml-window sfml-graphics sfml-audio ${LUA_LIBRARY})
 target_include_directories(terrarium PUBLIC "${PROJECT_BINARY_DIR}")
-
-# Add libs
-target_link_libraries(terrarium sfml-system sfml-window sfml-graphics sfml-audio lua)
