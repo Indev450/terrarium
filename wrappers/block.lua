@@ -6,9 +6,8 @@ local function add_block_item(name, def)
         local x = math.floor(position.x)
         local y = math.floor(position.y)
 
-        if core._get_block(x, y) == 0 then
+        if terrarium.place_block(x, y, name) then
             itemstack:add(-1)
-            core._set_block(x, y, def.block_id)
         end
     end
 
@@ -16,9 +15,8 @@ local function add_block_item(name, def)
         local x = math.floor(position.x)
         local y = math.floor(position.y)
 
-        if core._get_wall(x, y) == 0 then
+        if terrarium.place_wall(x, y, name) then
             itemstack:add(-1)
-            core._set_wall(x, y, def.block_id)
         end
     end
 
@@ -34,6 +32,10 @@ local block_defaults = {
 
     description = "Block",
     max_count = 999,
+
+    -- Should return boolean that means, change block at that position or not
+    on_place = function(position, user) return true end,
+    on_destroy = function(position, user) return true end,
 }
 
 function terrarium.register_block(name, def)
@@ -78,10 +80,73 @@ function terrarium.get_wall(x, y)
     return terrarium.block_names[core._get_wall(x, y)] or "unknown"
 end
 
+-- These functions don't use callbacks, use them when you need to
+-- modify blocks automatically, like in mapgen
 function terrarium.set_block(x, y, block_name)
     core._set_block(x, y, terrarium.get_block_id(block_name))
 end
 
 function terrarium.set_wall(x, y, block_name)
     core._set_wall(x, y, terrarium.get_block_id(block_name))
+end
+
+-- These functions use callbacks, use them when blocks modified by user
+function terrarium.dig_block(x, y, user)
+    return terrarium._dig(x, y, user, true)
+end
+
+function terrarium.dig_wall(x, y, user)
+    return terrarium._dig(x, y, user, false)
+end
+
+function terrarium.place_block(x, y, block_name, user)
+    return terrarium._place(x, y, block_name, user, true)
+end
+
+function terrarium.place_wall(x, y, block_name, user)
+    return terrarium._place(x, y, block_name, user, false)
+end
+
+
+function terrarium._dig(x, y, user, fg)
+    -- Select layer, foreground or background
+    local _get = fg and core._get_block or core._get_wall
+    local _set = fg and core._set_block or core._set_wall
+
+    local dig_id = _get(x, y)
+
+    -- Block at that position is air, so there is nothing to dig
+    if dig_id == 0 then return false end
+
+    local dig_name = terrarium.block_names[dig_id] or "unknown"
+
+    local def = terrarium.registered_blocks[dig_name]
+
+    -- If def is nil, then simply remove that unknown block. If it is not nil,
+    -- and on_destroy returns false, we are not allowed to dig block, don't dig
+    if def ~= nil and not def.on_destroy({ x = x, y = y }, user) then
+        return false
+    end
+
+    -- Change that block to air
+    _set(x, y, 0)
+
+    -- true means "digging" was successful
+    return true
+end
+
+function terrarium._place(x, y, block_name, user, fg)
+    -- Select layer, foreground or background
+    local _get = fg and core._get_block or core._get_wall
+    local _set = fg and core._set_block or core._set_wall
+
+    local old_id = _get(x, y)
+
+    -- Block at that position is not air, don't place block here
+    if old_id ~= 0 then return false end
+
+    -- Change that block
+    _set(x, y, terrarium.get_block_id(block_name))
+
+    return true
 end
