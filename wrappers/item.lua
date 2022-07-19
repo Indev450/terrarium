@@ -134,7 +134,7 @@ core._event_handlers["ItemSelect"] = function(event)
     -- TODO - get actual player name
     local user_name = "singleplayer"
 
-    local old_ctx = core._item_alt_users[user_name]
+    local old_ctx = core._item_wielders[user_name]
 
     if old_ctx ~= nil then
         local old_def = terrarium.registered_items[old_ctx.item_name]
@@ -148,12 +148,10 @@ core._event_handlers["ItemSelect"] = function(event)
 
     -- If player switched to non-empty item stack, execute callback for its item type
     if def ~= nil then
-        core._item_alt_users[user_name] = create_use_context(user_name, itemstack, position, name)
-        local new_ctx = core._item_alt_users[user_name]
+        core._item_wielders[user_name] = create_use_context(user_name, itemstack, position, name)
+        local new_ctx = core._item_wielders[user_name]
 
         def.on_select(user, itemstack, position, new_ctx)
-
-        core._item_wielders[user_name] = new_ctx
     end
 end
 
