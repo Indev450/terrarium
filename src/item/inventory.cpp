@@ -29,6 +29,11 @@ namespace Terrarium {
     void Inventory::addItem(ItemStack &new_item) {
         // First, try to find non-empty item stacks to merge
         for (auto &item: items) {
+            // Don't forget that empty item stacks are still "mergable"
+            if (item->empty()) {
+                continue;
+            }
+
             item->merge(new_item);
 
             if (new_item.empty()) {

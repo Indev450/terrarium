@@ -45,9 +45,7 @@ namespace Terrarium {
 
             other.count = add(other.count);
 
-            if (!def) {
-                def = other.def;
-            }
+            def = other.def;
         }
 
         inline bool canMerge(const ItemStack &other) {
