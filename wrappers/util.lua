@@ -95,7 +95,7 @@ function timer.new(time_to_wait, is_repeat)
     }, {__index = timer})
 end
 
-function timer:tick()
+function timer:tick(dtime)
     self.timer = self.timer - dtime
 
     if self.timer < 0 then
