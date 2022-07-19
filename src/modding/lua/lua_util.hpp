@@ -91,6 +91,12 @@ namespace Terrarium {
             return base + "." + derived;
         }
 
+        // Alternative to lua_pcall that automatically adds traceback to error message
+        int pcall(lua_State *L, int nargs, int nret);
+
+        // Adds traceback to error message
+        int add_traceback(lua_State *L);
+
         // Print error message occured in pcall and pop it
         void printerr(lua_State *L);
 

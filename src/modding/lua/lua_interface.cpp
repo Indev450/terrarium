@@ -68,7 +68,7 @@ namespace Terrarium {
             lua_pushnumber(L, dtime);
 
             // Pops _update and dtime
-            if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
                 LuaUtil::printerr(L);
             }
         } else {
@@ -103,7 +103,7 @@ namespace Terrarium {
             }
 
             // Pops _on_event and event table
-            if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
                 LuaUtil::printerr(L);
             }
 
@@ -120,7 +120,7 @@ namespace Terrarium {
         lua_getfield(L, -1, "_get_mapgen_data");
 
         if (lua_isfunction(L, -1)) {
-            if (lua_pcall(L, 0, 1, 0) != LUA_OK) {
+            if (LuaUtil::pcall(L, 0, 1) != LUA_OK) {
                 LuaUtil::printerr(L);
             } else {
                 if (!lua_istable(L, -1)) {
@@ -164,7 +164,7 @@ namespace Terrarium {
             LuaPlayerAPI::push_player(L, player);
 
             // Pops _on_player_join and player
-            if (lua_pcall(L, 1, 0, 0) != LUA_OK) {
+            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
                 LuaUtil::printerr(L);
             }
         } else {

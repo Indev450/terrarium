@@ -69,6 +69,28 @@ namespace Terrarium {
             return nullptr;
         }
 
+        int pcall(lua_State *L, int nargs, int nret) {
+            int hpos = lua_gettop(L) - nargs;
+
+            int ret = 0;
+
+            lua_pushcfunction(L, add_traceback);
+
+            lua_insert(L, hpos);
+
+            ret = lua_pcall(L, nargs, nret, hpos);
+
+            lua_remove(L, hpos);
+
+            return ret;
+        }
+
+        int add_traceback(lua_State *L) {
+            luaL_traceback(L, L, lua_tostring(L, 1), 1);
+
+            return 1;
+        }
+
         void printerr(lua_State *L) {
             const char *msg = lua_tostring(L, -1);
             std::cerr<<msg<<std::endl;
