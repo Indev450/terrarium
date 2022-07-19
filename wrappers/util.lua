@@ -108,3 +108,7 @@ function timer:tick()
 
     return false
 end
+
+function timer:restart()
+    self.timer = self.time_to_wait
+end
