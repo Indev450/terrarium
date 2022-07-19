@@ -103,7 +103,8 @@ int main()
     sf::Clock clock;
 
     // For testing, currently. Maybe this needs to be added in HUD too
-    float fps_show_timer = 1;
+    const float fps_update_time = 0.2;
+    float fps_show_timer = fps_update_time;
 
     sf::Text fps_text;
     fps_text.setCharacterSize(18);
@@ -231,12 +232,12 @@ int main()
         fps_show_timer -= dtime;
 
         if (fps_show_timer < 0) {
-            std::ostringstream oss;
-            oss<<TITLE<<" fps: "<<1./dtime;
+            std::string text = "fps: ";
+            text += std::to_string(1./dtime);
 
-            fps_text.setString(oss.str());
+            fps_text.setString(text);
 
-            fps_show_timer = 1;
+            fps_show_timer = fps_update_time;
         }
 
         game->entity_mgr.update(*game, dtime);
