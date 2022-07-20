@@ -75,6 +75,8 @@ namespace Terrarium {
         // so this is why i need separe hotbar array
         std::shared_ptr<Inventory> inventory = std::make_shared<Inventory>(HOTBAR_SIZE);
 
+        std::shared_ptr<ItemStack> hold_item_stack = std::make_shared<ItemStack>();
+
         Player() {
             for (unsigned int i = 0; i < HOTBAR_SIZE; ++i) {
                 hotbar[i] = inventory->get(i);

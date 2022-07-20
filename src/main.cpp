@@ -30,6 +30,7 @@
 #include "game.hpp"
 #include "graphics/gfx.hpp"
 #include "graphics/world_renderer.hpp"
+#include "ui/hud.hpp"
 #include "ui/hotbar.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
@@ -97,8 +98,14 @@ int main()
     // Maybe world renderer step needs to be configured too
     Terrarium::WorldRenderer world_renderer({ 800, 640 }, 8);
 
-    // TODO - add some kind of HUD api
-    Terrarium::HotbarRenderer hotbar_renderer(Terrarium::Player::HOTBAR_SIZE, game->gfx);
+    auto hotbar_renderer = std::make_unique<Terrarium::HotbarRenderer>(
+        Terrarium::Player::HOTBAR_SIZE, game->gfx);
+
+    hotbar_renderer->setPosition(32, 32);
+
+    Terrarium::Hud hud;
+
+    hud.addElement("hotbar", std::move(hotbar_renderer));
 
     sf::Clock clock;
 
@@ -187,7 +194,13 @@ int main()
                 {
                     switch (event.mouseButton.button) {
                         case sf::Mouse::Left:
-                            game->player->controls.lmb = true;
+                        {
+                            sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+
+                            if (!hud.click(*game, mouse_pos)) {
+                                game->player->controls.lmb = true;
+                            }
+                        }
                         break;
 
                         case sf::Mouse::Right:
@@ -273,7 +286,7 @@ int main()
 
         window.draw(fps_text);
 
-        hotbar_renderer.render(window, *game, sf::Vector2f(32, 32));
+        hud.render(window, *game);
 
         window.display();
     }

@@ -21,6 +21,8 @@
  */
 
 #include <string>
+#include <algorithm>
+#include <cmath>
 
 #include "hotbar.hpp"
 
@@ -45,15 +47,35 @@ namespace Terrarium {
         count_text.setFillColor(sf::Color::White);
     }
 
-    void HotbarRenderer::render(sf::RenderTarget &target, GameState &game, const sf::Vector2f &position) {
-        background.setPosition(position);
+    bool HotbarRenderer::click(GameState &game, const sf::Vector2f &position) {
+        // Calculate relative position
+        sf::Vector2f rpos = getInverseTransform().transformPoint(position);
 
-        target.draw(background);
+        sf::Vector2f size = background.getSize();
+
+        // Click out of bounds
+        if (rpos.x < 0 || rpos.x > size.x ||
+            rpos.y < 0 || rpos.y > size.y) {
+
+            return false;
+        }
+
+        unsigned int clicked_index = static_cast<unsigned int>(floor(rpos.x / (CELL_SIZE + SPACE)));
+
+        std::swap(game.player->hold_item_stack, game.player->getHotbar()[clicked_index]);
+
+        return true;
+    }
+
+    void HotbarRenderer::render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) {
+        sf::Transform combined_transform = getTransform() * parent_transform;
+
+        target.draw(background, combined_transform);
 
         std::shared_ptr<ItemStack> *hotbar = game.player->getHotbar();
 
         for (unsigned int i = 0; i < game.player->HOTBAR_SIZE; ++i) {
-            sf::Vector2f cell_position = position + sf::Vector2f((CELL_SIZE * i) + (i+1) * SPACE, SPACE);
+            sf::Vector2f cell_position = sf::Vector2f((CELL_SIZE * i) + (i+1) * SPACE, SPACE);
 
             if (i == game.player->getHotbarSelected()) {
                 cell.setOutlineColor(SELECTED_CELL_COLOR);
@@ -62,7 +84,7 @@ namespace Terrarium {
             }
 
             cell.setPosition(cell_position);
-            target.draw(cell);
+            target.draw(cell, combined_transform);
 
             if (hotbar[i]->empty()) {
                 continue;
@@ -73,14 +95,14 @@ namespace Terrarium {
 
             def->inventory_image.setPosition(cell_position);
 
-            target.draw(def->inventory_image);
+            target.draw(def->inventory_image, combined_transform);
 
             // If there are more than one item, draw count
             if (hotbar[i]->getCount() > 1) {
                 count_text.setString(std::to_string(hotbar[i]->getCount()));
                 count_text.setPosition(cell_position);
 
-                target.draw(count_text);
+                target.draw(count_text, combined_transform);
             }
         }
     }

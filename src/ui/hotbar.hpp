@@ -27,13 +27,14 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "element.hpp"
 #include "../game.hpp"
 #include "../item/item_stack.hpp"
 #include "../graphics/gfx.hpp"
 
 namespace Terrarium {
 
-    class HotbarRenderer {
+    class HotbarRenderer: public UIElement {
         static const unsigned int CELL_SIZE = 32;
         static const unsigned int SPACE = 4;
 
@@ -54,7 +55,9 @@ namespace Terrarium {
     public:
         HotbarRenderer(unsigned int _items_count, const Gfx &gfx);
 
-        void render(sf::RenderTarget &target, GameState &game, const sf::Vector2f &position);
+        bool click(GameState &game, const sf::Vector2f &position) override;
+
+        void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) override;
     };
 
 }
