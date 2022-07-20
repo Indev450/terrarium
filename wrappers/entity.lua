@@ -15,7 +15,7 @@ local entity_defaults = {
 
     animations = {},
 
-    on_create = function(self) end,
+    on_create = function(self, data) end,
 
     update = function(self, dtime) end,
 
@@ -57,7 +57,7 @@ function terrarium.override_player(def)
     core._override_entity_prefab(1, def)
 end
 
-function terrarium.new_entity(name, position)
+function terrarium.new_entity(name, position, data)
     local def = terrarium.registered_entities[name]
 
     if def == nil then error("attempt to create entity of unknown type '"..name.."'") end
@@ -70,7 +70,7 @@ function terrarium.new_entity(name, position)
 
     core._entities.to_be_added[luaentity.id] = luaentity
 
-    luaentity:on_create()
+    luaentity:on_create(data)
 
     return luaentity
 end
