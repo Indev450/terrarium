@@ -27,6 +27,10 @@ namespace Terrarium {
 
     bool Hud::click(GameState &game, const sf::Vector2f &position) {
         for (auto it = elements.begin(); it != elements.end(); ++it) {
+            if (!it->second->visible) {
+                continue;
+            }
+
             if (it->second->click(game, position)) {
                 return true;
             }
@@ -39,6 +43,10 @@ namespace Terrarium {
         sf::Transform transform;
 
         for (auto it = elements.begin(); it != elements.end(); ++it) {
+            if (!it->second->visible) {
+                continue;
+            }
+
             it->second->render(target, game, transform);
         }
     }
