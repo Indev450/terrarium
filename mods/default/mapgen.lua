@@ -19,7 +19,7 @@ terrarium.register_biome("default:grassland", {
 
     stone = {
         block = "default:stone",
-        wall = "default:stone",
+        wall = "default:dirt",
     },
 
     priority = 1,
@@ -39,14 +39,14 @@ terrarium.register_biome("default:grassland_overgrowth", {
 
     filler = {
         block = "default:dirt",
-        wall = "default:dirt",
+        wall = "default:grass",
     },
 
     filler_depth = 8,
 
     stone = {
         block = "default:stone",
-        wall = "default:stone",
+        wall = "default:grass",
     },
 
     priority = 2,
