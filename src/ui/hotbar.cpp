@@ -62,7 +62,7 @@ namespace Terrarium {
 
         unsigned int clicked_index = static_cast<unsigned int>(floor(rpos.x / (CELL_SIZE + SPACE)));
 
-        std::swap(game.player->hold_item_stack, game.player->getHotbar()[clicked_index]);
+        game.player->hold_item_stack->swap(*game.player->getHotbar()[clicked_index]);
 
         return true;
     }
