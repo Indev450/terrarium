@@ -29,6 +29,7 @@ namespace Terrarium {
 
     // I need to "define" this const here... For some reason. C++ weird...
     const unsigned int Player::HOTBAR_SIZE; // How is this "definition"?!
+    const unsigned int Player::INVENTORY_ROWS;
 
     void Player::update(GameState &game, float dtime) {
         Entity::update(game, dtime);

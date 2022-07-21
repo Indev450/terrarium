@@ -56,6 +56,7 @@ namespace Terrarium {
     public:
         // Need it there because it required for hotbar[] array
         static const unsigned int HOTBAR_SIZE = 8;
+        static const unsigned int INVENTORY_ROWS = 4;
 
     private:
         std::shared_ptr<ItemStack> hotbar[HOTBAR_SIZE];
@@ -71,9 +72,8 @@ namespace Terrarium {
 
         PlayerStats stats;
 
-        // For now it has same size as hotbar, but later i'll change it,
-        // so this is why i need separe hotbar array
-        std::shared_ptr<Inventory> inventory = std::make_shared<Inventory>(HOTBAR_SIZE);
+        std::shared_ptr<Inventory> inventory = std::make_shared<Inventory>(
+            HOTBAR_SIZE*INVENTORY_ROWS);
 
         std::shared_ptr<ItemStack> hold_item_stack = std::make_shared<ItemStack>();
 

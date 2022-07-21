@@ -32,6 +32,7 @@
 #include "graphics/world_renderer.hpp"
 #include "ui/hud.hpp"
 #include "ui/hotbar.hpp"
+#include "ui/inventory.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
@@ -103,9 +104,19 @@ int main()
 
     hotbar_renderer->setPosition(32, 32);
 
+    auto inventory_ui = std::make_unique<Terrarium::InventoryUI>(
+        Terrarium::Player::HOTBAR_SIZE,
+        Terrarium::Player::INVENTORY_ROWS,
+        game->gfx);
+
+    inventory_ui->inventory = game->player->inventory;
+    inventory_ui->setPosition(32, 74);
+    inventory_ui->visible = false;
+
     Terrarium::Hud hud;
 
     hud.addElement("hotbar", std::move(hotbar_renderer));
+    hud.addElement("inventory", std::move(inventory_ui));
 
     sf::Clock clock;
 
@@ -161,6 +172,10 @@ int main()
 
                         case sf::Keyboard::N:
                             game->player->hotbar_scroll = 1;
+                        break;
+
+                        case sf::Keyboard::I:
+                            hud.setVisible("inventory", !hud.isVisible("inventory"));
                         break;
 
                         default:
