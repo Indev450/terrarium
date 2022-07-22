@@ -34,6 +34,7 @@
 #include "item/item_def_manager.hpp"
 #include "player/player.hpp"
 #include "event/event.hpp"
+#include "ui/hud.hpp"
 #include "graphics/gfx.hpp"
 
 namespace Terrarium {
@@ -55,6 +56,8 @@ namespace Terrarium {
         std::queue<Event> events;
 
         Gfx gfx;
+
+        Hud hud;
 
         sf::FloatRect camera = { 0, 0, 0, 0 };
 

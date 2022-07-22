@@ -113,10 +113,8 @@ int main()
     inventory_ui->setPosition(32, 74);
     inventory_ui->visible = false;
 
-    Terrarium::Hud hud;
-
-    hud.addElement("hotbar", std::move(hotbar_renderer));
-    hud.addElement("inventory", std::move(inventory_ui));
+    game->hud.addElement("hotbar", std::move(hotbar_renderer));
+    game->hud.addElement("inventory", std::move(inventory_ui));
 
     sf::Clock clock;
 
@@ -175,7 +173,7 @@ int main()
                         break;
 
                         case sf::Keyboard::I:
-                            hud.setVisible("inventory", !hud.isVisible("inventory"));
+                            game->hud.setVisible("inventory", !game->hud.isVisible("inventory"));
                         break;
 
                         default:
@@ -212,7 +210,7 @@ int main()
                         {
                             sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
 
-                            if (!hud.click(*game, mouse_pos)) {
+                            if (!game->hud.click(*game, mouse_pos)) {
                                 game->player->controls.lmb = true;
                             }
                         }
@@ -301,7 +299,7 @@ int main()
 
         window.draw(fps_text);
 
-        hud.render(window, *game);
+        game->hud.render(window, *game);
 
         window.display();
     }
