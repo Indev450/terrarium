@@ -100,6 +100,13 @@ namespace Terrarium {
                     lua_setfield(L, -2, "item_event");
                 }
                 break;
+
+                case Event::UISubmit:
+                {
+                    pushUIEvent(*event.ui);
+                    lua_setfield(L, -2, "ui_event");
+                }
+                break;
             }
 
             // Pops _on_event and event table
@@ -247,6 +254,23 @@ namespace Terrarium {
 
         LuaUtil::push_vector2f(L, item_event.position);
         lua_setfield(L, -2, "position");
+    }
+
+    void LuaModdingInterface::pushUIEvent(UIEvent &ui_event) {
+        lua_newtable(L);
+
+        lua_pushstring(L, ui_event.form.c_str());
+        lua_setfield(L, -2, "form_name");
+
+        lua_newtable(L);
+        for (auto &field: ui_event.fields) {
+            lua_pushstring(L, field.second.c_str());
+            lua_setfield(L, -2, field.first.c_str());
+        }
+        lua_setfield(L, -2, "fields");
+
+        LuaPlayerAPI::push_player(L, ui_event.user);
+        lua_setfield(L, -2, "user");
     }
 
 } // namespace Terrarium

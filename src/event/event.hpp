@@ -25,9 +25,14 @@
 
 #include <cassert>
 #include <memory>
+#include <vector>
+#include <string>
+#include <utility>
 
 #include "../entity/entity.hpp"
 #include "../item/item_stack.hpp"
+#include "../ui/form.hpp"
+#include "../player/player.hpp"
 
 namespace Terrarium {
 
@@ -36,6 +41,19 @@ namespace Terrarium {
         std::weak_ptr<Player> user;
 
         sf::Vector2f position;
+    };
+
+    struct UIEvent {
+        // Form name
+        std::string form;
+
+        // List of data in a Form. Pair's first value is name of form field,
+        // and second is field value
+        std::vector<std::pair<std::string, std::string>> fields;
+
+        std::weak_ptr<Player> user;
+
+        std::shared_ptr<FormSource> form_source;
     };
 
     struct Event {
@@ -47,10 +65,14 @@ namespace Terrarium {
             ItemAltUseStop,
 
             ItemSelect, // Start wield item. Can be used for torches
+
+            UISubmit, // Sent when a button pressed
         } type;
 
         const union {
             ItemEvent *item = nullptr;
+
+            UIEvent *ui;
             // ...more events data
         };
 
@@ -58,6 +80,12 @@ namespace Terrarium {
             type(_type), item(_item) {
 
             assert(type <= ItemSelect);
+        }
+
+        Event(Type _type, UIEvent *_ui):
+            type(_type), ui(_ui) {
+
+            assert(type == UISubmit);
         }
 
         // Delete copy because i don't know how union with smart pointers inside
@@ -78,6 +106,8 @@ namespace Terrarium {
                 ENUM_TOSTRING(ItemAltUseStop);
 
                 ENUM_TOSTRING(ItemSelect);
+
+                ENUM_TOSTRING(UISubmit);
             }
 
             // Execution flow should never reach this, but compiler still prints warning,
@@ -92,9 +122,11 @@ namespace Terrarium {
                 case ItemAltUseStart:
                 case ItemAltUseStop:
                 case ItemSelect:
-                {
                     delete item;
-                }
+                break;
+
+                case UISubmit:
+                    delete ui;
                 break;
             }
         }

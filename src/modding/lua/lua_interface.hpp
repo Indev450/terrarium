@@ -37,6 +37,7 @@ namespace Terrarium {
         lua_State *L = nullptr;
 
         void pushItemEvent(ItemEvent &item_event);
+        void pushUIEvent(UIEvent &ui_event);
 
     public:
         LuaModdingInterface(std::shared_ptr<GameState> game);
