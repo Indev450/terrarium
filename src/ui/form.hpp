@@ -42,7 +42,7 @@ namespace Terrarium {
         virtual bool isReady() { return false; }
 
         // Called when field is ready to send
-        virtual std::string getValue() = 0;
+        virtual std::string getValue() { return ""; }
     };
 
     struct FormSource {
