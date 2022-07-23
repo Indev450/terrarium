@@ -33,6 +33,8 @@
 #include "ui/hud.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/inventory.hpp"
+#include "ui/form.hpp"
+#include "ui/rect_button.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
@@ -116,6 +118,32 @@ int main()
     game->hud.addElement("hotbar", std::move(hotbar_renderer));
     game->hud.addElement("inventory", std::move(inventory_ui));
 
+    auto pause_form = std::make_unique<Terrarium::Form>("pause");
+
+    auto continue_button = std::make_unique<Terrarium::RectButton>(
+        game->gfx, sf::Vector2f(64, 32), "continue", 20);
+    continue_button->setTextColor(sf::Color::White);
+    continue_button->setBackgroundColor(sf::Color(127, 127, 127, 127));
+    continue_button->setOutlineColor(sf::Color(127, 127, 127, 255));
+    continue_button->setOutlineThickness(4);
+    continue_button->setPosition(255, 255);
+
+    pause_form->addField("continue", std::move(continue_button));
+
+    auto exit_button = std::make_unique<Terrarium::RectButton>(
+        game->gfx, sf::Vector2f(64, 32), "exit", 20);
+    exit_button->setTextColor(sf::Color::White);
+    exit_button->setBackgroundColor(sf::Color(127, 127, 127, 127));
+    exit_button->setOutlineColor(sf::Color(127, 127, 127, 255));
+    exit_button->setOutlineThickness(4);
+    exit_button->setPosition(255, 255 + 32 + 4);
+
+    pause_form->addField("exit", std::move(exit_button));
+
+    pause_form->visible = false;
+
+    game->hud.addElement("pause", std::move(pause_form));
+
     sf::Clock clock;
 
     // For testing, currently. Maybe this needs to be added in HUD too
@@ -174,6 +202,10 @@ int main()
 
                         case sf::Keyboard::I:
                             game->hud.setVisible("inventory", !game->hud.isVisible("inventory"));
+                        break;
+
+                        case sf::Keyboard::Escape:
+                            game->hud.setVisible("pause", !game->hud.isVisible("pause"));
                         break;
 
                         default:
@@ -280,6 +312,23 @@ int main()
 
         while (!game->events.empty()) {
             Terrarium::Event &event = game->events.front();
+
+            if (event.type == Terrarium::Event::UISubmit) {
+                // TODO - Maybe change those form amd field names into integers and
+                // do switch instead of if-else if-... statements?
+                if (event.ui->form == "pause") {
+                    for (auto &field: event.ui->fields) {
+                        if (field.first == "continue" && !field.second.empty()) {
+                            game->hud.setVisible("pause", false);
+                        } else if (field.first == "exit" && !field.second.empty()) {
+                            window.close();
+                        }
+                    }
+
+                    game->events.pop();
+                    continue;
+                }
+            }
 
             lua_interface.handleEvent(event);
 
