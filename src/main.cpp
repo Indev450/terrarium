@@ -200,11 +200,23 @@ int main()
                         break;
 
                         case sf::Keyboard::B:
-                            game->player->hotbar_scroll = -1;
+                        {
+                            sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+
+                            if (!game->hud.scroll(*game, mouse_pos, -1)) {
+                                game->player->hotbar_scroll = -1;
+                            }
+                        }
                         break;
 
                         case sf::Keyboard::N:
-                            game->player->hotbar_scroll = 1;
+                        {
+                            sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+
+                            if (!game->hud.scroll(*game, mouse_pos, 1)) {
+                                game->player->hotbar_scroll = 1;
+                            }
+                        }
                         break;
 
                         case sf::Keyboard::I:
@@ -283,7 +295,13 @@ int main()
                 break;
 
                 case sf::Event::MouseWheelScrolled:
-                    game->player->hotbar_scroll = -event.mouseWheelScroll.delta;
+                {
+                    sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+
+                    if (!game->hud.scroll(*game, mouse_pos, event.mouseWheelScroll.delta)) {
+                        game->player->hotbar_scroll = -event.mouseWheelScroll.delta;
+                    }
+                }
                 break;
 
                 default:

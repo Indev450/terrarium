@@ -45,6 +45,8 @@ namespace Terrarium {
 
         bool click(GameState &game, const sf::Vector2f &position);
 
+        bool scroll(GameState &game, const sf::Vector2f &position, float delta);
+
         void render(sf::RenderTarget &target, GameState &game);
     };
 

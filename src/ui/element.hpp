@@ -14,6 +14,8 @@ namespace Terrarium {
         // This function should return, was the click handled or not
         virtual bool click(GameState &game, const sf::Vector2f &position) = 0;
 
+        virtual bool scroll(GameState &game, const sf::Vector2f &position, float delta) { return false; }
+
         virtual void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) = 0;
     };
 

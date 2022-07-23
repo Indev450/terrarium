@@ -33,13 +33,21 @@
 namespace Terrarium {
 
     class UIContainer: public UIElement {
+        sf::RenderTexture rtexture;
+        sf::Sprite sprite;
+
         sf::RectangleShape shape;
         sf::Vector2f size;
 
         std::vector<std::unique_ptr<UIElement>> elements;
 
+        float scroll_current = 0;
+        float scroll_max = 0;
+
+        static constexpr float SCROLL_SPEED = 5.0;
+
     public:
-        UIContainer(const sf::Vector2f &_size);
+        UIContainer(const sf::Vector2f &_size, float _scroll_max = 0);
 
         void setFillColor(const sf::Color &color);
         void setOutlineColor(const sf::Color &color);
@@ -48,6 +56,8 @@ namespace Terrarium {
         void addElement(std::unique_ptr<UIElement> element);
 
         bool click(GameState &game, const sf::Vector2f &position) override;
+
+        bool scroll(GameState &game, const sf::Vector2f &position, float delta) override;
 
         void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) override;
 

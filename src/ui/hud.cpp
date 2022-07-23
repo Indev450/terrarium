@@ -61,6 +61,20 @@ namespace Terrarium {
         return false;
     }
 
+    bool Hud::scroll(GameState &game, const sf::Vector2f &position, float delta) {
+        for (auto it = elements.begin(); it != elements.end(); ++it) {
+            if (!it->second->visible) {
+                continue;
+            }
+
+            if (it->second->scroll(game, position, delta)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void Hud::render(sf::RenderTarget &target, GameState &game) {
         sf::Transform transform;
 
