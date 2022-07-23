@@ -35,6 +35,7 @@
 #include "ui/inventory.hpp"
 #include "ui/form.hpp"
 #include "ui/rect_button.hpp"
+#include "ui/container.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
@@ -118,31 +119,37 @@ int main()
     game->hud.addElement("hotbar", std::move(hotbar_renderer));
     game->hud.addElement("inventory", std::move(inventory_ui));
 
+    auto pause_container = std::make_unique<Terrarium::UIContainer>(
+        sf::Vector2f(100, 110));
+    pause_container->setPosition(255, 255);
+
     auto pause_form = std::make_unique<Terrarium::Form>("pause");
 
     auto continue_button = std::make_unique<Terrarium::RectButton>(
-        game->gfx, sf::Vector2f(64, 32), "continue", 20);
+        game->gfx, sf::Vector2f(80, 40), "continue", 20);
     continue_button->setTextColor(sf::Color::White);
     continue_button->setBackgroundColor(sf::Color(127, 127, 127, 127));
     continue_button->setOutlineColor(sf::Color(127, 127, 127, 255));
     continue_button->setOutlineThickness(4);
-    continue_button->setPosition(255, 255);
+    continue_button->setPosition(10, 10);
 
     pause_form->addField("continue", std::move(continue_button));
 
     auto exit_button = std::make_unique<Terrarium::RectButton>(
-        game->gfx, sf::Vector2f(64, 32), "exit", 20);
+        game->gfx, sf::Vector2f(80, 40), "exit", 20);
     exit_button->setTextColor(sf::Color::White);
     exit_button->setBackgroundColor(sf::Color(127, 127, 127, 127));
     exit_button->setOutlineColor(sf::Color(127, 127, 127, 255));
     exit_button->setOutlineThickness(4);
-    exit_button->setPosition(255, 255 + 32 + 4);
+    exit_button->setPosition(10, 60);
 
     pause_form->addField("exit", std::move(exit_button));
 
-    pause_form->visible = false;
+    pause_container->visible = false;
 
-    game->hud.addElement("pause", std::move(pause_form));
+    pause_container->addElement(std::move(pause_form));
+
+    game->hud.addElement("pause", std::move(pause_container));
 
     sf::Clock clock;
 
