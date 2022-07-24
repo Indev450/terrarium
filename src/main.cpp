@@ -175,6 +175,9 @@ int main()
 
                 case sf::Event::Resized:
                 {
+                    sf::FloatRect visible_area(0, 0, event.size.width, event.size.height);
+                    window.setView(sf::View(visible_area));
+
                     sf::Vector2f new_size = game->pixels_to_blocks.transformPoint(event.size.width, event.size.height);
 
                     game->camera.width = new_size.x;
@@ -339,7 +342,7 @@ int main()
             Terrarium::Event &event = game->events.front();
 
             if (event.type == Terrarium::Event::UISubmit) {
-                // TODO - Maybe change those form amd field names into integers and
+                // TODO - Maybe change those form and field names into integers and
                 // do switch instead of if-else if-... statements?
                 if (event.ui->form == "pause") {
                     for (auto &field: event.ui->fields) {
