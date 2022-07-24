@@ -100,7 +100,9 @@ int main()
     lua_interface.onPlayerJoin(game->player);
 
     // Maybe world renderer step needs to be configured too
-    Terrarium::WorldRenderer world_renderer({ 800, 640 }, 8);
+    Terrarium::WorldRenderer *world_renderer = new Terrarium::WorldRenderer({
+        800 + Terrarium::Tile::SIZE,
+        640 + Terrarium::Tile::SIZE }, 8);
 
     auto hotbar_renderer = std::make_unique<Terrarium::HotbarRenderer>(
         Terrarium::Player::HOTBAR_SIZE, game->gfx);
@@ -183,7 +185,13 @@ int main()
                     game->camera.width = new_size.x;
                     game->camera.height = new_size.y;
 
-                    world_renderer.setScreenSize({ event.size.width + Terrarium::Tile::SIZE, event.size.height + Terrarium::Tile::SIZE });
+                    // FIXME - recreating world renderer each time screen size changed
+                    // is temporary solution. I probably just need to fix
+                    // WorldRenderer::setScreenSize instead.
+                    delete world_renderer;
+                    world_renderer = new Terrarium::WorldRenderer({
+                        event.size.width + Terrarium::Tile::SIZE,
+                        event.size.height + Terrarium::Tile::SIZE }, 8);
                 }
                 break;
 
@@ -368,9 +376,9 @@ int main()
         // Draw
         window.clear(sf::Color::Blue);
 
-        world_renderer.updatePosition(game->camera);
-        world_renderer.update(*game);
-        world_renderer.render(window);
+        world_renderer->updatePosition(game->camera);
+        world_renderer->update(*game);
+        world_renderer->render(window);
 
         game->entity_mgr.draw(*game, window);
 
