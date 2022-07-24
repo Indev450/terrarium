@@ -26,7 +26,8 @@ add_executable(terrarium
     ${LIB_PERLIN_SOURCES}
 )
 
+set_property(TARGET terrarium PROPERTY CXX_STANDART_REQUIRED ON)
+set_property(TARGET terrarium PROPERTY CXX_STANDART 17)
 target_compile_options(terrarium PRIVATE -Wall -g)
 target_include_directories(terrarium PRIVATE ${LUA_INCLUDE_DIR})
 target_link_libraries(terrarium sfml-system sfml-window sfml-graphics sfml-audio ${LUA_LIBRARY})
-target_include_directories(terrarium PUBLIC "${PROJECT_BINARY_DIR}")
