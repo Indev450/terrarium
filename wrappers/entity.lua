@@ -64,7 +64,7 @@ function terrarium.new_entity(name, position, data)
 
     local luaentity = setmetatable(deep_copy(def), {__index = entity_methods})
 
-    luaentity.obj = core._new_entity(def.prefab_id)
+    luaentity.ref = core._new_entity(def.prefab_id)
 
     luaentity.id = core._entities:get_free_id()
 

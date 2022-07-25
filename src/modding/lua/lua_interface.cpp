@@ -33,6 +33,7 @@
 #include "lua_block.hpp"
 #include "lua_player.hpp"
 #include "lua_mapgen.hpp"
+#include "lua_hud_bar.hpp"
 
 #include "../../utils/path_guard.hpp"
 
@@ -51,6 +52,7 @@ namespace Terrarium {
         LuaInventoryAPI::init(*this);
         LuaBlockAPI::init(*this);
         LuaPlayerAPI::init(*this);
+        LuaHudBarAPI::init(*this);
 
         if (!LuaUtil::run_script(L, "wrappers/init.lua")) {
             throw std::runtime_error("could not initialize lua wrappers");

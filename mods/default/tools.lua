@@ -21,7 +21,7 @@ terrarium.register_item("default:copper_pickaxe",  {
 
             -- Thanks to this if statement, non-player entities can use
             -- our pickaxe!
-            if user.is_player then
+            if user.ref.is_player then
                 -- TODO - wrap this in some kind of function, like "ItemStack(name, count)"
                 local itemstack = core._new_item_stack()
 
@@ -29,7 +29,7 @@ terrarium.register_item("default:copper_pickaxe",  {
 
                 -- Also, i think i need some kind of "overload" for this function, that takes item name and count.
                 -- ...or maybe i need entire wrapper "class"?
-                user:get_player_inventory():add_item(itemstack)
+                user.ref:get_player_inventory():add_item(itemstack)
             end
         end
     end,
@@ -45,14 +45,14 @@ terrarium.register_item("default:copper_pickaxe",  {
 
             -- Thanks to this if statement, non-player entities can use
             -- our pickaxe!
-            if user.is_player then
+            if user.ref.is_player then
                 -- TODO - wrap this in some kind of function, like "ItemStack(name, count)"
                 local itemstack = core._new_item_stack()
                 itemstack:set(block_name, 1)
 
                 -- Also, i think i need some kind of "overload" for this function, that takes item name and count.
                 -- ...or maybe i need entire wrapper "class"?
-                user:get_player_inventory():add_item(itemstack)
+                user.ref:get_player_inventory():add_item(itemstack)
             end
         end
     end,

@@ -20,6 +20,8 @@
  *
  */
 
+#include <cstdint>
+
 #include "lua_util.hpp"
 
 namespace Terrarium {
@@ -188,6 +190,38 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             return rect;
+        }
+
+        sf::Color checkcolor(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            sf::Color color;
+
+            idx = lua_absindex(L, idx);
+
+            lua_getfield(L, idx, "r");
+            color.r = checkinteger_ranged<uint8_t>(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "g");
+            color.g = checkinteger_ranged<uint8_t>(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "b");
+            color.b = checkinteger_ranged<uint8_t>(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "a");
+
+            if (!lua_isnil(L, -1)) {
+                color.a = checkinteger_ranged<uint8_t>(L, -1);
+            }
+
+            lua_pop(L, 1);
+
+            return color;
         }
 
         Animation checkanimation(lua_State *L, int idx) {

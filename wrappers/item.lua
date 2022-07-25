@@ -1,8 +1,8 @@
 terrarium.registered_items = {}
 
-local function create_use_context(user_name, itemstack, position, item_name)
+local function create_use_context(user, itemstack, position, item_name)
     return {
-        user_name = user_name,
+        user = user,
         itemstack = itemstack,
         item_name = item_name,
         start_position = position,
@@ -38,12 +38,28 @@ function terrarium.register_item(name, def)
 end
 
 
-core._item_users = {}
-core._item_alt_users = {}
-core._item_wielders = {}
+-- Keys are tables, so its better to keep them as weak references
+core._item_users = setmetatable({}, {__mode='k'})
+core._item_alt_users = setmetatable({}, {__mode='k'})
+core._item_wielders = setmetatable({}, {__mode='k'})
+
+-- Convert user from item_event.user to table. If user_ref is player,
+-- return player table from terrarium.players. If it is not, then it is already
+-- table - "lua entity", which is simply returned. (it may be lua entity if
+-- some entity will trigger item event by passing self as event.item_event.user
+local function get_user(user_ref)
+    if user_ref.is_player then
+        -- user_ref:get_player_name()
+        local player_name = "singleplayer"
+
+        return terrarium.players[player_name]
+    end
+
+    return user_ref
+end
 
 core._event_handlers["ItemUseStart"] = function(event)
-    local user = event.item_event.user
+    local user = get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -51,11 +67,8 @@ core._event_handlers["ItemUseStart"] = function(event)
 
     local def = terrarium.registered_items[name]
 
-    -- TODO - get actual player name
-    local user_name = "singleplayer"
-
-    core._item_users[user_name] = create_use_context(user_name, itemstack, position, name)
-    local ctx = core._item_users[user_name]
+    core._item_users[user] = create_use_context(user, itemstack, position, name)
+    local ctx = core._item_users[user]
 
     if def ~= nil then
         def.on_start_use(user, itemstack, position, ctx)
@@ -63,7 +76,7 @@ core._event_handlers["ItemUseStart"] = function(event)
 end
 
 core._event_handlers["ItemUseStop"] = function(event)
-    local user = event.item_event.user
+    local user = get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -71,18 +84,15 @@ core._event_handlers["ItemUseStop"] = function(event)
 
     local def = terrarium.registered_items[name]
 
-    -- TODO - get actual player name
-    local user_name = "singleplayer"
-
     if def ~= nil then
-        def.on_end_use(user, itemstack, position, core._item_users[user_name])
+        def.on_end_use(user, itemstack, position, core._item_users[user])
     end
 
-    core._item_users[user_name] = nil
+    core._item_users[user] = nil
 end
 
 core._event_handlers["ItemAltUseStart"] = function(event)
-    local user = event.item_event.user
+    local user = get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -90,11 +100,8 @@ core._event_handlers["ItemAltUseStart"] = function(event)
 
     local def = terrarium.registered_items[name]
 
-    -- TODO - get actual player name
-    local user_name = "singleplayer"
-
-    core._item_alt_users[user_name] = create_use_context(user_name, itemstack, position, name)
-    local ctx = core._item_alt_users[user_name]
+    core._item_alt_users[user] = create_use_context(user, itemstack, position, name)
+    local ctx = core._item_alt_users[user]
 
     if def ~= nil then
         def.on_start_alt_use(user, itemstack, position, ctx)
@@ -102,7 +109,7 @@ core._event_handlers["ItemAltUseStart"] = function(event)
 end
 
 core._event_handlers["ItemAltUseStop"] = function(event)
-    local user = event.item_event.user
+    local user = get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -110,18 +117,15 @@ core._event_handlers["ItemAltUseStop"] = function(event)
 
     local def = terrarium.registered_items[name]
 
-    -- TODO - get actual player name
-    local user_name = "singleplayer"
-
     if def ~= nil then
-        def.on_end_alt_use(user, itemstack, position, core._item_alt_users[user_name])
+        def.on_end_alt_use(user, itemstack, position, core._item_alt_users[user])
     end
 
-    core._item_alt_users[user_name] = nil
+    core._item_alt_users[user] = nil
 end
 
 core._event_handlers["ItemSelect"] = function(event)
-    local user = event.item_event.user
+    local user = get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -131,10 +135,7 @@ core._event_handlers["ItemSelect"] = function(event)
     -- but event has to be sent anyway
     local def = terrarium.registered_items[name]
 
-    -- TODO - get actual player name
-    local user_name = "singleplayer"
-
-    local old_ctx = core._item_wielders[user_name]
+    local old_ctx = core._item_wielders[user]
 
     if old_ctx ~= nil then
         local old_def = terrarium.registered_items[old_ctx.item_name]
@@ -144,12 +145,12 @@ core._event_handlers["ItemSelect"] = function(event)
         end
     end
 
-    core._item_wielders[user_name] = nil
+    core._item_wielders[user] = nil
 
     -- If player switched to non-empty item stack, execute callback for its item type
     if def ~= nil then
-        core._item_wielders[user_name] = create_use_context(user_name, itemstack, position, name)
-        local new_ctx = core._item_wielders[user_name]
+        core._item_wielders[user] = create_use_context(user, itemstack, position, name)
+        local new_ctx = core._item_wielders[user]
 
         def.on_select(user, itemstack, position, new_ctx)
     end
@@ -157,47 +158,42 @@ end
 
 core._update_hooks["item"] = function(dtime)
     -- TODO - get actual list of players
-    for _, user_name in pairs({"singleplayer"}) do
-        local use_ctx = core._item_users[user_name]
-        local alt_use_ctx = core._item_alt_users[user_name]
-        local wield_ctx = core._item_wielders[user_name]
+    for user, ctx in pairs(core._item_users) do
+        local position = user:get_controls().mouse_pos
 
-        -- Argument is currently ignored
-        local user = core._get_player(user_name)
+        ctx.use_time = ctx.use_time + dtime
+        ctx.dtime = dtime
 
-        local position = user:get_player_controls().mouse_pos
+        local def = terrarium.registered_items[ctx.itemstack:get_item_name()]
 
-        if use_ctx ~= nil then
-            use_ctx.use_time = use_ctx.use_time + dtime
-            use_ctx.dtime = dtime
-
-            local def = terrarium.registered_items[use_ctx.itemstack:get_item_name()]
-
-            if def ~= nil then
-                def.on_use(user, use_ctx.itemstack, position, use_ctx)
-            end
+        if def ~= nil then
+            def.on_use(user, ctx.itemstack, position, ctx)
         end
+    end
 
-        if alt_use_ctx ~= nil then
-            alt_use_ctx.use_time = alt_use_ctx.use_time + dtime
-            alt_use_ctx.dtime = dtime
+    for user, ctx in pairs(core._item_alt_users) do
+        local position = user:get_controls().mouse_pos
 
-            local def = terrarium.registered_items[alt_use_ctx.itemstack:get_item_name()]
+        ctx.use_time = ctx.use_time + dtime
+        ctx.dtime = dtime
 
-            if def ~= nil then
-                def.on_alt_use(user, alt_use_ctx.itemstack, position, alt_use_ctx)
-            end
+        local def = terrarium.registered_items[ctx.itemstack:get_item_name()]
+
+        if def ~= nil then
+            def.on_alt_use(user, ctx.itemstack, position, ctx)
         end
+    end
 
-        if wield_ctx ~= nil then
-            wield_ctx.use_time = wield_ctx.use_time + dtime
-            wield_ctx.dtime = dtime
+    for user, ctx in pairs(core._item_wielders) do
+        local position = user:get_controls().mouse_pos
 
-            local def = terrarium.registered_items[wield_ctx.itemstack:get_item_name()]
+        ctx.use_time = ctx.use_time + dtime
+        ctx.dtime = dtime
 
-            if def ~= nil then
-                def.on_wield(user, wield_ctx.itemstack, position, wield_ctx)
-            end
+        local def = terrarium.registered_items[ctx.itemstack:get_item_name()]
+
+        if def ~= nil then
+            def.on_wield(user, ctx.itemstack, position, ctx)
         end
     end
 end

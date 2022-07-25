@@ -29,6 +29,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 #include <lua.hpp>
 
@@ -109,6 +110,8 @@ namespace Terrarium {
         sf::FloatRect checkfloatrect(lua_State *L, int idx);
 
         sf::IntRect checkintrect(lua_State *L, int idx);
+
+        sf::Color checkcolor(lua_State *L, int idx);
 
         Animation checkanimation(lua_State *L, int idx);
 
