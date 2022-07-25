@@ -28,6 +28,7 @@
 #include <memory>
 
 #include "element.hpp"
+#include "bar.hpp"
 
 namespace Terrarium {
 
@@ -35,6 +36,7 @@ namespace Terrarium {
 
     class Hud {
         std::unordered_map<std::string, std::unique_ptr<UIElement>> elements;
+        std::unordered_map<std::string, std::unique_ptr<Bar>> bars;
 
     public:
         void addElement(const std::string &name, std::unique_ptr<UIElement> element);
@@ -42,6 +44,10 @@ namespace Terrarium {
         void setVisible(const std::string &name, bool visible);
 
         bool isVisible(const std::string &name);
+
+        void addBar(const std::string &name, std::unique_ptr<Bar> bar);
+
+        Bar *getBar(const std::string &name);
 
         bool click(GameState &game, const sf::Vector2f &position);
 

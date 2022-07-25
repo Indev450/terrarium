@@ -47,6 +47,20 @@ namespace Terrarium {
         return false;
     }
 
+    void Hud::addBar(const std::string &name, std::unique_ptr<Bar> bar) {
+        bars[name] = std::move(bar);
+    }
+
+    Bar *Hud::getBar(const std::string &name) {
+        auto pair = bars.find(name);
+
+        if (pair != bars.end()) {
+            return pair->second.get();
+        }
+
+        return nullptr;
+    }
+
     bool Hud::click(GameState &game, const sf::Vector2f &position) {
         for (auto it = elements.begin(); it != elements.end(); ++it) {
             if (!it->second->visible) {
@@ -77,6 +91,10 @@ namespace Terrarium {
 
     void Hud::render(sf::RenderTarget &target, GameState &game) {
         sf::Transform transform;
+
+        for (auto it = bars.begin(); it != bars.end(); ++it) {
+            it->second->render(target);
+        }
 
         for (auto it = elements.begin(); it != elements.end(); ++it) {
             if (!it->second->visible) {

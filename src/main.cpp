@@ -36,6 +36,7 @@
 #include "ui/form.hpp"
 #include "ui/rect_button.hpp"
 #include "ui/container.hpp"
+#include "ui/bar.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
@@ -152,6 +153,17 @@ int main()
     pause_container->addElement(std::move(pause_form));
 
     game->hud.addElement("pause", std::move(pause_container));
+
+    // Test health bar. It doesn't even connected to player
+    auto health_bar = std::make_unique<Terrarium::Bar>(
+        sf::Vector2f(128, 32), game->gfx);
+    health_bar->setPosition(600, 4);
+    health_bar->setTextStyle(Terrarium::BarTextStyle::Division);
+    health_bar->setValue(80);
+    health_bar->setTextSize(18);
+    health_bar->setText("HP: ");
+
+    game->hud.addBar("health", std::move(health_bar));
 
     sf::Clock clock;
 
