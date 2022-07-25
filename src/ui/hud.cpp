@@ -47,6 +47,10 @@ namespace Terrarium {
         return false;
     }
 
+    void Hud::delElement(const std::string &name) {
+        elements.erase(name);
+    }
+
     void Hud::addBar(const std::string &name, std::unique_ptr<Bar> bar) {
         bars[name] = std::move(bar);
     }
@@ -59,6 +63,10 @@ namespace Terrarium {
         }
 
         return nullptr;
+    }
+
+    void Hud::delBar(const std::string &name) {
+        bars.erase(name);
     }
 
     bool Hud::click(GameState &game, const sf::Vector2f &position) {

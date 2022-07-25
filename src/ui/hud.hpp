@@ -45,9 +45,13 @@ namespace Terrarium {
 
         bool isVisible(const std::string &name);
 
+        void delElement(const std::string &name);
+
         void addBar(const std::string &name, std::unique_ptr<Bar> bar);
 
         Bar *getBar(const std::string &name);
+
+        void delBar(const std::string &name);
 
         bool click(GameState &game, const sf::Vector2f &position);
 
