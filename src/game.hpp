@@ -32,6 +32,7 @@
 #include "world/world.hpp"
 #include "tile/block_def_holder.hpp"
 #include "item/item_def_manager.hpp"
+#include "craft/craft.hpp"
 #include "player/player.hpp"
 #include "event/event.hpp"
 #include "ui/hud.hpp"
@@ -51,6 +52,7 @@ namespace Terrarium {
         EntityManager entity_mgr;
         BlockDefHolder block_defs;
         ItemDefManager item_defs;
+        CraftManager crafts;
         std::shared_ptr<Player> player;
 
         std::queue<Event> events;

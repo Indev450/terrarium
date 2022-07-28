@@ -34,6 +34,12 @@ namespace Terrarium {
         uint16_t count = 0;
 
     public:
+        ItemStack() = default;
+
+        ItemStack(const ItemStack &copy) {
+            set(copy.def, copy.count);
+        }
+
         void set(std::shared_ptr<ItemDef> def, uint16_t count = 1);
 
         int add(int change);

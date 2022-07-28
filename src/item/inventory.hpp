@@ -48,7 +48,7 @@ namespace Terrarium {
             items.resize(size);
         }
 
-        inline unsigned int size() {
+        inline unsigned int size() const {
             return items.size();
         }
 
@@ -70,7 +70,7 @@ namespace Terrarium {
 
         // Count how many items of given type exist in inventory.
         // Can be used in crafts, as well as takeItems()
-        unsigned int countItems(std::shared_ptr<ItemDef> type);
+        unsigned int countItems(std::shared_ptr<ItemDef> type) const;
 
         // Find any ItemStack that have required type
         std::shared_ptr<ItemStack> find(std::shared_ptr<ItemDef> type);
