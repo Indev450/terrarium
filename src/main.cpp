@@ -37,6 +37,7 @@
 #include "ui/rect_button.hpp"
 #include "ui/container.hpp"
 #include "ui/bar.hpp"
+#include "ui/craft_ui.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
@@ -165,6 +166,33 @@ int main()
 
     game->hud.addBar("health", std::move(health_bar));
 
+    auto craft_ui = std::make_unique<Terrarium::CraftUI>(
+        game->gfx, "empty_hands"
+    );
+    craft_ui->setPosition(32, 512);
+    craft_ui->visible = false;
+
+    game->hud.addElement("craft", std::move(craft_ui));
+
+    game->crafts.addCategory("empty_hands");
+
+    for (int i = 0; i < 9; ++i) {
+        auto test_recipe = std::make_unique<Terrarium::Recipe>();
+
+        auto dirt_item = game->item_defs.get("default:dirt");
+        auto stone_item = game->item_defs.get("default:stone");
+
+        test_recipe->requirements.emplace_back();
+        test_recipe->requirements[0].set(dirt_item, 16);
+
+        test_recipe->requirements.emplace_back();
+        test_recipe->requirements[1].set(stone_item, 4 + i);
+
+        test_recipe->result.set(dirt_item, 20 + i);
+
+        game->crafts.addRecipe("empty_hands", std::move(test_recipe));
+    }
+
     sf::Clock clock;
 
     // For testing, currently. Maybe this needs to be added in HUD too
@@ -244,6 +272,7 @@ int main()
 
                         case sf::Keyboard::I:
                             game->hud.setVisible("inventory", !game->hud.isVisible("inventory"));
+                            game->hud.setVisible("craft", !game->hud.isVisible("craft"));
                         break;
 
                         case sf::Keyboard::Escape:
