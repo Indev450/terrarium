@@ -28,30 +28,19 @@
 
 namespace Terrarium {
 
-    HotbarRenderer::HotbarRenderer(unsigned int _items_count, const Gfx &gfx):
-        BG_COLOR(196, 196, 196, 127), CELL_COLOR(127, 127, 127),
-        SELECTED_CELL_COLOR(64, 196, 196), items_count(_items_count)
+    HotbarRenderer::HotbarRenderer(const Gfx &gfx, unsigned int _items_count):
+        SELECTED_CELL_COLOR(64, 196, 196), items_count(_items_count),
+        item_cell_renderer(gfx, sf::Color::White, sf::Color::Transparent, sf::Color(127, 127, 127))
     {
-        background.setSize(sf::Vector2f(
-            (CELL_SIZE * items_count) + (items_count+1) * SPACE,
-            CELL_SIZE + SPACE*2));
-        background.setFillColor(BG_COLOR);
-
-        cell.setSize(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-        cell.setFillColor(sf::Color(0, 0, 0, 0));
-        cell.setOutlineThickness(OUTLINE);
-        // Outline color set when drawing
-
-        count_text.setFont(gfx.font);
-        count_text.setCharacterSize(16);
-        count_text.setFillColor(sf::Color::White);
+        background.setSize(item_cell_renderer.realGridSize(items_count, 1));
+        background.setFillColor(sf::Color(196, 196, 196, 127));
     }
 
     bool HotbarRenderer::click(GameState &game, const sf::Vector2f &position) {
         // Calculate relative position
         sf::Vector2f rpos = getInverseTransform().transformPoint(position);
 
-        sf::Vector2f size = background.getSize();
+        sf::Vector2f size = item_cell_renderer.realGridSize(items_count, 1);
 
         // Click out of bounds
         if (rpos.x < 0 || rpos.x > size.x ||
@@ -60,7 +49,7 @@ namespace Terrarium {
             return false;
         }
 
-        unsigned int clicked_index = static_cast<unsigned int>(floor(rpos.x / (CELL_SIZE + SPACE)));
+        unsigned int clicked_index = item_cell_renderer.clickedCellPosition(rpos).x;
 
         game.player->hold_item_stack->swap(*game.player->getHotbar()[clicked_index]);
 
@@ -74,36 +63,18 @@ namespace Terrarium {
 
         std::shared_ptr<ItemStack> *hotbar = game.player->getHotbar();
 
+        ItemCellRendererSettings settings;
+
         for (unsigned int i = 0; i < game.player->HOTBAR_SIZE; ++i) {
-            sf::Vector2f cell_position = sf::Vector2f((CELL_SIZE * i) + (i+1) * SPACE, SPACE);
+            settings.reset();
 
             if (i == game.player->getHotbarSelected()) {
-                cell.setOutlineColor(SELECTED_CELL_COLOR);
-            } else {
-                cell.setOutlineColor(CELL_COLOR);
+                settings.outline_color = SELECTED_CELL_COLOR;
             }
 
-            cell.setPosition(cell_position);
-            target.draw(cell, combined_transform);
+            item_cell_renderer.render(target, *hotbar[i], combined_transform, settings);
 
-            if (hotbar[i]->empty()) {
-                continue;
-            }
-
-            // If item stack in hotbar is not empty, then item def is definitely not null
-            std::shared_ptr<ItemDef> def = hotbar[i]->getDef();
-
-            def->inventory_image.setPosition(cell_position);
-
-            target.draw(def->inventory_image, combined_transform);
-
-            // If there are more than one item, draw count
-            if (hotbar[i]->getCount() > 1) {
-                count_text.setString(std::to_string(hotbar[i]->getCount()));
-                count_text.setPosition(cell_position);
-
-                target.draw(count_text, combined_transform);
-            }
+            settings.grid_x++;
         }
     }
 

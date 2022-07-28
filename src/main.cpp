@@ -106,14 +106,14 @@ int main()
         640 + Terrarium::Tile::SIZE }, 8);
 
     auto hotbar_renderer = std::make_unique<Terrarium::HotbarRenderer>(
-        Terrarium::Player::HOTBAR_SIZE, game->gfx);
+        game->gfx, Terrarium::Player::HOTBAR_SIZE);
 
     hotbar_renderer->setPosition(32, 32);
 
     auto inventory_ui = std::make_unique<Terrarium::InventoryUI>(
+        game->gfx,
         Terrarium::Player::HOTBAR_SIZE,
-        Terrarium::Player::INVENTORY_ROWS,
-        game->gfx);
+        Terrarium::Player::INVENTORY_ROWS);
 
     inventory_ui->inventory = game->player->inventory;
     inventory_ui->setPosition(32, 74);

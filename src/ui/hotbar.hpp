@@ -28,6 +28,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "element.hpp"
+#include "item_cell.hpp"
 #include "../game.hpp"
 #include "../item/item_stack.hpp"
 #include "../graphics/gfx.hpp"
@@ -35,25 +36,17 @@
 namespace Terrarium {
 
     class HotbarRenderer: public UIElement {
-        static const unsigned int CELL_SIZE = 32;
-        static const unsigned int SPACE = 4;
-
-        static const int OUTLINE = 2;
-
         // I'd like to make this static const, but stupid compiler doesn't let me
         // to do that :blobcatreeeeeee:
-        const sf::Color BG_COLOR;
-        const sf::Color CELL_COLOR;
         const sf::Color SELECTED_CELL_COLOR;
 
         unsigned int items_count;
 
-        sf::RectangleShape background;
-        sf::RectangleShape cell;
+        ItemCellRenderer item_cell_renderer;
 
-        sf::Text count_text;
+        sf::RectangleShape background;
     public:
-        HotbarRenderer(unsigned int _items_count, const Gfx &gfx);
+        HotbarRenderer(const Gfx &gfx, unsigned int _items_count);
 
         bool click(GameState &game, const sf::Vector2f &position) override;
 

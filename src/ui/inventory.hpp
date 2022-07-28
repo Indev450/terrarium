@@ -28,6 +28,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "element.hpp"
+#include "item_cell.hpp"
 #include "../game.hpp"
 #include "../item/inventory.hpp"
 #include "../graphics/gfx.hpp"
@@ -35,25 +36,18 @@
 namespace Terrarium {
 
     class InventoryUI: public UIElement {
-        static const unsigned int CELL_SIZE = 32;
-        static const unsigned int SPACE = 4;
-
-        static const int OUTLINE = 2;
-
         const sf::Color BG_COLOR;
-        const sf::Color CELL_COLOR;
 
         unsigned int width; // Item cells in row
         unsigned int height; // rows count
 
-        sf::RectangleShape background;
-        sf::RectangleShape cell;
+        ItemCellRenderer item_cell_renderer;
 
-        sf::Text count_text;
+        sf::RectangleShape background;
     public:
         std::shared_ptr<Inventory> inventory;
 
-        InventoryUI(unsigned int _width, unsigned int _height, const Gfx &gfx);
+        InventoryUI(const Gfx &gfx, unsigned int _width, unsigned int _height);
 
         bool click(GameState &game, const sf::Vector2f &position) override;
 
