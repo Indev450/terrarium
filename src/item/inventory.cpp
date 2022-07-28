@@ -27,6 +27,10 @@
 namespace Terrarium {
 
     void Inventory::addItem(ItemStack &new_item) {
+        if (new_item.empty()) {
+            return;
+        }
+
         // First, try to find non-empty item stacks to merge
         for (auto &item: items) {
             // Don't forget that empty item stacks are still "mergable"
@@ -46,12 +50,17 @@ namespace Terrarium {
         for (auto &item: items) {
             if (item->empty()) {
                 item->swap(new_item);
+                break;
             }
         }
     }
 
     unsigned int Inventory::takeItems(std::shared_ptr<ItemDef> type, unsigned int count) {
         for (auto &item: items) {
+            if (item->getDef() != type) {
+                continue;
+            }
+
             count = -item->add(-count);
 
             if (count == 0) {
@@ -62,7 +71,7 @@ namespace Terrarium {
         return count;
     }
 
-    unsigned int Inventory::countItems(std::shared_ptr<ItemDef> type) {
+    unsigned int Inventory::countItems(std::shared_ptr<ItemDef> type) const {
         unsigned int result = 0;
 
         for (auto item: items) {
