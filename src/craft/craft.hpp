@@ -28,6 +28,7 @@
 #include <unordered_map>
 #include <string>
 #include <utility>
+#include <optional>
 
 #include "../item/inventory.hpp"
 
@@ -51,6 +52,8 @@ namespace Terrarium {
         std::unordered_map<std::string, std::vector<std::unique_ptr<Recipe>>> recipes;
 
     public:
+        std::optional<std::string> default_category;
+
         void addCategory(const std::string &category);
 
         void addRecipe(const std::string &category, std::unique_ptr<Recipe> recipe);

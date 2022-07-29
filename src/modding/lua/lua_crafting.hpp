@@ -20,38 +20,31 @@
  *
  */
 
-#ifndef UI_CRAFT_HPP
-#define UI_CRAFT_HPP
-
-#include <string>
-
-#include "../graphics/gfx.hpp"
-#include "element.hpp"
-#include "item_cell.hpp"
+#include <lua.hpp>
 
 namespace Terrarium {
 
-    class CraftUI: public UIElement {
-        // How many recipes are shown on screen
-        static const unsigned int SHOW_RECIPES = 7;
+    class LuaModdingInterface;
 
-        // Gap between craft result and its recipe
-        static constexpr float RECIPE_GAP = 4;
+    namespace LuaCraftingAPI {
 
-        ItemCellRenderer item_cell_renderer;
+        void init(LuaModdingInterface &lua_interface);
 
-        unsigned int current_scroll = 0;
+        // Crafting-related core module functions
 
-    public:
-        CraftUI(const Gfx &gfx);
+        // void core._add_crafting_category(string name)
+        int add_crafting_category(lua_State *L);
 
-        bool click(GameState &game, const sf::Vector2f &position) override;
+        // FIXME - function_name_is_way_too_long
+        // void core._set_default_crafting_category(string name)
+        int set_default_crafting_category(lua_State *L);
 
-        bool scroll(GameState &game, const sf::Vector2f &position, float delta) override;
+        // void core._register_recipe(string category, Recipe recipe)
+        int register_recipe(lua_State *L);
 
-        void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) override;
-    };
+        // void core._show_crafting_ui(string category)
+        int show_crafting_ui(lua_State *L);
+
+    }
 
 }
-
-#endif

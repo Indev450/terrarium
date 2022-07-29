@@ -5,12 +5,14 @@ core._update_hooks = {}
 
 dofile("wrappers/util.lua")
 dofile("wrappers/color.lua")
+dofile("wrappers/item_stack.lua")
 
 dofile("wrappers/block.lua")
 dofile("wrappers/item.lua")
 dofile("wrappers/entity.lua")
 dofile("wrappers/player.lua")
 dofile("wrappers/mapgen.lua")
+dofile("wrappers/crafting.lua")
 
 function core._on_event(event)
     core._event_handlers[event.name](event)

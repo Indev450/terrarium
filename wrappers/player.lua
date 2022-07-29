@@ -50,6 +50,10 @@ local player_methods = {
     del_bar = function(self, name)
         core._hud_bar_remove(name)
     end,
+
+    show_crafting_ui = function(self, category)
+        core._show_crafting_ui(category or terrarium.default_crafting_category)
+    end,
 }
 
 local function create_player(player_ref)

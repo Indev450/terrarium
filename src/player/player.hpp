@@ -23,6 +23,9 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include <string>
+#include <optional>
+
 #include <SFML/System/Vector2.hpp>
 
 #include "../entity/entity.hpp"
@@ -76,6 +79,8 @@ namespace Terrarium {
             HOTBAR_SIZE*INVENTORY_ROWS);
 
         std::shared_ptr<ItemStack> hold_item_stack = std::make_shared<ItemStack>();
+
+        std::optional<std::string> crafting_category;
 
         Player() {
             for (unsigned int i = 0; i < HOTBAR_SIZE; ++i) {

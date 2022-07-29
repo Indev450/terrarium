@@ -29,6 +29,7 @@
 #include "lua_util.hpp"
 #include "lua_entity.hpp"
 #include "lua_item.hpp"
+#include "lua_crafting.hpp"
 #include "lua_inventory.hpp"
 #include "lua_block.hpp"
 #include "lua_player.hpp"
@@ -49,6 +50,7 @@ namespace Terrarium {
 
         LuaEntityAPI::init(*this);
         LuaItemAPI::init(*this);
+        LuaCraftingAPI::init(*this);
         LuaInventoryAPI::init(*this);
         LuaBlockAPI::init(*this);
         LuaPlayerAPI::init(*this);

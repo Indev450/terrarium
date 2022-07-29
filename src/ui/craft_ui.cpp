@@ -26,12 +26,17 @@
 
 namespace Terrarium {
 
-    CraftUI::CraftUI(const Gfx &gfx, const std::string &_category):
-        category(_category),
+    CraftUI::CraftUI(const Gfx &gfx):
         item_cell_renderer(gfx, sf::Color::White, sf::Color(196, 196, 196, 127), sf::Color(127, 127, 127))
     {}
 
     bool CraftUI::click(GameState &game, const sf::Vector2f &position) {
+        if (!game.player->crafting_category) {
+            return false;
+        }
+
+        std::string &category = *game.player->crafting_category;
+
         sf::Vector2f rpos = getInverseTransform().transformPoint(position);
 
         sf::Vector2f size = item_cell_renderer.realGridSize(1, SHOW_RECIPES);
@@ -60,6 +65,12 @@ namespace Terrarium {
     }
 
     bool CraftUI::scroll(GameState &game, const sf::Vector2f &position, float delta) {
+        if (!game.player->crafting_category) {
+            return false;
+        }
+
+        std::string &category = *game.player->crafting_category;
+
         sf::Vector2f rpos = getInverseTransform().transformPoint(position);
 
         sf::Vector2f size = item_cell_renderer.realGridSize(1, SHOW_RECIPES);
@@ -86,6 +97,12 @@ namespace Terrarium {
     }
 
     void CraftUI::render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) {
+        if (!game.player->crafting_category) {
+            return;
+        }
+
+        std::string &category = *game.player->crafting_category;
+
         sf::Transform combined_transform = getTransform() * parent_transform;
 
         std::vector<std::unique_ptr<Recipe>> &recipes = game.crafts.getRecipes(category);

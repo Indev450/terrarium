@@ -166,32 +166,11 @@ int main()
 
     game->hud.addBar("health", std::move(health_bar));
 
-    auto craft_ui = std::make_unique<Terrarium::CraftUI>(
-        game->gfx, "empty_hands"
-    );
+    auto craft_ui = std::make_unique<Terrarium::CraftUI>(game->gfx);
     craft_ui->setPosition(32, 512);
     craft_ui->visible = false;
 
     game->hud.addElement("craft", std::move(craft_ui));
-
-    game->crafts.addCategory("empty_hands");
-
-    for (int i = 0; i < 9; ++i) {
-        auto test_recipe = std::make_unique<Terrarium::Recipe>();
-
-        auto dirt_item = game->item_defs.get("default:dirt");
-        auto stone_item = game->item_defs.get("default:stone");
-
-        test_recipe->requirements.emplace_back();
-        test_recipe->requirements[0].set(dirt_item, 16);
-
-        test_recipe->requirements.emplace_back();
-        test_recipe->requirements[1].set(stone_item, 4 + i);
-
-        test_recipe->result.set(dirt_item, 20 + i);
-
-        game->crafts.addRecipe("empty_hands", std::move(test_recipe));
-    }
 
     sf::Clock clock;
 
@@ -271,8 +250,14 @@ int main()
                         break;
 
                         case sf::Keyboard::I:
+                        {
+                            if (game->hud.isVisible("craft") || !game->player->crafting_category) {
+                                game->player->crafting_category = game->crafts.default_category;
+                            }
+
                             game->hud.setVisible("inventory", !game->hud.isVisible("inventory"));
                             game->hud.setVisible("craft", !game->hud.isVisible("craft"));
+                        }
                         break;
 
                         case sf::Keyboard::Escape:
