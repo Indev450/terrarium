@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "../graphics/gfx.hpp"
+#include "../utils/screen_transformable.hpp"
 
 namespace Terrarium {
 
@@ -17,7 +18,7 @@ namespace Terrarium {
 
     // For various progress bars/hp bars. I'm keeping this separate from
     // UIElement's, because i haven't figured out way to safely modify Bar
-    class Bar: public sf::Transformable {
+    class Bar: public ScreenTransformable {
         float value = 0;
         float max_value = 100;
 

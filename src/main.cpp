@@ -59,6 +59,8 @@ int main()
 
     std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(2000, 1000);
 
+    game->hud.setScreenSize(sf::Vector2f(800, 640));
+
     if (!game->gfx.font.loadFromFile("assets/dpcomic.ttf")) {
         std::cerr<<"Cannot load font"<<std::endl;
     }
@@ -158,7 +160,7 @@ int main()
     // Test health bar. It doesn't even connected to player
     auto health_bar = std::make_unique<Terrarium::Bar>(
         sf::Vector2f(128, 32), game->gfx);
-    health_bar->setPosition(600, 4);
+    health_bar->setPosition(-132, 4);
     health_bar->setTextStyle(Terrarium::BarTextStyle::Division);
     health_bar->setValue(80);
     health_bar->setTextSize(18);
@@ -211,6 +213,8 @@ int main()
                     world_renderer = new Terrarium::WorldRenderer({
                         event.size.width + Terrarium::Tile::SIZE,
                         event.size.height + Terrarium::Tile::SIZE }, 8);
+
+                    game->hud.setScreenSize(sf::Vector2f(event.size.width, event.size.height));
                 }
                 break;
 

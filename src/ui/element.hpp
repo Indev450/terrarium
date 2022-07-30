@@ -3,11 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "../utils/screen_transformable.hpp"
+
 namespace Terrarium {
 
     class GameState;
 
-    class UIElement: public sf::Transformable {
+    class UIElement: public ScreenTransformable {
     public:
         bool visible = true;
 
@@ -17,6 +19,7 @@ namespace Terrarium {
         virtual bool scroll(GameState &game, const sf::Vector2f &position, float delta) { return false; }
 
         virtual void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) = 0;
+
     };
 
 }

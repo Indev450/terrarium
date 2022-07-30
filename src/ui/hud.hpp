@@ -27,6 +27,8 @@
 #include <string>
 #include <memory>
 
+#include <SFML/Graphics.hpp>
+
 #include "element.hpp"
 #include "bar.hpp"
 
@@ -38,7 +40,11 @@ namespace Terrarium {
         std::unordered_map<std::string, std::unique_ptr<UIElement>> elements;
         std::unordered_map<std::string, std::unique_ptr<Bar>> bars;
 
+        sf::Vector2f screen_size;
+
     public:
+        void setScreenSize(const sf::Vector2f &size);
+
         void addElement(const std::string &name, std::unique_ptr<UIElement> element);
 
         void setVisible(const std::string &name, bool visible);

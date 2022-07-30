@@ -25,7 +25,20 @@
 
 namespace Terrarium {
 
+    void Hud::setScreenSize(const sf::Vector2f &size) {
+        screen_size = size;
+
+        for (auto it = bars.begin(); it != bars.end(); ++it) {
+            it->second->setScreenSize(size);
+        }
+
+        for (auto it = elements.begin(); it != elements.end(); ++it) {
+            it->second->setScreenSize(size);
+        }
+    }
+
     void Hud::addElement(const std::string &name, std::unique_ptr<UIElement> element) {
+        element->setScreenSize(screen_size);
         elements[name] = std::move(element);
     }
 
@@ -52,6 +65,7 @@ namespace Terrarium {
     }
 
     void Hud::addBar(const std::string &name, std::unique_ptr<Bar> bar) {
+        bar->setScreenSize(screen_size);
         bars[name] = std::move(bar);
     }
 
