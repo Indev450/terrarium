@@ -26,6 +26,8 @@
 
 namespace Terrarium {
 
+    const ItemCellRendererSettings ItemCellRendererSettings::Default;
+
     ItemCellRenderer::ItemCellRenderer(const Gfx &gfx,
                                        const sf::Color &text_color,
                                        const sf::Color &cell_color,

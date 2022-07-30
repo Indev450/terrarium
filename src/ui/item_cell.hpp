@@ -48,6 +48,8 @@ namespace Terrarium {
             cell_color = std::nullopt;
             outline_color = std::nullopt;
         }
+
+        static const ItemCellRendererSettings Default;
     };
 
     // Utility class to draw item cells

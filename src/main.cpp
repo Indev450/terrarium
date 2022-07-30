@@ -193,6 +193,10 @@ int main()
     fps_text.setFillColor(sf::Color::Black);
     fps_text.setFont(game->gfx.font);
 
+    // To render item that player currently carrying in inventory
+    Terrarium::ItemCellRenderer item_cell_renderer(
+        game->gfx, sf::Color::White, sf::Color::Transparent, sf::Color::Transparent);
+
     while (window.isOpen()) {
         // Update input
         sf::Event event;
@@ -422,6 +426,16 @@ int main()
         window.draw(fps_text);
 
         game->hud.render(window, *game);
+
+        if (!game->player->hold_item_stack->empty()) {
+            sf::Transform transform;
+
+            // I wonder is it fine to have magic numbers here?
+            transform.translate(sf::Vector2f(mouse_pos_pixels) - sf::Vector2f(16, 16));
+
+            item_cell_renderer.render(
+                window, *game->player->hold_item_stack, transform, Terrarium::ItemCellRendererSettings::Default);
+        }
 
         window.display();
     }
