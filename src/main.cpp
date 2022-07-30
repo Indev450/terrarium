@@ -139,6 +139,10 @@ int main()
     continue_button->setOutlineThickness(4);
     continue_button->setPosition(10, 10);
 
+    // Set size of container as screen size. I honestly don't want to fix
+    // this properly right now. Maybe later. UI is too hard for me
+    continue_button->setScreenSize(sf::Vector2f(100, 110));
+
     pause_form->addField("continue", std::move(continue_button));
 
     auto exit_button = std::make_unique<Terrarium::RectButton>(
@@ -148,6 +152,9 @@ int main()
     exit_button->setOutlineColor(sf::Color(127, 127, 127, 255));
     exit_button->setOutlineThickness(4);
     exit_button->setPosition(10, 60);
+
+    // Same as above
+    exit_button->setScreenSize(sf::Vector2f(100, 110));
 
     pause_form->addField("exit", std::move(exit_button));
 

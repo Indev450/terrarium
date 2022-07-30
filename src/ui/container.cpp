@@ -49,6 +49,7 @@ namespace Terrarium {
     }
 
     void UIContainer::addElement(std::unique_ptr<UIElement> element) {
+        element->setScreenSize(size); // Screen size for nested elements is container size
         elements.push_back(std::move(element));
     }
 
