@@ -54,6 +54,10 @@ public:
         position.y = y;
     }
 
+    const sf::Vector2f &getPosition() {
+        return position;
+    }
+
     const sf::Transform &getTransform() const {
         return sf::Transformable::getTransform();
     }

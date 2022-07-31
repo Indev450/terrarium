@@ -47,6 +47,8 @@ namespace Terrarium {
 
         void addElement(const std::string &name, std::unique_ptr<UIElement> element);
 
+        void replaceElement(const std::string &name, std::unique_ptr<UIElement> element);
+
         void setVisible(const std::string &name, bool visible);
 
         bool isVisible(const std::string &name);

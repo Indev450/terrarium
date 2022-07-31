@@ -42,6 +42,17 @@ namespace Terrarium {
         elements[name] = std::move(element);
     }
 
+    void Hud::replaceElement(const std::string &name, std::unique_ptr<UIElement> element) {
+        auto pair = elements.find(name);
+
+        if (pair != elements.end()) {
+            element->setPosition(pair->second->getPosition());
+            element->visible = pair->second->visible;
+        }
+
+        addElement(name, std::move(element));
+    }
+
     void Hud::setVisible(const std::string &name, bool visible) {
         auto pair = elements.find(name);
 
