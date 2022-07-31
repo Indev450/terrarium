@@ -54,6 +54,10 @@ local player_methods = {
     show_crafting_ui = function(self, category)
         core._show_crafting_ui(category or terrarium.default_crafting_category)
     end,
+
+    open_inventory_ui = function(self, inventory, width, height)
+        core._open_inventory_ui(inventory, width, height)
+    end,
 }
 
 local function create_player(player_ref)

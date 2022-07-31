@@ -40,16 +40,6 @@ namespace Terrarium {
         class LuaInventoryUD {
             std::weak_ptr<Inventory> inventory_ref;
 
-            inline std::shared_ptr<Inventory> checkedLock() {
-                std::shared_ptr<Inventory> inventory = inventory_ref.lock();
-
-                if (!inventory) {
-                    throw std::invalid_argument("inventory ref is expired");
-                }
-
-                return inventory;
-            }
-
         public:
             LuaInventoryUD(std::weak_ptr<Inventory> _inventory_ref);
 
@@ -68,9 +58,24 @@ namespace Terrarium {
             unsigned int countItems(std::shared_ptr<ItemDef> type);
 
             std::shared_ptr<ItemStack> find(std::shared_ptr<ItemDef> type);
+
+            inline std::shared_ptr<Inventory> checkedLock() {
+                std::shared_ptr<Inventory> inventory = inventory_ref.lock();
+
+                if (!inventory) {
+                    throw std::invalid_argument("inventory ref is expired");
+                }
+
+                return inventory;
+            }
         };
 
         void init(LuaModdingInterface &lua_interface);
+
+        // Inventory-related core module functions
+
+        // void core._open_inventory_ui(InventoryRef inventory, unsigned int width, unsigned int height)
+        int open_inventory_ui(lua_State *L);
 
         // InventoryRef userdata methods
 

@@ -24,6 +24,7 @@
 #include "lua_inventory.hpp"
 #include "lua_item.hpp"
 #include "lua_util.hpp"
+#include "../../ui/inventory.hpp"
 
 namespace Terrarium {
 
@@ -80,6 +81,8 @@ namespace Terrarium {
         }
 
         void init(LuaModdingInterface &lua_interface) {
+            lua_interface.registerFunction("_open_inventory_ui", open_inventory_ui);
+
             lua_State *L = lua_interface.getLuaState();
 
             luaL_newmetatable(L, LUA_INVENTORY); // push metatable
@@ -117,6 +120,32 @@ namespace Terrarium {
             lua_setfield(L, -2, "__gc");
 
             lua_pop(L, 1); // pop metatable
+        }
+
+        int open_inventory_ui(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            LuaInventoryUD *inventory_ref = reinterpret_cast<LuaInventoryUD*>(luaL_checkudata(L, 1, LUA_INVENTORY));
+
+            auto inventory_ui = std::make_unique<InventoryUI>(
+                lua_interface->game->gfx,
+                LuaUtil::checkinteger_ranged<unsigned int>(L, 2),
+                LuaUtil::checkinteger_ranged<unsigned int>(L, 3)
+            );
+
+            try {
+                inventory_ui->inventory = inventory_ref->checkedLock();
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            lua_interface->game->hud.replaceElement("opened_inventory", std::move(inventory_ui));
+
+            lua_interface->game->hud.setVisible("craft", true);
+            lua_interface->game->hud.setVisible("inventory", true);
+            lua_interface->game->hud.setVisible("opened_inventory", true);
+
+            return 0;
         }
 
         int inventory_is_valid(lua_State *L) {

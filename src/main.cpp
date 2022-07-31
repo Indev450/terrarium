@@ -125,6 +125,16 @@ int main()
     game->hud.addElement("hotbar", std::move(hotbar_renderer));
     game->hud.addElement("inventory", std::move(inventory_ui));
 
+    // Dummy element for opened inventories.
+    inventory_ui = std::make_unique<Terrarium::InventoryUI>(
+        game->gfx, 0, 0);
+    inventory_ui->setPosition(
+        32 + Terrarium::ItemCellRenderer::realGridSize(Terrarium::Player::HOTBAR_SIZE, 0).x + 4,
+        74);
+    inventory_ui->visible = false;
+
+    game->hud.addElement("opened_inventory", std::move(inventory_ui));
+
     auto pause_container = std::make_unique<Terrarium::UIContainer>(
         sf::Vector2f(100, 110));
     pause_container->setPosition(255, 255);
