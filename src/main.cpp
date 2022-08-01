@@ -282,6 +282,7 @@ int main()
 
                             game->hud.setVisible("inventory", !game->hud.isVisible("inventory"));
                             game->hud.setVisible("craft", !game->hud.isVisible("craft"));
+                            game->hud.setVisible("opened_inventory", false);
                         }
                         break;
 
