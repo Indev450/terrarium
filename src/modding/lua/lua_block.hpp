@@ -53,6 +53,9 @@ namespace Terrarium {
         // void core._set_wall(int x, int y, int block_id)
         int set_wall(lua_State *L);
 
+        // InventoryRef core._get_block_inventory(int x, int y)
+        int get_block_inventory(lua_State *L);
+
     }
 
 }

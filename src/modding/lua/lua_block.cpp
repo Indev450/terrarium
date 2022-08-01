@@ -23,6 +23,7 @@
 #include <memory>
 
 #include "lua_block.hpp"
+#include "lua_inventory.hpp"
 #include "lua_interface.hpp"
 #include "lua_util.hpp"
 #include "../../tile/block_def.hpp"
@@ -38,6 +39,7 @@ namespace Terrarium {
             lua_interface.registerFunction("_get_wall", get_wall);
             lua_interface.registerFunction("_set_block", set_block);
             lua_interface.registerFunction("_set_wall", set_wall);
+            lua_interface.registerFunction("_get_block_inventory", get_block_inventory);
         }
 
         int register_block(lua_State *L) {
@@ -147,6 +149,17 @@ namespace Terrarium {
             lua_interface->game->world.setWall(x, y, block_id);
 
             return 0;
+        }
+
+        int get_block_inventory(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            int x = luaL_checkinteger(L, 1);
+            int y = luaL_checkinteger(L, 2);
+
+            LuaInventoryAPI::push_inventory(L, lua_interface->game->world.getBlockInventory(sf::Vector2i(x, y)));
+
+            return 1;
         }
 
     }

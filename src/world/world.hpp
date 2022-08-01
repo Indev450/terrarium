@@ -23,10 +23,13 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <memory>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "../tile/tile.hpp"
 #include "../utils/vector2i_hash.hpp"
+#include "../item/inventory.hpp"
 
 namespace Terrarium {
 
@@ -38,6 +41,8 @@ namespace Terrarium {
         bool save_updated_blocks = true;
         // Store updated block positions to redraw them
         std::unordered_set<sf::Vector2i, HashVector2i> updated_blocks;
+
+        std::unordered_map<sf::Vector2i, std::shared_ptr<Inventory>, HashVector2i> block_inventories;
 
     public:
         World(unsigned int _width, unsigned int _height):
@@ -97,6 +102,14 @@ namespace Terrarium {
             if (save_updated_blocks) {
                 updated_blocks.emplace(x, y);
             }
+        }
+
+        std::shared_ptr<Inventory> getBlockInventory(const sf::Vector2i &position) {
+            if (block_inventories.count(position) == 0) {
+                block_inventories[position] = std::make_shared<Inventory>(0);
+            }
+
+            return block_inventories[position];
         }
 
         // To be used in mapgen (mapgen usually changes EVERY world block)
