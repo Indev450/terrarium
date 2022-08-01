@@ -36,16 +36,16 @@ namespace Terrarium {
     public:
         Inventory(unsigned int size) {
             resize(size);
+        }
+
+        inline void resize(unsigned int size) {
+            items.resize(size);
 
             for (unsigned int i = 0; i < size; ++i) {
                 if (!items[i]) {
                     items[i] = std::make_shared<ItemStack>();
                 }
             }
-        }
-
-        inline void resize(unsigned int size) {
-            items.resize(size);
         }
 
         inline unsigned int size() const {
