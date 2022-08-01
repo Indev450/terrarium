@@ -11,12 +11,15 @@ local function add_block_item(name, def)
         end
     end
 
-    function def.on_alt_use(user, itemstack, position, use_ctx)
-        local x = math.floor(position.x)
-        local y = math.floor(position.y)
+    -- Don't place interactive blocks at background layer
+    if not def.is_interactive then
+        function def.on_alt_use(user, itemstack, position, use_ctx)
+            local x = math.floor(position.x)
+            local y = math.floor(position.y)
 
-        if terrarium.place_wall(x, y, name) then
-            itemstack:add(-1)
+            if terrarium.place_wall(x, y, name) then
+                itemstack:add(-1)
+            end
         end
     end
 
@@ -151,7 +154,13 @@ function terrarium._place(x, y, block_name, user, fg)
     -- Change that block
     _set(x, y, terrarium.get_block_id(block_name))
 
+    terrarium.registered_blocks[block_name].on_place({ x = x, y = y }, user)
+
     return true
+end
+
+function terrarium.get_block_inventory(x, y)
+    return core._get_block_inventory(x, y)
 end
 
 
