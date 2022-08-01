@@ -20,26 +20,20 @@
  *
  */
 
-#ifndef BLOCK_DEF_HPP
-#define BLOCK_DEF_HPP
-
-#include <cstdint>
-
-#include <SFML/Graphics.hpp>
+#ifndef PLAYER_WORLD_INTERACT_HPP
+#define PLAYER_WORLD_INTERACT_HPP
 
 namespace Terrarium {
 
-    typedef uint16_t blockid;
+    class GameState;
 
-    struct BlockDef {
-        sf::Sprite sprite;
+    // Helper object for handling interactive objects.
+    struct WorldInteractHelper {
+        float interact_distance = 4;
 
-        bool is_solid = true;
-        float slippery = 0;
-
-        bool is_interactive = false;
+        void interact(GameState &game);
     };
 
-} // namespace Terrarium
+}
 
 #endif

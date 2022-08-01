@@ -47,7 +47,7 @@ core._item_wielders = setmetatable({}, {__mode='k'})
 -- return player table from terrarium.players. If it is not, then it is already
 -- table - "lua entity", which is simply returned. (it may be lua entity if
 -- some entity will trigger item event by passing self as event.item_event.user
-local function get_user(user_ref)
+function core.get_user(user_ref)
     if user_ref.is_player then
         -- user_ref:get_player_name()
         local player_name = "singleplayer"
@@ -59,7 +59,7 @@ local function get_user(user_ref)
 end
 
 core._event_handlers["ItemUseStart"] = function(event)
-    local user = get_user(event.item_event.user)
+    local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -76,7 +76,7 @@ core._event_handlers["ItemUseStart"] = function(event)
 end
 
 core._event_handlers["ItemUseStop"] = function(event)
-    local user = get_user(event.item_event.user)
+    local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -92,7 +92,7 @@ core._event_handlers["ItemUseStop"] = function(event)
 end
 
 core._event_handlers["ItemAltUseStart"] = function(event)
-    local user = get_user(event.item_event.user)
+    local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -109,7 +109,7 @@ core._event_handlers["ItemAltUseStart"] = function(event)
 end
 
 core._event_handlers["ItemAltUseStop"] = function(event)
-    local user = get_user(event.item_event.user)
+    local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 
@@ -125,7 +125,7 @@ core._event_handlers["ItemAltUseStop"] = function(event)
 end
 
 core._event_handlers["ItemSelect"] = function(event)
-    local user = get_user(event.item_event.user)
+    local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
 

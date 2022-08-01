@@ -105,6 +105,9 @@ namespace Terrarium {
 
         void push_vector2f(lua_State *L, const sf::Vector2f &vec);
 
+        // Duplicating code once again
+        void push_vector2i(lua_State *L, const sf::Vector2i &vec);
+
         void push_floatrect(lua_State *L, const sf::FloatRect &rect);
 
         sf::FloatRect checkfloatrect(lua_State *L, int idx);

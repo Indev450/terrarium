@@ -118,6 +118,16 @@ namespace Terrarium {
             lua_setfield(L, -2, "y");
         }
 
+        void push_vector2i(lua_State *L, const sf::Vector2i &vec) {
+            lua_newtable(L);
+
+            lua_pushinteger(L, vec.x);
+            lua_setfield(L, -2, "x");
+
+            lua_pushinteger(L, vec.y);
+            lua_setfield(L, -2, "y");
+        }
+
         void push_floatrect(lua_State *L, const sf::FloatRect &rect) {
             lua_newtable(L);
 

@@ -34,6 +34,7 @@
 #include "item/item_def_manager.hpp"
 #include "craft/craft.hpp"
 #include "player/player.hpp"
+#include "player/world_interact.hpp"
 #include "event/event.hpp"
 #include "ui/hud.hpp"
 #include "graphics/gfx.hpp"
@@ -53,6 +54,10 @@ namespace Terrarium {
         BlockDefHolder block_defs;
         ItemDefManager item_defs;
         CraftManager crafts;
+
+        // TODO - maybe move this into Player class?
+        WorldInteractHelper world_interact;
+
         std::shared_ptr<Player> player;
 
         std::queue<Event> events;

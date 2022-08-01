@@ -285,6 +285,10 @@ int main()
                         }
                         break;
 
+                        case sf::Keyboard::E:
+                            game->world_interact.interact(*game);
+                        break;
+
                         case sf::Keyboard::Escape:
                             game->hud.setVisible("pause", !game->hud.isVisible("pause"));
                         break;

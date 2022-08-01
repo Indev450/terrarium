@@ -66,6 +66,10 @@ namespace Terrarium {
             block_def->is_solid = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
 
+            lua_getfield(L, 1, "is_interactive");
+            block_def->is_interactive = LuaUtil::checkboolean(L, -1);
+            lua_pop(L, 1);
+
             lua_pushinteger(L, lua_interface->game->block_defs.add(block_def));
 
             return 1;

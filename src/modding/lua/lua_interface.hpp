@@ -38,6 +38,7 @@ namespace Terrarium {
 
         void pushItemEvent(ItemEvent &item_event);
         void pushUIEvent(UIEvent &ui_event);
+        void pushBlockEvent(BlockEvent &block_event);
 
     public:
         LuaModdingInterface(std::shared_ptr<GameState> game);

@@ -29,6 +29,7 @@ local block_defaults = {
     image = "",
     slippery = 0,
     is_solid = true,
+    is_interactive = false,
 
     description = "Block",
     max_count = 999,
@@ -36,6 +37,8 @@ local block_defaults = {
     -- Should return boolean that means, change block at that position or not
     on_place = function(position, user) return true end,
     on_destroy = function(position, user) return true end,
+
+    on_interact = function(position, user) end
 }
 
 function terrarium.register_block(name, def)
@@ -149,4 +152,13 @@ function terrarium._place(x, y, block_name, user, fg)
     _set(x, y, terrarium.get_block_id(block_name))
 
     return true
+end
+
+
+core._event_handlers["BlockActivate"] = function(event)
+    local block_id = core._get_block(event.block_event.position.x, event.block_event.position.y)
+
+    local block_def = terrarium.registered_blocks[terrarium.block_names[block_id]]
+
+    block_def.on_interact(event.block_event.position, core.get_user(event.block_event.user))
 end

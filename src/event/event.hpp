@@ -29,6 +29,8 @@
 #include <string>
 #include <utility>
 
+#include <SFML/System/Vector2.hpp>
+
 #include "../entity/entity.hpp"
 #include "../item/item_stack.hpp"
 #include "../ui/form.hpp"
@@ -56,6 +58,12 @@ namespace Terrarium {
         std::shared_ptr<FormSource> form_source;
     };
 
+    struct BlockEvent {
+        sf::Vector2i position;
+
+        std::weak_ptr<Player> user;
+    };
+
     struct Event {
         const enum Type {
             ItemUseStart = 0,
@@ -67,13 +75,16 @@ namespace Terrarium {
             ItemSelect, // Start wield item. Can be used for torches
 
             UISubmit, // Sent when a button pressed
+
+            BlockActivate, // Sent when using interactive block
         } type;
 
         const union {
             ItemEvent *item = nullptr;
 
             UIEvent *ui;
-            // ...more events data
+
+            BlockEvent *block;
         };
 
         Event(Type _type, ItemEvent *_item):
@@ -86,6 +97,12 @@ namespace Terrarium {
             type(_type), ui(_ui) {
 
             assert(type == UISubmit);
+        }
+
+        Event(Type _type, BlockEvent *_block):
+            type(_type), block(_block) {
+
+            assert(type == BlockActivate);
         }
 
         // Delete copy because i don't know how union with smart pointers inside
@@ -108,6 +125,8 @@ namespace Terrarium {
                 ENUM_TOSTRING(ItemSelect);
 
                 ENUM_TOSTRING(UISubmit);
+
+                ENUM_TOSTRING(BlockActivate);
             }
 
             // Execution flow should never reach this, but compiler still prints warning,
@@ -127,6 +146,10 @@ namespace Terrarium {
 
                 case UISubmit:
                     delete ui;
+                break;
+
+                case BlockActivate:
+                    delete block;
                 break;
             }
         }
