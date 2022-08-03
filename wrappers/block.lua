@@ -37,6 +37,9 @@ local block_defaults = {
     description = "Block",
     max_count = 999,
 
+    dig_sound = nil,
+    place_sound = nil,
+
     -- Should return boolean that means, change block at that position or not
     on_place = function(position, user) return true end,
     on_destroy = function(position, user) return true end,
@@ -137,6 +140,19 @@ function terrarium._dig(x, y, user, fg)
     -- Change that block to air
     _set(x, y, 0)
 
+    if def ~= nil and def.dig_sound ~= nil then
+        core._play_sound({
+            name = def.dig_sound.name,
+            volume = def.dig_sound.volume,
+            pitch = def.dig_sound.pitch,
+
+            source = {
+                x = x,
+                y = y,
+            },
+        })
+    end
+
     -- true means "digging" was successful
     return true
 end
@@ -154,7 +170,22 @@ function terrarium._place(x, y, block_name, user, fg)
     -- Change that block
     _set(x, y, terrarium.get_block_id(block_name))
 
-    terrarium.registered_blocks[block_name].on_place({ x = x, y = y }, user)
+    local def = terrarium.registered_blocks[block_name]
+
+    def.on_place({ x = x, y = y }, user)
+
+    if def.place_sound ~= nil then
+        core._play_sound({
+            name = def.place_sound.name,
+            volume = def.place_sound.volume,
+            pitch = def.place_sound.pitch,
+
+            source = {
+                x = x,
+                y = y,
+            },
+        })
+    end
 
     return true
 end
