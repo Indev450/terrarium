@@ -51,6 +51,10 @@ namespace Terrarium {
         void play() { sound->play(); }
 
         void stop() { sound->stop(); }
+
+        bool isPlaying() {
+            return sound->getStatus() == sf::SoundSource::Playing;
+        }
     };
 
     // Sound playing at specified world position

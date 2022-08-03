@@ -20,13 +20,25 @@
  *
  */
 
+#include <list>
+
 #include "sfx.hpp"
 #include "../game.hpp"
 
 namespace Terrarium {
     void Sfx::update(GameState &game) {
+        std::list<sound_handle> to_delete;
+
         for (auto it = playing_sounds.begin(); it != playing_sounds.end(); ++it) {
             it->second->update(game);
+
+            if (!it->second->isPlaying()) {
+                to_delete.push_back(it->first);
+            }
+        }
+
+        for (auto handle: to_delete) {
+            playing_sounds.del(handle);
         }
     }
 
