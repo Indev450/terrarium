@@ -46,7 +46,7 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             lua_getfield(L, 1, "volume");
-            float volume = LuaUtil::checknumber_ranged(L, -1, 0, 100);
+            float volume = LuaUtil::checknumber_ranged(L, -1, 0, 1) * 100;
             lua_pop(L, 1);
 
             // TODO - maybe pitch also should be "ranged"?
