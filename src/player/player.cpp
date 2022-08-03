@@ -161,7 +161,7 @@ namespace Terrarium {
         }
     }
 
-    sf::Vector2f Player::getPosition(GameState &game) {
+    sf::Vector2f Player::getPosition() {
         sf::Vector2f result;
 
         result.x = hitbox.left + hitbox.width/2;

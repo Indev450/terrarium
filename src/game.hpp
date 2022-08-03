@@ -38,6 +38,7 @@
 #include "event/event.hpp"
 #include "ui/hud.hpp"
 #include "graphics/gfx.hpp"
+#include "sounds/sfx.hpp"
 
 namespace Terrarium {
 
@@ -63,6 +64,7 @@ namespace Terrarium {
         std::queue<Event> events;
 
         Gfx gfx;
+        Sfx sfx;
 
         Hud hud;
 

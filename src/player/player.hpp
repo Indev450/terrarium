@@ -90,7 +90,7 @@ namespace Terrarium {
 
         void update(GameState &game, float dtime) override;
 
-        sf::Vector2f getPosition(GameState &game);
+        sf::Vector2f getPosition();
 
         inline std::shared_ptr<ItemStack> *getHotbar() {
             return hotbar;

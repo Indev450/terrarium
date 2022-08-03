@@ -91,6 +91,8 @@ namespace Terrarium {
             void setMirror(bool mirror);
 
             void kill(EntityManager &entity_mgr);
+
+            std::weak_ptr<Entity> getPtr() { return entity_ref; }
         };
 
         // Register all functions

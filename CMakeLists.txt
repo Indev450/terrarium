@@ -7,6 +7,7 @@ find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
 
 file(GLOB ENTITY_SOURCES "src/entity/*.cpp")
 file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
+file(GLOB SOUNDS_SOURCES "src/sounds/*.cpp")
 file(GLOB PLAYER_SOURCES "src/player/*.cpp")
 file(GLOB ITEM_SOURCES "src/item/*.cpp")
 file(GLOB CRAFT_SOURCES "src/craft/*.cpp")
@@ -19,6 +20,7 @@ add_executable(terrarium
     src/main.cpp
     ${ENTITY_SOURCES}
     ${GRAPHICS_SOURCES}
+    ${SOUNDS_SOURCES}
     ${PLAYER_SOURCES}
     ${ITEM_SOURCES}
     ${CRAFT_SOURCES}

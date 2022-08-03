@@ -81,6 +81,14 @@ namespace Terrarium {
         void del(Key key) {
             map.erase(key);
         }
+
+        typename std::unordered_map<Key, std::shared_ptr<Value>>::iterator begin() {
+            return map.begin();
+        }
+
+        typename std::unordered_map<Key, std::shared_ptr<Value>>::iterator end() {
+            return map.end();
+        }
     };
 
 } // namespace Terrarium

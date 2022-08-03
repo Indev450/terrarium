@@ -392,7 +392,7 @@ int main()
 
         game->entity_mgr.update(*game, dtime);
 
-        sf::Vector2f camera_pos = game->player->getPosition(*game) - sf::Vector2f(game->camera.width/2, game->camera.height/2);
+        sf::Vector2f camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
         game->camera.left = camera_pos.x;
         game->camera.top = camera_pos.y;
 
@@ -428,6 +428,8 @@ int main()
         }
 
         lua_interface.update(dtime);
+
+        game->sfx.update(*game);
 
         // Draw
         window.clear(sf::Color::Blue);

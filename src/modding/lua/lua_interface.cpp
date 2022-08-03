@@ -35,6 +35,7 @@
 #include "lua_player.hpp"
 #include "lua_mapgen.hpp"
 #include "lua_hud_bar.hpp"
+#include "lua_sound.hpp"
 
 #include "../../utils/path_guard.hpp"
 
@@ -55,6 +56,7 @@ namespace Terrarium {
         LuaBlockAPI::init(*this);
         LuaPlayerAPI::init(*this);
         LuaHudBarAPI::init(*this);
+        LuaSoundAPI::init(*this);
 
         if (!LuaUtil::run_script(L, "wrappers/init.lua")) {
             throw std::runtime_error("could not initialize lua wrappers");
@@ -222,6 +224,17 @@ namespace Terrarium {
 
                         for (const auto &texture_path: fs::directory_iterator(textures_dir)) {
                             game->gfx.textures.load(texture_path.path().filename());
+                        }
+                    }
+
+                    const fs::path sounds_dir = entry.path() / "sounds";
+
+                    // If there is sounds directory, load it
+                    if (fs::is_directory(sounds_dir, ec)) {
+                        game->sfx.sounds.addSearchPath(sounds_dir);
+
+                        for (const auto &sound_path: fs::directory_iterator(sounds_dir)) {
+                            game->sfx.sounds.load(sound_path.path().filename());
                         }
                     }
 
