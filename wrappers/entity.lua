@@ -106,13 +106,17 @@ core._update_hooks["entity"] = function(dtime)
     end
 
     if #core._entities.to_be_removed ~= 0 then
-        for id, _ in pairs(core._entities.to_be_removed) do
+        local to_be_removed = core._entities.to_be_removed
+        core._entities.to_be_removed = {}
+
+        for id, _ in pairs(to_be_removed) do
             core._entities.list[id]:on_removed()
+        end
+
+        for id, _ in pairs(to_be_removed) do
             core._entities.list[id].obj:kill()
             core._entities.list[id] = nil
         end
-
-        core._entities.to_be_removed = {}
     end
 
     for _, entity in pairs(core._entities.list) do
