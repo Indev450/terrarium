@@ -14,6 +14,7 @@ file(GLOB CRAFT_SOURCES "src/craft/*.cpp")
 file(GLOB UI_SOURCES "src/ui/*.cpp")
 file(GLOB MAPGEN_SOURCES "src/mapgen/*.cpp")
 file(GLOB LUA_API_SOURCES "src/modding/lua/*.cpp")
+file(GLOB UTILS_SOURCES "src/utils/*.cpp")
 file(GLOB LIB_PERLIN_SOURCES "src/lib/perlin/*.cpp")
 
 add_executable(terrarium
@@ -27,6 +28,7 @@ add_executable(terrarium
     ${UI_SOURCES}
     ${MAPGEN_SOURCES}
     ${LUA_API_SOURCES}
+    ${UTILS_SOURCES}
     ${LIB_PERLIN_SOURCES}
 )
 

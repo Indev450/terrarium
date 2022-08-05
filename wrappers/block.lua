@@ -50,7 +50,7 @@ local block_defaults = {
 function terrarium.register_block(name, def)
     apply_defaults(def, block_defaults)
 
-    def.block_id = core._register_block(def)
+    def.block_id = core._register_block(name, def)
 
     terrarium.registered_blocks[name] = def
     terrarium.block_names[def.block_id] = name

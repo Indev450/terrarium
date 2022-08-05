@@ -24,6 +24,9 @@
 #define GAME_HPP
 
 #include <queue>
+#include <iostream>
+#include <cstring>
+#include <stdexcept>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -39,6 +42,7 @@
 #include "ui/hud.hpp"
 #include "graphics/gfx.hpp"
 #include "sounds/sfx.hpp"
+#include "utils/binary_io.hpp"
 
 namespace Terrarium {
 
@@ -48,6 +52,40 @@ namespace Terrarium {
         {
             blocks_to_pixels.scale(Tile::SIZE, Tile::SIZE);
             pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
+        }
+
+        GameState(std::istream &file) {
+            // Save file format:
+            // char[4]         signature    should be "terr"
+            // u32             version      should be 1 for this format version
+            //
+            // WorldSave       world        (See src/world/world.hpp)
+            // BlockIdsSave    block_ids    (See src/tile/block_def_holder.hpp)
+            char signature[4];
+            file.read(signature, 4);
+
+            if (strncmp(signature, "terr", 4) != 0) {
+                throw std::invalid_argument("save file signature missmatch");
+            }
+
+            uint32_t version = read<uint32_t>(file);
+
+            if (version != 1) {
+                throw std::invalid_argument("save file version missmatch");
+            }
+
+            world.load(file);
+            block_defs.load(file);
+
+            blocks_to_pixels.scale(Tile::SIZE, Tile::SIZE);
+            pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
+        }
+
+        void save(std::ostream &file) {
+            file.write("terr", 4);
+            write<uint32_t>(file, 1);
+            world.save(file);
+            block_defs.save(file);
         }
 
         World world;

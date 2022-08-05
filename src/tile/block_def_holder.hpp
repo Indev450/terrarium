@@ -23,13 +23,18 @@
 #ifndef BLOCK_DEF_HOLDER_HPP
 #define BLOCK_DEF_HOLDER_HPP
 
+#include <string>
+#include <iostream>
+
 #include "block_def.hpp"
 #include "../utils/overflowing_map.hpp"
+#include "../utils/binary_io.hpp"
 
 namespace Terrarium {
 
     class BlockDefHolder: public OverflowingMap<blockid, BlockDef> {
         BlockDef unknown;
+        std::unordered_map<std::string, blockid> block_names;
 
     public:
         // Instead of pointer, returns reference to found block def,
@@ -43,6 +48,52 @@ namespace Terrarium {
             }
 
             return *def;
+        }
+
+        blockid add(std::shared_ptr<BlockDef> def) {
+            auto pair = block_names.find(def->name);
+
+            if (pair != block_names.end()) {
+                set(pair->second, def);
+
+                return pair->second;
+            } else {
+                blockid id = OverflowingMap<blockid, BlockDef>::add(def);
+
+                block_names[def->name] = id;
+
+                return id;
+            }
+        }
+
+        // Methods to save existing block ids into file. Used to keep same block ids
+        // after world saved, so loading new mods won't corrupt world save
+        //
+        // Save format:
+        // blockid                           entries_count
+        // vector<{string name, blockid id}> block_names
+        void load(std::istream &s) {
+            // Use blockid type because there can be (in theory) 2^(sizeof(blockid)*8)
+            // possible block ids
+            blockid count = read<blockid>(s);
+
+            for (unsigned int i = 0; i < count; ++i) {
+                std::string name = read<std::string>(s);
+                blockid id = read<blockid>(s);
+
+                block_names[name] = id;
+            }
+        }
+
+        void save(std::ostream &s) {
+            blockid count = block_names.size();
+
+            write(s, count);
+
+            for (auto &pair: block_names) {
+                write<const std::string&>(s, pair.first); // name
+                write<blockid>(s, pair.second); // id
+            }
         }
     };
 

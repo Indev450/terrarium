@@ -22,7 +22,9 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <memory>
+#include <filesystem>
 #include <ctime> // for time()
 
 #include <SFML/Graphics.hpp>
@@ -48,7 +50,7 @@
 
 const char *TITLE = "TerrariumEngine";
 
-int main()
+int main(int argc, char **argv)
 {
     std::cout<<"TerrariumEngine version "<<TERRARIUM_VERSION_MAJOR<<'.'<<TERRARIUM_VERSION_MINOR<<std::endl;
 
@@ -57,7 +59,26 @@ int main()
 
     // BEGIN TEST CODE
 
-    std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(2000, 1000);
+    std::shared_ptr<Terrarium::GameState> game;
+
+    std::string save_file_name = "world.bin";
+    bool need_mapgen = true;
+
+    if (argc < 2) {
+        game = std::make_shared<Terrarium::GameState>(2000, 1000);
+    } else {
+        if (std::filesystem::exists(argv[1])) {
+            std::ifstream save_file(argv[1]);
+            game = std::make_shared<Terrarium::GameState>(save_file);
+
+            need_mapgen = false;
+            save_file.close();
+        } else {
+            save_file_name = argv[1];
+
+            game = std::make_shared<Terrarium::GameState>(2000, 1000);
+        }
+    }
 
     game->hud.setScreenSize(sf::Vector2f(800, 640));
 
@@ -76,30 +97,32 @@ int main()
     Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);
     game->player = std::dynamic_pointer_cast<Terrarium::Player>(game->entity_mgr.get(player_id));
 
-    // Create mapgen. I think mapgen can be configured when game will have
-    // menu and settings, so i will leave hardcoded settings for now
-    Terrarium::MapgenPerlin mapgen(time(nullptr));
+    if (need_mapgen) {
+        // Create mapgen. I think mapgen can be configured when game will have
+        // menu and settings, so i will leave hardcoded settings for now
+        Terrarium::MapgenPerlin mapgen(time(nullptr));
 
-    mapgen.settings.ground_gen_scale = 1./20;
+        mapgen.settings.ground_gen_scale = 1./20;
 
-    mapgen.settings.cave_gen_scale_x = 1./20;
-    mapgen.settings.cave_gen_scale_y = 1./20;
+        mapgen.settings.cave_gen_scale_x = 1./20;
+        mapgen.settings.cave_gen_scale_y = 1./20;
 
-    mapgen.settings.biome_gen_scale_x = 1./300;
-    mapgen.settings.biome_gen_scale_y = 1./200;
+        mapgen.settings.biome_gen_scale_x = 1./300;
+        mapgen.settings.biome_gen_scale_y = 1./200;
 
-    mapgen.settings.min_block_density = 0.4;
-    mapgen.settings.min_wall_density = 0.2;
+        mapgen.settings.min_block_density = 0.4;
+        mapgen.settings.min_wall_density = 0.2;
 
-    // In theory, i could leave mapgen configuration to lua, but i'm planning
-    // to add more different mapgens in future (just like in minetest),
-    // and i currently haven't figured "protocol" for polymorphic mapgen configuration.
-    lua_interface.initMapgen(mapgen);
+        // In theory, i could leave mapgen configuration to lua, but i'm planning
+        // to add more different mapgens in future (just like in minetest),
+        // and i currently haven't figured "protocol" for polymorphic mapgen configuration.
+        lua_interface.initMapgen(mapgen);
 
-    // Mapgen currently is kinda slow, maybe its good idea to run it in
-    // different thread and draw some kind of "Generating map, please wait..."
-    // in GUI
-    mapgen.run(game->world);
+        // Mapgen currently is kinda slow, maybe its good idea to run it in
+        // different thread and draw some kind of "Generating map, please wait..."
+        // in GUI
+        mapgen.run(game->world);
+    }
 
     lua_interface.onPlayerJoin(game->player);
 
@@ -456,6 +479,12 @@ int main()
 
         window.display();
     }
+
+    std::ofstream save_file(save_file_name, std::ios::binary);
+
+    game->save(save_file);
+
+    save_file.close();
 
     // END TEST CODE
 

@@ -47,28 +47,28 @@ namespace Terrarium {
 
             std::shared_ptr<BlockDef> block_def = std::make_shared<BlockDef>();
 
-            if (!lua_istable(L, 1)) {
+            block_def->name = luaL_checkstring(L, 1);
+
+            if (!lua_istable(L, 2)) {
                 return luaL_error(L, "expected table as block def");
             }
 
-            // image, slippery, is_solid
-
-            lua_getfield(L, 1, "image");
+            lua_getfield(L, 2, "image");
             const char *image = luaL_checkstring(L, -1);
             block_def->sprite.setTexture(lua_interface->game->gfx.textures.get(image));
             lua_pop(L, 1);
 
-            lua_getfield(L, 1, "slippery");
+            lua_getfield(L, 2, "slippery");
             float slippery = LuaUtil::checknumber_ranged(L, -1, 0, 1);
 
             block_def->slippery = slippery;
             lua_pop(L, 1);
 
-            lua_getfield(L, 1, "is_solid");
+            lua_getfield(L, 2, "is_solid");
             block_def->is_solid = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
 
-            lua_getfield(L, 1, "is_interactive");
+            lua_getfield(L, 2, "is_interactive");
             block_def->is_interactive = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
 

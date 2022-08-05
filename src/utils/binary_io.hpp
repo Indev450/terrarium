@@ -20,28 +20,19 @@
  *
  */
 
-#ifndef BLOCK_DEF_HPP
-#define BLOCK_DEF_HPP
+#ifndef UTIL_BINARY_IO_HPP
+#define UTIL_BINARY_IO_HPP
 
 #include <cstdint>
+#include <iostream>
 
-#include <SFML/Graphics.hpp>
+#include "../tile/tile.hpp"
 
-namespace Terrarium {
+// Functions for writing into binary file, in little endian
+template <class T>
+T read(std::istream &s);
 
-    typedef uint16_t blockid;
-
-    struct BlockDef {
-        std::string name;
-
-        sf::Sprite sprite;
-
-        bool is_solid = true;
-        float slippery = 0;
-
-        bool is_interactive = false;
-    };
-
-} // namespace Terrarium
+template <class T>
+void write(std::ostream &s, T value);
 
 #endif

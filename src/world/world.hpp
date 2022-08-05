@@ -26,9 +26,12 @@
 #include <memory>
 #include <unordered_set>
 #include <unordered_map>
+#include <cstdint>
+#include <iostream>
 
 #include "../tile/tile.hpp"
 #include "../utils/vector2i_hash.hpp"
+#include "../utils/binary_io.hpp"
 #include "../item/inventory.hpp"
 
 namespace Terrarium {
@@ -36,7 +39,7 @@ namespace Terrarium {
     class World {
         Tile* tiles = nullptr;
 
-        unsigned int width, height;
+        uint16_t width = 0, height = 0;
 
         bool save_updated_blocks = true;
         // Store updated block positions to redraw them
@@ -45,10 +48,40 @@ namespace Terrarium {
         std::unordered_map<sf::Vector2i, std::shared_ptr<Inventory>, HashVector2i> block_inventories;
 
     public:
-        World(unsigned int _width, unsigned int _height):
+        World(uint16_t _width, uint16_t _height):
             width(_width), height(_height)
         {
             tiles = new Tile[width*height];
+        }
+
+        World() = default;
+
+        // World save format:
+        // u16  width
+        // u16  height
+        // Tile tiles[width*height]
+        void load(std::istream &file) {
+            width = read<uint16_t>(file);
+            height = read<uint16_t>(file);
+
+            tiles = new Tile[width*height];
+
+            for (unsigned int y = 0; y < height; ++y) {
+                for (unsigned int x = 0; x < width; ++x) {
+                    tiles[y*width + x] = read<Tile>(file);
+                }
+            }
+        }
+
+        void save(std::ostream &file) {
+            write(file, width);
+            write(file, height);
+
+            for (unsigned int y = 0; y < height; ++y) {
+                for (unsigned int x = 0; x < width; ++x) {
+                    write(file, tiles[y*width + x]);
+                }
+            }
         }
 
         inline bool isInRange(int x, int y) {
@@ -135,11 +168,11 @@ namespace Terrarium {
             updated_blocks.clear();
         }
 
-        inline unsigned int getWidth() {
+        inline uint16_t getWidth() {
             return width;
         }
 
-        inline unsigned int getHeight() {
+        inline uint16_t getHeight() {
             return height;
         }
 
