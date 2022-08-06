@@ -21,6 +21,8 @@
  */
 
 #include "item_stack.hpp"
+#include "../game.hpp"
+#include "../utils/binary_io.hpp"
 
 namespace Terrarium {
 
@@ -64,6 +66,20 @@ namespace Terrarium {
 
         def = other_def;
         count = other_count;
+    }
+
+    void ItemStack::load(std::istream &s, GameState &game) {
+        std::string item_name = read<std::string>(s);
+        uint16_t item_count = read<uint16_t>(s);
+
+        set(game.item_defs.get(item_name), item_count);
+    }
+
+    void ItemStack::save(std::ostream &s) {
+        if (empty()) { return; }
+
+        write<const std::string&>(s, def->name);
+        write<uint16_t>(s, count);
     }
 
 } // namespace Terrarium

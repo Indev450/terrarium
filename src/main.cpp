@@ -59,26 +59,7 @@ int main(int argc, char **argv)
 
     // BEGIN TEST CODE
 
-    std::shared_ptr<Terrarium::GameState> game;
-
-    std::string save_file_name = "world.bin";
-    bool need_mapgen = true;
-
-    if (argc < 2) {
-        game = std::make_shared<Terrarium::GameState>(2000, 1000);
-    } else {
-        if (std::filesystem::exists(argv[1])) {
-            std::ifstream save_file(argv[1]);
-            game = std::make_shared<Terrarium::GameState>(save_file);
-
-            need_mapgen = false;
-            save_file.close();
-        } else {
-            save_file_name = argv[1];
-
-            game = std::make_shared<Terrarium::GameState>(2000, 1000);
-        }
-    }
+    std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>();
 
     game->hud.setScreenSize(sf::Vector2f(800, 640));
 
@@ -92,6 +73,26 @@ int main(int argc, char **argv)
 
     // Lua interface runs mods, that can override player prefab
     Terrarium::LuaModdingInterface lua_interface(game);
+
+    std::string save_file_name = "world.bin";
+    bool need_mapgen = true;
+
+    if (argc < 2) {
+        game->world.create(2000, 1000);
+    } else {
+        save_file_name = argv[1];
+
+        if (std::filesystem::exists(argv[1])) {
+            std::ifstream save_file(argv[1]);
+
+            game->load(save_file);
+
+            need_mapgen = false;
+            save_file.close();
+        } else {
+            game->world.create(2000, 1000);
+        }
+    }
 
     // Now player gets spawned. Hopefully with a normal prefab...
     Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);

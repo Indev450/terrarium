@@ -12,6 +12,7 @@ file(GLOB PLAYER_SOURCES "src/player/*.cpp")
 file(GLOB ITEM_SOURCES "src/item/*.cpp")
 file(GLOB CRAFT_SOURCES "src/craft/*.cpp")
 file(GLOB UI_SOURCES "src/ui/*.cpp")
+file(GLOB WORLD_SOURCES "src/world/*.cpp")
 file(GLOB MAPGEN_SOURCES "src/mapgen/*.cpp")
 file(GLOB LUA_API_SOURCES "src/modding/lua/*.cpp")
 file(GLOB UTILS_SOURCES "src/utils/*.cpp")
@@ -26,6 +27,7 @@ add_executable(terrarium
     ${ITEM_SOURCES}
     ${CRAFT_SOURCES}
     ${UI_SOURCES}
+    ${WORLD_SOURCES}
     ${MAPGEN_SOURCES}
     ${LUA_API_SOURCES}
     ${UTILS_SOURCES}

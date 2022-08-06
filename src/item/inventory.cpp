@@ -23,6 +23,7 @@
 #include <algorithm>
 
 #include "inventory.hpp"
+#include "../utils/binary_io.hpp"
 
 namespace Terrarium {
 
@@ -74,7 +75,7 @@ namespace Terrarium {
     unsigned int Inventory::countItems(std::shared_ptr<ItemDef> type) const {
         unsigned int result = 0;
 
-        for (auto item: items) {
+        for (auto &item: items) {
             if (item->getDef() == type) {
                 result += item->getCount();
             }
@@ -91,6 +92,39 @@ namespace Terrarium {
         }
 
         return nullptr;
+    }
+
+    void Inventory::load(std::istream &s, GameState &game) {
+        items.clear();
+
+        resize(read<uint16_t>(s));
+
+        uint16_t entries = read<uint16_t>(s);
+
+        for (unsigned int i = 0; i < entries; ++i) {
+            uint16_t slot = read<uint16_t>(s);
+
+            items[slot]->load(s, game);
+        }
+    }
+
+    void Inventory::save(std::ostream &s) {
+        write<uint16_t>(s, items.size());
+
+        uint16_t entries = countUsedSlots();
+
+        write<uint16_t>(s, entries);
+
+        uint16_t slot = 0;
+
+        for (auto &item: items) {
+            if (!item->empty()) {
+                write<uint16_t>(s, slot);
+                item->save(s);
+            }
+
+            ++slot;
+        }
     }
 
 } // namespace Terrarium

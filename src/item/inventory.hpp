@@ -25,10 +25,13 @@
 
 #include <vector>
 #include <memory>
+#include <iostream>
 
 #include "item_stack.hpp"
 
 namespace Terrarium {
+
+    class GameState;
 
     class Inventory {
         std::vector<std::shared_ptr<ItemStack>> items;
@@ -60,6 +63,19 @@ namespace Terrarium {
             return items[i];
         }
 
+        // Returns amount of non-empty slots in inventory
+        unsigned int countUsedSlots() {
+            unsigned int count = 0;
+
+            for (auto &item: items) {
+                if (!item->empty()) {
+                    ++count;
+                }
+            }
+
+            return count;
+        }
+
         // Add new_item into inventory. If possible, it will merge with existing
         // item stacks with same type. If some items couldn't fit, they are left in new_item
         void addItem(ItemStack &new_item);
@@ -74,6 +90,16 @@ namespace Terrarium {
 
         // Find any ItemStack that have required type
         std::shared_ptr<ItemStack> find(std::shared_ptr<ItemDef> type);
+
+        // Inventory save format:
+        // u16                                         size       total size of inventory
+        // u16                                         entries    non-empty slots count
+        // vector<{u16 slot, ItemStack item_stack}>    slots      ItemStacks mapped to slot positions
+
+        // Needs game state for ItemStack::load
+        void load(std::istream &s, GameState &game);
+
+        void save(std::ostream &s);
     };
 
 }

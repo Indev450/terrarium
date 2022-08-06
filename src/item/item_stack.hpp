@@ -24,10 +24,13 @@
 #define ITEM_STACK_HPP
 
 #include <memory>
+#include <iostream>
 
 #include "item_def.hpp"
 
 namespace Terrarium {
+
+    class GameState;
 
     class ItemStack {
         std::shared_ptr<ItemDef> def;
@@ -69,6 +72,15 @@ namespace Terrarium {
         inline bool empty() const {
             return !def || count == 0;
         }
+
+        // ItemStack save format:
+        // string item_name
+        // u16 count
+
+        // Needs game state to get item def
+        void load(std::istream &s, GameState &game);
+
+        void save(std::ostream &s);
     };
 
 }

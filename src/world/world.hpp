@@ -31,10 +31,11 @@
 
 #include "../tile/tile.hpp"
 #include "../utils/vector2i_hash.hpp"
-#include "../utils/binary_io.hpp"
 #include "../item/inventory.hpp"
 
 namespace Terrarium {
+
+    class GameState;
 
     class World {
         Tile* tiles = nullptr;
@@ -48,41 +49,20 @@ namespace Terrarium {
         std::unordered_map<sf::Vector2i, std::shared_ptr<Inventory>, HashVector2i> block_inventories;
 
     public:
-        World(uint16_t _width, uint16_t _height):
-            width(_width), height(_height)
-        {
-            tiles = new Tile[width*height];
-        }
-
-        World() = default;
+        void create(uint16_t _width, uint16_t _height);
 
         // World save format:
-        // u16  width
-        // u16  height
-        // Tile tiles[width*height]
-        void load(std::istream &file) {
-            width = read<uint16_t>(file);
-            height = read<uint16_t>(file);
+        // u16                               width
+        // u16                               height
+        // Tile                              tiles[width*height]
+        // u16                               inventories_count
+        // vector<{
+        //     { u16 x, u16 y } position,
+        //     Inventory        inventory
+        // }>                                block_inventories
+        void load(std::istream &file, GameState &game);
 
-            tiles = new Tile[width*height];
-
-            for (unsigned int y = 0; y < height; ++y) {
-                for (unsigned int x = 0; x < width; ++x) {
-                    tiles[y*width + x] = read<Tile>(file);
-                }
-            }
-        }
-
-        void save(std::ostream &file) {
-            write(file, width);
-            write(file, height);
-
-            for (unsigned int y = 0; y < height; ++y) {
-                for (unsigned int x = 0; x < width; ++x) {
-                    write(file, tiles[y*width + x]);
-                }
-            }
-        }
+        void save(std::ostream &file);
 
         inline bool isInRange(int x, int y) {
             return x >= 0 && x < static_cast<int>(width) &&
@@ -97,7 +77,7 @@ namespace Terrarium {
             return &tiles[y*width + x];
         }
 
-        blockid getBlock(int x, int y) {
+        inline blockid getBlock(int x, int y) {
             if (!isInRange(x, y)) {
                 return 0;
             }
@@ -105,7 +85,7 @@ namespace Terrarium {
             return tiles[y*width + x].fg;
         }
 
-        blockid getWall(int x, int y) {
+        inline blockid getWall(int x, int y) {
             if (!isInRange(x, y)) {
                 return 0;
             }
@@ -113,7 +93,7 @@ namespace Terrarium {
             return tiles[y*width + x].bg;
         }
 
-        void setBlock(int x, int y, blockid block) {
+        inline void setBlock(int x, int y, blockid block) {
             if (!isInRange(x, y)) {
                 return;
             }
@@ -125,7 +105,7 @@ namespace Terrarium {
             }
         }
 
-        void setWall(int x, int y, blockid block) {
+        inline void setWall(int x, int y, blockid block) {
             if (!isInRange(x, y)) {
                 return;
             }
@@ -137,7 +117,7 @@ namespace Terrarium {
             }
         }
 
-        std::shared_ptr<Inventory> getBlockInventory(const sf::Vector2i &position) {
+        inline std::shared_ptr<Inventory> getBlockInventory(const sf::Vector2i &position) {
             if (block_inventories.count(position) == 0) {
                 block_inventories[position] = std::make_shared<Inventory>(0);
             }

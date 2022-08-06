@@ -47,17 +47,15 @@
 namespace Terrarium {
 
     struct GameState {
-        GameState(unsigned int world_width, unsigned int world_height):
-            world(world_width, world_height)
-        {
+        GameState() {
             blocks_to_pixels.scale(Tile::SIZE, Tile::SIZE);
             pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
         }
 
-        GameState(std::istream &file) {
+        void load(std::istream &file) {
             // Save file format:
             // char[4]         signature    should be "terr"
-            // u32             version      should be 1 for this format version
+            // u32             version      should be 2 for this format version
             //
             // WorldSave       world        (See src/world/world.hpp)
             // BlockIdsSave    block_ids    (See src/tile/block_def_holder.hpp)
@@ -70,20 +68,17 @@ namespace Terrarium {
 
             uint32_t version = read<uint32_t>(file);
 
-            if (version != 1) {
+            if (version != 2) {
                 throw std::invalid_argument("save file version missmatch");
             }
 
-            world.load(file);
+            world.load(file, *this);
             block_defs.load(file);
-
-            blocks_to_pixels.scale(Tile::SIZE, Tile::SIZE);
-            pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
         }
 
         void save(std::ostream &file) {
             file.write("terr", 4);
-            write<uint32_t>(file, 1);
+            write<uint32_t>(file, 2);
             world.save(file);
             block_defs.save(file);
         }
