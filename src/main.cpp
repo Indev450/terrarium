@@ -74,6 +74,10 @@ int main(int argc, char **argv)
     // Lua interface runs mods, that can override player prefab
     Terrarium::LuaModdingInterface lua_interface(game);
 
+    // Now player gets spawned. Hopefully with a normal prefab...
+    Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);
+    game->player = std::dynamic_pointer_cast<Terrarium::Player>(game->entity_mgr.get(player_id));
+
     std::string save_file_name = "world.bin";
     bool need_mapgen = true;
 
@@ -93,10 +97,6 @@ int main(int argc, char **argv)
             game->world.create(2000, 1000);
         }
     }
-
-    // Now player gets spawned. Hopefully with a normal prefab...
-    Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);
-    game->player = std::dynamic_pointer_cast<Terrarium::Player>(game->entity_mgr.get(player_id));
 
     if (need_mapgen) {
         // Create mapgen. I think mapgen can be configured when game will have

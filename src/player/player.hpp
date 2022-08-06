@@ -25,6 +25,7 @@
 
 #include <string>
 #include <optional>
+#include <iostream>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -83,6 +84,10 @@ namespace Terrarium {
         std::optional<std::string> crafting_category;
 
         Player() {
+            updateHotbar();
+        }
+
+        void updateHotbar() {
             for (unsigned int i = 0; i < HOTBAR_SIZE; ++i) {
                 hotbar[i] = inventory->get(i);
             }
@@ -99,6 +104,16 @@ namespace Terrarium {
         inline unsigned int getHotbarSelected() {
             return hotbar_selected;
         }
+
+        // Player save format:
+        // i32          x
+        // i32          y
+        // u8           have_hold_item_stack    1 if hold_item_stack is not empty, 0 otherwise
+        // ItemStack    hold_item_stack         item stack that player moving in inventory
+        // Inventory    inventory
+        void load(std::istream &s, GameState &game);
+
+        void save(std::ostream &s, GameState &game);
     };
 
 } // namespace Terrarium

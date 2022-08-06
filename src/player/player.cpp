@@ -24,6 +24,7 @@
 
 #include "player.hpp"
 #include "../game.hpp"
+#include "../utils/binary_io.hpp"
 
 namespace Terrarium {
 
@@ -168,6 +169,48 @@ namespace Terrarium {
         result.y = hitbox.top + hitbox.height/2;
 
         return result;
+    }
+
+    void Player::load(std::istream &s, GameState &game) {
+        sf::Vector2f position;
+
+        position.x = read<int32_t>(s);
+        position.y = read<int32_t>(s);
+
+        position = game.pixels_to_blocks.transformPoint(position);
+
+        hitbox.left = position.x;
+        hitbox.top = position.y;
+
+        uint8_t has_hold_item_stack = read<uint8_t>(s);
+
+        if (has_hold_item_stack != 0) {
+            hold_item_stack->load(s, game);
+        }
+
+        inventory->load(s, game);
+
+        updateHotbar();
+    }
+
+    void Player::save(std::ostream &s, GameState &game) {
+        sf::Vector2f position(hitbox.left, hitbox.top);
+
+        // For better precision
+        position = game.blocks_to_pixels.transformPoint(position);
+
+        write<int32_t>(s, position.x);
+        write<int32_t>(s, position.y);
+
+        if (hold_item_stack->empty()) {
+            write<uint8_t>(s, 0);
+        } else {
+            write<uint8_t>(s, 1);
+        }
+
+        hold_item_stack->save(s);
+
+        inventory->save(s);
     }
 
 } // namespace Terrarium

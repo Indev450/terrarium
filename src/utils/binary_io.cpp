@@ -92,6 +92,31 @@ void write<uint32_t>(std::ostream &s, uint32_t value) {
 }
 
 ////////////////////////////////////////////////////////////////////////
+template <>
+int32_t read<int32_t>(std::istream &s) {
+    int32_t result = 0;
+    uint8_t bytes[4];
+
+    s.read((char*)bytes, 4);
+
+    result = bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
+
+    return result;
+}
+
+template <>
+void write<int32_t>(std::ostream &s, int32_t value) {
+    uint8_t bytes[4];
+
+    bytes[0] = value & 0xFF;
+    bytes[1] = (value >> 8) & 0xFF;
+    bytes[2] = (value >> 16) & 0xFF;
+    bytes[3] = (value >> 24) & 0xFF;
+
+    s.write((char*)bytes, 4);
+}
+
+////////////////////////////////////////////////////////////////////////
 // Complex types                                                      //
 ////////////////////////////////////////////////////////////////////////
 

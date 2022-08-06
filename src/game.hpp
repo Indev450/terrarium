@@ -55,10 +55,11 @@ namespace Terrarium {
         void load(std::istream &file) {
             // Save file format:
             // char[4]         signature    should be "terr"
-            // u32             version      should be 2 for this format version
+            // u32             version      should be 3 for this format version
             //
             // WorldSave       world        (See src/world/world.hpp)
             // BlockIdsSave    block_ids    (See src/tile/block_def_holder.hpp)
+            // PlayerSave      player       (See src/player/player.hpp)
             char signature[4];
             file.read(signature, 4);
 
@@ -68,19 +69,22 @@ namespace Terrarium {
 
             uint32_t version = read<uint32_t>(file);
 
-            if (version != 2) {
+            if (version != 3) {
                 throw std::invalid_argument("save file version missmatch");
             }
 
             world.load(file, *this);
             block_defs.load(file);
+            player->load(file, *this);
         }
 
         void save(std::ostream &file) {
             file.write("terr", 4);
-            write<uint32_t>(file, 2);
+            write<uint32_t>(file, 3);
+
             world.save(file);
             block_defs.save(file);
+            player->save(file, *this);
         }
 
         World world;
