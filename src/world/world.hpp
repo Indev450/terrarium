@@ -30,8 +30,8 @@
 #include <iostream>
 
 #include "../tile/tile.hpp"
-#include "../utils/vector2i_hash.hpp"
 #include "../item/inventory.hpp"
+#include "../utils/vector2i_hash.hpp"
 
 namespace Terrarium {
 
@@ -44,9 +44,9 @@ namespace Terrarium {
 
         bool save_updated_blocks = true;
         // Store updated block positions to redraw them
-        std::unordered_set<sf::Vector2i, HashVector2i> updated_blocks;
+        std::unordered_set<sf::Vector2i> updated_blocks;
 
-        std::unordered_map<sf::Vector2i, std::shared_ptr<Inventory>, HashVector2i> block_inventories;
+        std::unordered_map<sf::Vector2i, std::shared_ptr<Inventory>> block_inventories;
 
     public:
         void create(uint16_t _width, uint16_t _height);

@@ -27,12 +27,11 @@
 
 #include <SFML/System/Vector2.hpp>
 
-struct HashVector2i {
-
-    size_t operator()(const sf::Vector2i &vec) const {
+template <>
+struct std::hash<sf::Vector2i> {
+    std::size_t operator()(const sf::Vector2i &vec) const noexcept {
         return vec.x + static_cast<size_t>(vec.y) * std::numeric_limits<int>::max();
     }
-
 };
 
 #endif
