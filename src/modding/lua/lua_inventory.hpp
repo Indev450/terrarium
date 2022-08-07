@@ -91,13 +91,13 @@ namespace Terrarium {
         // ItemStack/nil InventoryRef:get(unsigned int i)
         int inventory_get(lua_State *L);
 
-        // void InventoryRef:addItem(ItemStack new_item)
+        // void InventoryRef:add_item(ItemStack new_item)
         int inventory_add_item(lua_State *L);
 
         // unsigned int InventoryRef:take_items(string name, unsigned int count)
         int inventory_take_items(lua_State *L);
 
-        // unsigned int InventoryRef:countItems(string name)
+        // unsigned int InventoryRef:count_items(string name)
         int inventory_count_items(lua_State *L);
 
         // ItemStack/nil InventoryRef:find(string name)
