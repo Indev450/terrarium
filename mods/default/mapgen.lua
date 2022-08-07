@@ -51,3 +51,30 @@ terrarium.register_biome("default:grassland_overgrowth", {
 
     priority = 2,
 })
+
+terrarium.register_biome("default:desert", {
+    humidity_max = 0.2,
+
+    heat_min = -0.4,
+
+    top = {
+        block = "default:sand",
+        wall = "default:sand",
+    },
+
+    top_depth = 1,
+
+    filler = {
+        block = "default:sand",
+        wall = "default:sand",
+    },
+
+    filler_depth = 1,
+
+    stone = {
+        block = "default:sand",
+        wall = "default:sand",
+    },
+
+    priority = 2,
+})

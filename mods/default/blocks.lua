@@ -46,6 +46,26 @@ terrarium.register_block("default:grass", {
     },
 })
 
+terrarium.register_block("default:sand", {
+    image = "sand.png",
+
+    slippery = 0.4,
+
+    is_solid = true,
+
+    dig_sound = {
+        name = "dig_soil.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_soil.wav",
+        volume = 1.0,
+        pitch = 1.4,
+    },
+})
+
 terrarium.register_block("default:chest", {
     image = "chest.png",
 
