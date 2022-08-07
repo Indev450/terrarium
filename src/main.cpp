@@ -40,6 +40,7 @@
 #include "ui/container.hpp"
 #include "ui/bar.hpp"
 #include "ui/craft_ui.hpp"
+#include "utils/saves.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/lua_interface.hpp"
 
@@ -68,37 +69,39 @@ int main(int argc, char **argv)
     }
 
     // Add player prefab, with id 1.
-    std::shared_ptr<Terrarium::EntityPrefab> player_prefab = std::make_shared<Terrarium::EntityPrefab>();
-    Terrarium::entity_prefabid player_prefab_id = game->entity_mgr.addPrefab(player_prefab);
+    game->entity_mgr.addPrefab(std::make_shared<Terrarium::EntityPrefab>());
+
+    Terrarium::SavesManager saves_mgr("saves");
+
+    std::string save_name = "world";
+
+    if (argc > 1) {
+        save_name = argv[1];
+    }
+
+    bool save_exists = saves_mgr.saveExists(save_name);
+
+    // If world exists, just load it. Otherwise, create new (but don't run mapgen yet)
+    if (save_exists) {
+        saves_mgr.loadWorldData(*game, save_name);
+    } else {
+        game->world.create(2000, 1000);
+    }
 
     // Lua interface runs mods, that can override player prefab
     Terrarium::LuaModdingInterface lua_interface(game);
 
     // Now player gets spawned. Hopefully with a normal prefab...
-    Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(player_prefab_id);
+    Terrarium::entityid player_id = game->entity_mgr.create<Terrarium::Player>(1);
     game->player = std::dynamic_pointer_cast<Terrarium::Player>(game->entity_mgr.get(player_id));
 
-    std::string save_file_name = "world.bin";
-    bool need_mapgen = true;
-
-    if (argc < 2) {
-        game->world.create(2000, 1000);
-    } else {
-        save_file_name = argv[1];
-
-        if (std::filesystem::exists(argv[1])) {
-            std::ifstream save_file(argv[1]);
-
-            game->load(save_file);
-
-            need_mapgen = false;
-            save_file.close();
-        } else {
-            game->world.create(2000, 1000);
-        }
+    // Now load player save, if possible
+    if (save_exists) {
+        saves_mgr.loadPlayerData(*game, save_name);
     }
 
-    if (need_mapgen) {
+    // Generate map
+    if (!save_exists) {
         // Create mapgen. I think mapgen can be configured when game will have
         // menu and settings, so i will leave hardcoded settings for now
         Terrarium::MapgenPerlin mapgen(time(nullptr));
@@ -125,6 +128,7 @@ int main(int argc, char **argv)
         mapgen.run(game->world);
     }
 
+    // Now player can "join the game"
     lua_interface.onPlayerJoin(game->player);
 
     // Maybe world renderer step needs to be configured too
@@ -481,11 +485,7 @@ int main(int argc, char **argv)
         window.display();
     }
 
-    std::ofstream save_file(save_file_name, std::ios::binary);
-
-    game->save(save_file);
-
-    save_file.close();
+    saves_mgr.save(*game, save_name);
 
     // END TEST CODE
 

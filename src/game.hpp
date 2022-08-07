@@ -52,38 +52,64 @@ namespace Terrarium {
             pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
         }
 
-        void load(std::istream &file) {
-            // Save file format:
-            // char[4]         signature    should be "terr"
-            // u32             version      should be 3 for this format version
-            //
-            // WorldSave       world        (See src/world/world.hpp)
-            // BlockIdsSave    block_ids    (See src/tile/block_def_holder.hpp)
-            // PlayerSave      player       (See src/player/player.hpp)
-            char signature[4];
-            file.read(signature, 4);
+        // World save file format:
+        // char[8]         signature    should be "terrwrld"
+        // u32             version      should be 1 for this format version
+        //
+        // WorldSave       world        (See src/world/world.hpp)
+        // BlockIdsSave    block_ids    (See src/tile/block_def_holder.hpp)
+        void loadWorld(std::istream &file) {
+            char signature[8];
+            file.read(signature, 8);
 
-            if (strncmp(signature, "terr", 4) != 0) {
-                throw std::invalid_argument("save file signature missmatch");
+            if (strncmp(signature, "terrwrld", 8) != 0) {
+                throw std::invalid_argument("world save file signature missmatch");
             }
 
             uint32_t version = read<uint32_t>(file);
 
-            if (version != 3) {
-                throw std::invalid_argument("save file version missmatch");
+            if (version != 1) {
+                throw std::invalid_argument("world save file version missmatch");
             }
 
             world.load(file, *this);
             block_defs.load(file);
-            player->load(file, *this);
         }
 
-        void save(std::ostream &file) {
-            file.write("terr", 4);
-            write<uint32_t>(file, 3);
+        void saveWorld(std::ostream &file) {
+            file.write("terrwrld", 8);
+            write<uint32_t>(file, 1);
 
             world.save(file);
             block_defs.save(file);
+        }
+
+        // Player save file format:
+        // char[8]       signature    should be "terrplay"
+        // u32           version      should be 1 for this format version
+        //
+        // PlayerSave    player       (see src/player/player.hpp)
+        void loadPlayer(std::istream &file) {
+            char signature[8];
+            file.read(signature, 8);
+
+            if (strncmp(signature, "terrplay", 8) != 0) {
+                throw std::invalid_argument("player save file signature missmatch");
+            }
+
+            uint32_t version = read<uint32_t>(file);
+
+            if (version != 1) {
+                throw std::invalid_argument("player save file version missmatch");
+            }
+
+            player->load(file, *this);
+        }
+
+        void savePlayer(std::ostream &file) {
+            file.write("terrplay", 8);
+            write<uint32_t>(file, 1);
+
             player->save(file, *this);
         }
 
