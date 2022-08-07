@@ -25,7 +25,6 @@
 
 #include <memory>
 #include <unordered_set>
-#include <unordered_map>
 #include <cstdint>
 #include <iostream>
 
@@ -46,8 +45,6 @@ namespace Terrarium {
         // Store updated block positions to redraw them
         std::unordered_set<sf::Vector2i> updated_blocks;
 
-        std::unordered_map<sf::Vector2i, std::shared_ptr<Inventory>> block_inventories;
-
     public:
         void create(uint16_t _width, uint16_t _height);
 
@@ -55,11 +52,6 @@ namespace Terrarium {
         // u16                               width
         // u16                               height
         // Tile                              tiles[width*height]
-        // u16                               inventories_count
-        // vector<{
-        //     { u16 x, u16 y } position,
-        //     Inventory        inventory
-        // }>                                block_inventories
         void load(std::istream &file, GameState &game);
 
         void save(std::ostream &file);
@@ -115,14 +107,6 @@ namespace Terrarium {
             if (save_updated_blocks) {
                 updated_blocks.emplace(x, y);
             }
-        }
-
-        inline std::shared_ptr<Inventory> getBlockInventory(const sf::Vector2i &position) {
-            if (block_inventories.count(position) == 0) {
-                block_inventories[position] = std::make_shared<Inventory>(0);
-            }
-
-            return block_inventories[position];
         }
 
         // To be used in mapgen (mapgen usually changes EVERY world block)

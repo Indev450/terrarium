@@ -157,7 +157,7 @@ namespace Terrarium {
             int x = luaL_checkinteger(L, 1);
             int y = luaL_checkinteger(L, 2);
 
-            LuaInventoryAPI::push_inventory(L, lua_interface->game->world.getBlockInventory(sf::Vector2i(x, y)));
+            LuaInventoryAPI::push_inventory(L, lua_interface->game->inventories.getOrCreate(sf::Vector2i(x, y)));
 
             return 1;
         }

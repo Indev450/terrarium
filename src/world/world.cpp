@@ -52,19 +52,6 @@ namespace Terrarium {
                 tiles[y*width + x] = read<Tile>(file);
             }
         }
-
-        uint16_t inventories_count = read<uint16_t>(file);
-
-        for (unsigned int i = 0; i < inventories_count; ++i) {
-            uint16_t x = read<uint16_t>(file);
-            uint16_t y = read<uint16_t>(file);
-
-            auto inventory = std::make_shared<Inventory>(0);
-
-            inventory->load(file, game);
-
-            block_inventories[sf::Vector2i(x, y)] = inventory;
-        }
     }
 
     void World::save(std::ostream &file) {
@@ -75,15 +62,6 @@ namespace Terrarium {
             for (unsigned int x = 0; x < width; ++x) {
                 write(file, tiles[y*width + x]);
             }
-        }
-
-        write<uint16_t>(file, block_inventories.size());
-
-        for (auto &pair: block_inventories) {
-            write<uint16_t>(file, pair.first.x);
-            write<uint16_t>(file, pair.first.y);
-
-            pair.second->save(file);
         }
     }
 

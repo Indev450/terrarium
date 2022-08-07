@@ -44,6 +44,8 @@ namespace Terrarium {
 
         void loadWorldData(GameState &game, const std::string &save_name);
 
+        void loadInventoriesData(GameState &game, const std::string &save_name);
+
         void loadPlayerData(GameState &game, const std::string &save_name);
 
         void save(GameState &game, const std::string &save_name);

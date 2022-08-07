@@ -77,6 +77,18 @@ namespace Terrarium {
         }
     }
 
+    void SavesManager::loadInventoriesData(GameState &game, const std::string &save_name) {
+        fs::path inventories_save = getSavePath(save_name)/"inventories.bin";
+
+        std::ifstream file(inventories_save, std::ios::binary);
+
+        if (file.is_open()) {
+            game.loadInventories(file);
+        } else {
+            throw std::runtime_error("failed to load inventories data");
+        }
+    }
+
     void SavesManager::loadPlayerData(GameState &game, const std::string &save_name) {
         fs::path player_save = getSavePath(save_name)/"player.bin";
 
@@ -92,8 +104,9 @@ namespace Terrarium {
     void SavesManager::save(GameState &game, const std::string &save_name) {
         fs::path save_dir = getSavePath(save_name, true);
 
-        fs::path world_save = getSavePath(save_name)/"world.bin";
-        fs::path player_save = getSavePath(save_name)/"player.bin";
+        fs::path world_save = save_dir/"world.bin";
+        fs::path inventories_save = save_dir/"inventories.bin";
+        fs::path player_save = save_dir/"player.bin";
 
         std::ofstream file;
 
@@ -103,6 +116,16 @@ namespace Terrarium {
             game.saveWorld(file);
         } else {
             throw std::runtime_error("failed to save world data");
+        }
+
+        file.close();
+
+        file.open(inventories_save, std::ios::binary);
+
+        if (file.is_open()) {
+            game.saveInventories(file);
+        } else {
+            throw std::runtime_error("failed to save inventories data");
         }
 
         file.close();

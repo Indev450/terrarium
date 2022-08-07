@@ -98,6 +98,7 @@ int main(int argc, char **argv)
     // Now load player save, if possible
     if (save_exists) {
         saves_mgr.loadPlayerData(*game, save_name);
+        saves_mgr.loadInventoriesData(*game, save_name);
     }
 
     // Generate map
