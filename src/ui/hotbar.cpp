@@ -51,7 +51,16 @@ namespace Terrarium {
 
         unsigned int clicked_index = item_cell_renderer.clickedCellPosition(rpos).x;
 
-        game.player->hold_item_stack->swap(*game.player->getHotbar()[clicked_index]);
+        auto clicked_item = game.player->getHotbar()[clicked_index];
+
+        if (game.player->hold_item_stack->canMerge(*clicked_item) &&
+            !game.player->hold_item_stack->empty() &&
+            !clicked_item->empty()) {
+
+            clicked_item->merge(*game.player->hold_item_stack);
+        } else {
+            game.player->hold_item_stack->swap(*clicked_item);
+        }
 
         return true;
     }

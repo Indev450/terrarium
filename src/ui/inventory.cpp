@@ -34,7 +34,16 @@ namespace Terrarium {
 
         unsigned int clicked_index = clicked_cell.y * width + clicked_cell.x;
 
-        game.player->hold_item_stack->swap(*inventory->get(clicked_index));
+        auto clicked_item = inventory->get(clicked_index);
+
+        if (game.player->hold_item_stack->canMerge(*clicked_item) &&
+            !game.player->hold_item_stack->empty() &&
+            !clicked_item->empty()) {
+
+            clicked_item->merge(*game.player->hold_item_stack);
+        } else {
+            game.player->hold_item_stack->swap(*clicked_item);
+        }
 
         return true;
     }

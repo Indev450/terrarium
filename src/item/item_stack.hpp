@@ -58,7 +58,15 @@ namespace Terrarium {
         }
 
         inline bool canMerge(const ItemStack &other) {
-            return def == other.def || empty() || other.empty();
+            if (empty() || other.empty()) {
+                return true;
+            }
+
+            if (def == other.def) {
+                return count < def->max_count && other.count < other.def->max_count;
+            }
+
+            return false;
         }
 
         inline std::shared_ptr<ItemDef> getDef() const {
