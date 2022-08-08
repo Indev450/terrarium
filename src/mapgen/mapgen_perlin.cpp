@@ -20,6 +20,8 @@
  *
  */
 
+#include <cmath>
+
 #include "mapgen_perlin.hpp"
 
 namespace Terrarium {
@@ -31,7 +33,7 @@ namespace Terrarium {
     const int MapgenPerlin::HEAT = 20;
 
     MapgenPerlin::MapgenPerlin(unsigned int seed):
-        perlin(seed)
+        perlin(seed), rng(seed)
     {}
 
     void MapgenPerlin::generate(World &world) {
@@ -98,6 +100,46 @@ namespace Terrarium {
                             } else {
                                 world.setWall(x, y, it->stone.bg);
                             }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ores
+        for (auto it = ores.begin(); it != ores.end(); ++it) {
+            // For distributing ores in world
+            std::uniform_int_distribution<unsigned int> rng_int_dist(0, it->distribution);
+
+            // for deforming ore clusters.
+            std::uniform_int_distribution<int> rng_cluster_dist(-1, 1);
+
+            for (int y = it->distribution; y < static_cast<int>(world.getHeight()); y += it->distribution + rng_int_dist(rng)) {
+                for (int x = it->distribution; x < static_cast<int>(world.getWidth()); x += it->distribution + rng_int_dist(rng)) {
+                    unsigned int placed_tiles = 0;
+
+                    int place_x = x;
+                    int place_y = y;
+
+                    while (placed_tiles < it->cluster_tiles) {
+                        if (it->tile.fg != 0) {
+                            if (world.getBlock(place_x, place_y) != 0) {
+                                world.setBlock(place_x, place_y, it->tile.fg);
+                            }
+                        }
+
+                        if (it->tile.bg != 0) {
+                            if (world.getWall(place_x, place_y) != 0) {
+                                world.setWall(place_x, place_y, it->tile.bg);
+                            }
+                        }
+
+                        ++placed_tiles;
+
+                        ++place_x;
+                        if (place_x - x > sqrt(it->cluster_tiles)) {
+                            place_x = x + rng_cluster_dist(rng);
+                            ++place_y;
                         }
                     }
                 }

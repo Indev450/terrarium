@@ -6,6 +6,20 @@ terrarium.register_block("default:stone", {
     is_solid = true,
 })
 
+terrarium.register_block("default:copper_ore", {
+    image = "copper.png",
+
+    slippery = 0.7,
+
+    is_solid = true,
+
+    dig_sound = {
+        name = "dig_metal.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+})
+
 terrarium.register_block("default:dirt", {
     image = "dirt.png",
 

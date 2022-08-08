@@ -164,7 +164,22 @@ namespace Terrarium {
                     lua_pop(L, 1);
                 }
 
-                lua_pop(L, 2); // pops biomes and "mapgen data" table
+                lua_pop(L, 1);
+
+                lua_getfield(L, -1, "ores");
+
+                if (!lua_istable(L, -1)) {
+                    throw std::runtime_error("table returned by core._get_mapgen_data() should have 'ores' table");
+                }
+
+                lua_pushnil(L);
+                while (lua_next(L, -2) != 0) {
+                    mapgen.addOre(LuaMapgenAPI::checkore(L, -1));
+
+                    lua_pop(L, 1);
+                }
+
+                lua_pop(L, 2); // pops ores and "mapgen data" table
             }
 
 

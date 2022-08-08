@@ -37,6 +37,8 @@ namespace Terrarium {
 
         Biome checkbiome(lua_State *L, int idx);
 
+        Ore checkore(lua_State *L, int idx);
+
     }
 
 }

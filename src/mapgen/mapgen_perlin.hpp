@@ -23,6 +23,8 @@
 #ifndef MAPGEN_V1_HPP
 #define MAPGEN_V1_HPP
 
+#include <random>
+
 #include "mapgen_base.hpp"
 #include "../lib/perlin/perlin.hpp"
 
@@ -64,6 +66,8 @@ namespace Terrarium {
         // The noise is 3d, so for density, humidity and heat i can just
         // use different z values
         Perlin::PerlinNoise perlin;
+
+        std::default_random_engine rng;
 
         static const int DENSITY;
         static const int HUMIDITY;

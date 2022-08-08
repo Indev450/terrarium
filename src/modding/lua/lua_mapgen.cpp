@@ -99,6 +99,30 @@ namespace Terrarium {
             return biome;
         }
 
+        Ore checkore(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            idx = lua_absindex(L, idx);
+
+            Ore ore;
+
+            lua_getfield(L, idx, "cluster_tiles");
+            ore.cluster_tiles = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "distribution");
+            ore.distribution = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "tile");
+            ore.tile = checktile(L, -1);
+            lua_pop(L, 1);
+
+            return ore;
+        }
+
     }
 
 }

@@ -78,3 +78,11 @@ terrarium.register_biome("default:desert", {
 
     priority = 2,
 })
+
+terrarium.register_ore({
+    cluster_tiles = 12,
+
+    tile = {
+        block = "default:copper_ore",
+    }
+})

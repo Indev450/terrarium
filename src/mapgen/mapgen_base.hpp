@@ -56,9 +56,18 @@ namespace Terrarium {
         }
     };
 
+    struct Ore {
+        unsigned int cluster_tiles = 12; // Max number of tiles placed
+
+        unsigned int distribution = 48; // minimum distance between ore clusters
+
+        Tile tile = { 0, 0 }; // Tile to be placed. blockid 0 means nothing is placed
+    };
+
     class MapgenBase {
     protected:
         std::vector<Biome> biomes;
+        std::vector<Ore> ores;
 
         enum SearchLayer {
             FOREGROUND,
@@ -98,6 +107,10 @@ namespace Terrarium {
 
         void addBiome(const Biome &biome) {
             biomes.push_back(biome);
+        }
+
+        void addOre(const Ore &ore) {
+            ores.push_back(ore);
         }
 
         void run(World &world) {
