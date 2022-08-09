@@ -114,8 +114,11 @@ namespace Terrarium {
             // for deforming ore clusters.
             std::uniform_int_distribution<int> rng_cluster_dist(-1, 1);
 
-            for (int y = it->distribution; y < static_cast<int>(world.getHeight()); y += it->distribution + rng_int_dist(rng)) {
-                for (int x = it->distribution; x < static_cast<int>(world.getWidth()); x += it->distribution + rng_int_dist(rng)) {
+            int start_y = it->min_depth * world.getHeight() + rng_int_dist(rng);
+            int end_y = it->max_depth * world.getHeight();
+
+            for (int y = start_y; y < end_y; y += it->distribution + rng_int_dist(rng)) {
+                for (int x = rng_int_dist(rng); x < static_cast<int>(world.getWidth()); x += it->distribution + rng_int_dist(rng)) {
                     unsigned int placed_tiles = 0;
 
                     int place_x = x;

@@ -116,6 +116,14 @@ namespace Terrarium {
             ore.distribution = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
             lua_pop(L, 1);
 
+            lua_getfield(L, idx, "min_depth");
+            ore.min_depth = LuaUtil::checknumber_ranged(L, -1, 0.0, 1.0);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "max_depth");
+            ore.max_depth = LuaUtil::checknumber_ranged(L, -1, 0.0, 1.0);
+            lua_pop(L, 1);
+
             lua_getfield(L, idx, "tile");
             ore.tile = checktile(L, -1);
             lua_pop(L, 1);

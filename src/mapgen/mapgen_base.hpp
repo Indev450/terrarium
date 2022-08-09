@@ -61,6 +61,10 @@ namespace Terrarium {
 
         unsigned int distribution = 48; // minimum distance between ore clusters
 
+        float min_depth = 0.0; // Min depth from world top
+
+        float max_depth = 1.0; // Max depth from world top
+
         Tile tile = { 0, 0 }; // Tile to be placed. blockid 0 means nothing is placed
     };
 

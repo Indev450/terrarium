@@ -34,6 +34,9 @@ local ore_defaults = {
     cluster_tiles = 12,
     distribution = 48,
 
+    min_depth = 0.0,
+    max_depth = 1.0,
+
     tile = {
         block = "__builtin:air",
         wall = "__builtin:air",
