@@ -22,6 +22,8 @@ terrarium.register_biome("default:grassland", {
         wall = "default:dirt",
     },
 
+    max_depth = 0.2,
+
     priority = 1,
 })
 
@@ -48,6 +50,8 @@ terrarium.register_biome("default:grassland_overgrowth", {
         block = "default:stone",
         wall = "default:grass",
     },
+
+    max_depth = 0.2,
 
     priority = 2,
 })

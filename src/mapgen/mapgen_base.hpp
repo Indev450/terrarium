@@ -46,6 +46,10 @@ namespace Terrarium {
 
         Tile stone = { 0, 0 };
 
+        float min_depth = 0.0;
+
+        float max_depth = 1.0;
+
         // Lowest number -> lowest priority. Biomes with lowest priority generated
         // first, then they "overriden" by higher priority biomes.
         unsigned int priority = 0;

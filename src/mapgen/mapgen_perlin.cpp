@@ -63,6 +63,9 @@ namespace Terrarium {
 
         // Now process biomes
         for (int x = 0; x < static_cast<int>(world.getWidth()); ++x) {
+            int column_height = base_height;
+            column_height += base_height * (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
+
             for (int y = 0; y < static_cast<int>(world.getHeight()); ++y) {
                 float humidity = perlin.noise(
                     x*settings.biome_gen_scale_x,
@@ -74,10 +77,16 @@ namespace Terrarium {
                     y*settings.biome_gen_scale_y,
                     HEAT);
 
+                int depth = y - column_height;
+
                 // Starting from biomes with less priority. Biomes with higher
                 // priority will override all changes done by previous biomes.
                 for (auto it = biomes.cbegin(); it != biomes.cend(); ++it) {
-                    if (humidity > it->humidity_min && humidity < it->humidity_max &&
+                    int min_depth = (world.getHeight() - column_height) * it->min_depth;
+                    int max_depth = (world.getHeight() - column_height) * it->max_depth;
+
+                    if (depth >= min_depth && depth <= max_depth &&
+                        humidity > it->humidity_min && humidity < it->humidity_max &&
                         heat > it->heat_min && heat < it->heat_max) {
 
                         // All changes are based on initial "skeleton" world.

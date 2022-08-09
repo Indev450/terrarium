@@ -27,6 +27,10 @@ local biome_defaults = {
         wall = "__builtin:air",
     },
 
+    min_depth = 0.0,
+
+    max_depth = 1.0,
+
     priority = 0,
 }
 
