@@ -20,29 +20,28 @@
  *
  */
 
-#ifndef ENTITY_PREFAB_HPP
-#define ENTITY_PREFAB_HPP
+#ifndef ACTIVITY_MANAGER_HPP
+#define ACTIVITY_MANAGER_HPP
 
-#include "entity.hpp"
+#include <SFML/Graphics.hpp>
+
+#include <memory>
+
+#include "activity.hpp"
 
 namespace Terrarium {
 
-    typedef uint16_t entity_prefabid;
+    class ActivityManager {
+        std::unique_ptr<Activity> activity;
+        std::unique_ptr<sf::RenderWindow> window;
 
-    struct EntityPrefab {
-        PhysicsParams physics;
-        sf::Vector2f size;
+    public:
+        ActivityManager(std::unique_ptr<sf::RenderWindow> _window);
 
-        AnimationMap anims;
+        void run();
+        void setActivity(std::unique_ptr<Activity> new_activity);
 
-        void initEntity(Entity &entity) {
-            entity.hitbox.width = size.x;
-            entity.hitbox.height = size.y;
-
-            entity.physics = physics;
-
-            entity.anims = anims;
-        }
+        sf::RenderWindow &getWindow();
     };
 
 }

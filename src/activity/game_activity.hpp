@@ -20,29 +20,34 @@
  *
  */
 
-#ifndef ENTITY_PREFAB_HPP
-#define ENTITY_PREFAB_HPP
+#ifndef GAME_ACTIVITY_HPP
+#define GAME_ACTIVITY_HPP
 
-#include "entity.hpp"
+#include <memory>
+#include <string>
+
+#include "activity.hpp"
+#include "../game.hpp"
+#include "../graphics/world_renderer.hpp"
+#include "../ui/item_cell.hpp"
 
 namespace Terrarium {
 
-    typedef uint16_t entity_prefabid;
+    class GameActivity: public Activity {
+        std::shared_ptr<GameState> game;
+        std::unique_ptr<WorldRenderer> world_renderer;
 
-    struct EntityPrefab {
-        PhysicsParams physics;
-        sf::Vector2f size;
+        ItemCellRenderer item_cell_renderer;
 
-        AnimationMap anims;
+    public:
+        GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name);
 
-        void initEntity(Entity &entity) {
-            entity.hitbox.width = size.x;
-            entity.hitbox.height = size.y;
+        void update(ActivityManager &am, float dtime) override;
+        void render(sf::RenderTarget &target) override;
 
-            entity.physics = physics;
+        void onEvent(ActivityManager &am, sf::Event event) override;
 
-            entity.anims = anims;
-        }
+        ~GameActivity();
     };
 
 }

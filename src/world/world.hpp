@@ -27,6 +27,7 @@
 #include <unordered_set>
 #include <cstdint>
 #include <iostream>
+#include <vector>
 
 #include "../tile/tile.hpp"
 #include "../item/inventory.hpp"
@@ -37,7 +38,7 @@ namespace Terrarium {
     class GameState;
 
     class World {
-        Tile* tiles = nullptr;
+        std::vector<Tile> tiles;
 
         uint16_t width = 0, height = 0;
 
@@ -46,6 +47,15 @@ namespace Terrarium {
         std::unordered_set<sf::Vector2i> updated_blocks;
 
     public:
+        World& operator=(World &&moved);
+
+        World(World &&moved);
+
+        World() = default;
+
+        World(const World &copy) = delete;
+        World& operator=(const World &copy) = delete;
+
         void create(uint16_t _width, uint16_t _height);
 
         // World save format:
@@ -138,10 +148,6 @@ namespace Terrarium {
 
         inline uint16_t getHeight() {
             return height;
-        }
-
-        ~World() {
-            delete[] tiles;
         }
     };
 

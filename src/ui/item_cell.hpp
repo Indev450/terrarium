@@ -53,7 +53,7 @@ namespace Terrarium {
     };
 
     // Utility class to draw item cells
-    class ItemCellRenderer: sf::Transformable {
+    class ItemCellRenderer: public sf::Transformable {
         static const unsigned int CELL_SIZE = 32;
         static const unsigned int SPACE = 4;
 

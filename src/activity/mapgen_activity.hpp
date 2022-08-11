@@ -20,33 +20,49 @@
  *
  */
 
-#ifndef MODDING_INTERFACE_HPP
-#define MODDING_INTERFACE_HPP
+#ifndef MAPGEN_ACTIVITY_HPP
+#define MAPGEN_ACTIVITY_HPP
 
+#include <future>
+#include <string>
 #include <memory>
 
-#include "../player/player.hpp"
+#include <SFML/Graphics.hpp>
+
+#include "activity.hpp"
+#include "../world/world.hpp"
 #include "../mapgen/mapgen_base.hpp"
+#include "../game.hpp"
 
 namespace Terrarium {
 
-    class GameState;
-    class Event;
+    class MapgenActivity: public Activity {
+        const float text_update_time = 0.5;
 
-    class ModdingInterface {
-    public:
+        sf::Text text;
+        float text_timer = text_update_time;
+        int text_dots = 0;
+
+        std::future<void> future;
+
+        std::shared_ptr<World> world;
+
         std::shared_ptr<GameState> game;
 
-        ModdingInterface(std::shared_ptr<GameState> _game):
-            game(_game)
-        {}
+        std::string save_name;
 
-        virtual void update(float dtime) {};
-        virtual void handleEvent(Event &event) {};
-        virtual void initMapgen(MapgenBase &mapgen) {};
-        virtual void onPlayerJoin(std::shared_ptr<Player> player) {};
+    public:
+        MapgenActivity(std::shared_ptr<GameState> _game,
+                       std::unique_ptr<MapgenBase> mapgen,
+                       uint16_t width, uint16_t height,
+                       const std::string &_save_name);
+
+        void update(ActivityManager &am, float dtime) override;
+        void render(sf::RenderTarget &target) override;
+
+        void onEvent(ActivityManager &am, sf::Event event) override {};
     };
 
-} // namespace Terrarium
+}
 
 #endif

@@ -20,32 +20,45 @@
  *
  */
 
+#include <algorithm>
+#include <memory>
+
 #include "world.hpp"
 #include "../game.hpp"
 #include "../utils/binary_io.hpp"
 
 namespace Terrarium {
 
+    World& World::operator=(World &&moved) {
+        tiles = std::move(moved.tiles);
+
+        width = moved.width;
+        moved.width = 0;
+
+        height = moved.height;
+        moved.height = 0;
+
+        return *this;
+    }
+
+    World::World(World &&moved) {
+        *this = std::move(moved);
+    }
+
     void World::create(uint16_t _width, uint16_t _height) {
         width = _width;
         height = _height;
 
-        if (tiles != nullptr) {
-            delete[] tiles;
-        }
+        tiles.resize(width*height);
 
-        tiles = new Tile[width*height];
-
-        for (unsigned int i = 0; i < width*height; ++i) {
-            tiles[i] = { 0, 0 };
-        }
+        std::fill(tiles.begin(), tiles.end(), Tile{0, 0});
     }
 
     void World::load(std::istream &file, GameState &game) {
         width = read<uint16_t>(file);
         height = read<uint16_t>(file);
 
-        tiles = new Tile[width*height];
+        tiles.resize(width*height);
 
         for (unsigned int y = 0; y < height; ++y) {
             for (unsigned int x = 0; x < width; ++x) {

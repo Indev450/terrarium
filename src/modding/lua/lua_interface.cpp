@@ -36,7 +36,6 @@
 #include "lua_mapgen.hpp"
 #include "lua_hud_bar.hpp"
 #include "lua_sound.hpp"
-
 #include "../../utils/path_guard.hpp"
 
 namespace Terrarium {

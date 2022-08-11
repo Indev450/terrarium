@@ -28,6 +28,7 @@
 #include <lua.hpp>
 
 #include "../interface.hpp"
+#include "../../game.hpp"
 
 namespace fs = std::filesystem;
 
@@ -46,7 +47,7 @@ namespace Terrarium {
         void update(float dtime) override;
         void handleEvent(Event &event) override;
         void initMapgen(MapgenBase &mapgen) override;
-        void onPlayerJoin(std::shared_ptr<Player> player);
+        void onPlayerJoin(std::shared_ptr<Player> player) override;
 
         // Makes closure with 1 upvalue - `this` pointer and leaves it on stack top
         void pushClosure(lua_CFunction fn);
