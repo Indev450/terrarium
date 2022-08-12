@@ -35,6 +35,8 @@ namespace Terrarium {
 
         Tile checktile(lua_State *L, int idx);
 
+        Decoration checkdecor(lua_State *L, int idx);
+
         Biome checkbiome(lua_State *L, int idx);
 
         Ore checkore(lua_State *L, int idx);

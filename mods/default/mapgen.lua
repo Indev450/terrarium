@@ -57,9 +57,9 @@ terrarium.register_biome("default:grassland_overgrowth", {
 })
 
 terrarium.register_biome("default:desert", {
-    humidity_max = 0.2,
+    humidity_max = 0.9,
 
-    heat_min = -0.4,
+    heat_min = -0.9,
 
     top = {
         block = "default:sand",
@@ -81,6 +81,29 @@ terrarium.register_biome("default:desert", {
     },
 
     priority = 2,
+
+    decorations = {
+        cactus = {
+            origin = {
+                x = 2,
+                y = 4,
+            },
+
+            tile_aliases = {
+                ['c'] = { block = "default:grass" },
+            },
+
+            tiles = {
+                "  c  ",
+                "c c c",
+                "ccccc",
+                "  c  ",
+                "  c  ",
+            },
+
+            place_chance = 0.05,
+        }
+    }
 })
 
 terrarium.register_ore({

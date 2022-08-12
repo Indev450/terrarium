@@ -116,6 +116,9 @@ namespace Terrarium {
 
         sf::Color checkcolor(lua_State *L, int idx);
 
+        template <class T>
+        sf::Vector2<T> checkvector(lua_State *L, int idx);
+
         Animation checkanimation(lua_State *L, int idx);
 
     }

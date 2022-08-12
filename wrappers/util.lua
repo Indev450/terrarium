@@ -26,6 +26,7 @@ function binenum(values)
     return result
 end
 
+------------------------------------------------------------------------
 function fmt_table(t, spaces)
     if type(t) ~= 'table' then return string.format("%q", t) end
 
@@ -47,6 +48,7 @@ function print_table(t)
     print(fmt_table(t))
 end
 
+------------------------------------------------------------------------
 function copy(obj)
     if type(obj) ~= 'table' then return obj end
 
@@ -77,6 +79,7 @@ function deep_copy(obj, seen)
     return res
 end
 
+------------------------------------------------------------------------
 function apply_defaults(table, defaults)
     for key, value in pairs(defaults) do
         if type(defaults[key]) ~= 'boolean' then
@@ -89,6 +92,7 @@ function apply_defaults(table, defaults)
     return table
 end
 
+------------------------------------------------------------------------
 timer = {}
 
 function timer.new(time_to_wait, is_repeat)

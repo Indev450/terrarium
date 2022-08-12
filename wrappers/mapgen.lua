@@ -27,11 +27,13 @@ local biome_defaults = {
         wall = "__builtin:air",
     },
 
-    min_depth = 0.0,
+    min_depth = -1.0,
 
     max_depth = 1.0,
 
     priority = 0,
+
+    decorations = {},
 }
 
 local ore_defaults = {
@@ -61,17 +63,65 @@ function terrarium.register_ore(def)
 end
 
 -- Converts block names into ids
+local function parse_tile(tile)
+    return {
+        block = terrarium.get_block_id(tile.block),
+        wall = terrarium.get_block_id(tile.wall),
+    }
+end
+
+local function parse_decoration(def)
+    local result = {
+        origin = def.origin,
+
+        width = 0,
+        height = #def.tiles,
+
+        place_chance = def.place_chance,
+
+        tiles = {}
+    }
+
+    -- First, create 2d array of tiles
+    local tiles_tmp = {}
+
+    for i = 1, #def.tiles do
+        local width = 0
+        tiles_tmp[i] = {}
+
+        -- Iterate over every character in string
+        for c in def.tiles[i]:gmatch('.') do
+            local tile = def.tile_aliases[c] or { block = "", wall = "" }
+            tiles_tmp[i][#tiles_tmp[i]+1] = parse_tile(tile)
+            width = width + 1
+        end
+
+        if width > result.width then
+            result.width = width
+        end
+    end
+
+    for y = 1, result.height do
+        for x = 1, result.width do
+            result.tiles[#result.tiles+1] = tiles_tmp[y][x] or { block = 0, wall = 0 }
+        end
+    end
+
+    return result
+end
+
 local function convert_registered_biome(def)
     local biome = deep_copy(def)
 
-    biome.top.block = terrarium.get_block_id(biome.top.block)
-    biome.top.wall = terrarium.get_block_id(biome.top.wall)
+    biome.top = parse_tile(biome.top)
 
-    biome.filler.block = terrarium.get_block_id(biome.filler.block)
-    biome.filler.wall = terrarium.get_block_id(biome.filler.wall)
+    biome.filler = parse_tile(biome.filler)
 
-    biome.stone.block = terrarium.get_block_id(biome.stone.block)
-    biome.stone.wall = terrarium.get_block_id(biome.stone.wall)
+    biome.stone = parse_tile(biome.stone)
+
+    for key, decor in pairs(def.decorations) do
+        biome.decorations[key] = parse_decoration(decor)
+    end
 
     return biome
 end
@@ -79,8 +129,7 @@ end
 local function convert_registered_ore(def)
     local ore = deep_copy(def)
 
-    ore.tile.block = terrarium.get_block_id(ore.tile.block)
-    ore.tile.wall = terrarium.get_block_id(ore.tile.wall)
+    ore.tile = parse_tile(ore.tile)
 
     return ore
 end

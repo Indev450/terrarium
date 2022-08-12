@@ -69,6 +69,8 @@ namespace Terrarium {
 
         std::default_random_engine rng;
 
+        std::uniform_real_distribution<float> place_decor_dist;
+
         static const int DENSITY;
         static const int HUMIDITY;
         static const int HEAT;

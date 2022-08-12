@@ -21,6 +21,8 @@
  */
 
 #include <cmath>
+#include <utility>
+#include <optional>
 
 #include "mapgen_perlin.hpp"
 
@@ -33,7 +35,7 @@ namespace Terrarium {
     const int MapgenPerlin::HEAT = 20;
 
     MapgenPerlin::MapgenPerlin(unsigned int seed):
-        perlin(seed), rng(seed)
+        perlin(seed), rng(seed), place_decor_dist(0, 1)
     {}
 
     void MapgenPerlin::generate(World &world) {
@@ -62,6 +64,10 @@ namespace Terrarium {
         }
 
         // Now process biomes
+
+        // Decorations to place, to avoid placing decorations on other decorations
+        std::vector<std::pair<sf::Vector2i, std::shared_ptr<Decoration>>> decor_to_place;
+
         for (int x = 0; x < static_cast<int>(world.getWidth()); ++x) {
             int column_height = base_height;
             column_height += base_height * (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
@@ -79,6 +85,8 @@ namespace Terrarium {
 
                 int depth = y - column_height;
 
+                std::optional<std::pair<sf::Vector2i, std::shared_ptr<Decoration>>> place_decor;
+
                 // Starting from biomes with less priority. Biomes with higher
                 // priority will override all changes done by previous biomes.
                 for (auto it = biomes.cbegin(); it != biomes.cend(); ++it) {
@@ -88,6 +96,18 @@ namespace Terrarium {
                     if (depth >= min_depth && depth <= max_depth &&
                         humidity > it->humidity_min && humidity < it->humidity_max &&
                         heat > it->heat_min && heat < it->heat_max) {
+
+                        // In case previous biome tried to place decoration
+                        place_decor = std::nullopt;
+
+                        if (world.getBlock(x, y) == 0) {
+                            for (auto &decor: it->decorations) {
+                                if (place_decor_dist(rng) < decor->place_chance && decor->canPlace(world, x, y)) {
+                                    place_decor = std::make_pair(sf::Vector2i(x, y), decor);
+                                    break;
+                                }
+                            }
+                        }
 
                         // All changes are based on initial "skeleton" world.
                         // Only non-air blocks are changed
@@ -112,7 +132,15 @@ namespace Terrarium {
                         }
                     }
                 }
+
+                if (place_decor) {
+                    decor_to_place.push_back(*place_decor);
+                }
             }
+        }
+
+        for (auto &pair: decor_to_place) {
+            pair.second->place(world, pair.first.x, pair.first.y);
         }
 
         // Ores

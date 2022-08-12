@@ -25,11 +25,78 @@
 
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 #include "../tile/tile.hpp"
 #include "../world/world.hpp"
 
 namespace Terrarium {
+
+    // Trees, grass, etc
+    struct Decoration {
+        sf::Vector2i origin;
+
+        uint16_t width;
+        uint16_t height;
+
+        std::vector<Tile> tiles;
+
+        float place_chance = 0.5;
+
+        bool canPlace(const World &world, int x, int y) const {
+            // TODO - maybe add something like "check_tile" or "place_on_tile"
+            // into decor definition?
+            const Tile *place_on_tile = world.getTile(x, y + 1);
+
+            if (place_on_tile == nullptr) { return false; }
+
+            if (place_on_tile->fg == 0) { return false; }
+
+            for (int off_x = 0; off_x < static_cast<int>(width); ++off_x) {
+                for (int off_y = 0; off_y < static_cast<int>(height); ++off_y) {
+                    int check_x = x + (off_x - origin.x);
+                    int check_y = y + (off_y - origin.y);
+
+                    const Tile *tile = world.getTile(check_x, check_y);
+                    const Tile &place_tile = tiles[off_y*width + off_x];
+
+                    // Out of bounds
+                    if (tile == nullptr) {
+                        return false;
+                    }
+
+                    if (place_tile.fg != 0 && tile->fg != 0) {
+                        return false;
+                    }
+
+                    if (place_tile.bg != 0 && tile->bg != 0) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        void place(World &world, int x, int y) const {
+            for (int off_x = 0; off_x < static_cast<int>(width); ++off_x) {
+                for (int off_y = 0; off_y < static_cast<int>(height); ++off_y) {
+                    int place_x = x + (off_x - origin.x);
+                    int place_y = y + (off_y - origin.y);
+
+                    const Tile &place_tile = tiles[off_y*width + off_x];
+
+                    if (place_tile.fg != 0) {
+                        world.setBlock(place_x, place_y, place_tile.fg);
+                    }
+
+                    if (place_tile.bg != 0) {
+                        world.setWall(place_x, place_y, place_tile.bg);
+                    }
+                }
+            }
+        }
+    };
 
     struct Biome {
         float humidity_min = -1.0;
@@ -53,6 +120,8 @@ namespace Terrarium {
         // Lowest number -> lowest priority. Biomes with lowest priority generated
         // first, then they "overriden" by higher priority biomes.
         unsigned int priority = 0;
+
+        std::vector<std::shared_ptr<Decoration>> decorations;
 
         // for sorting
         bool operator<(const Biome &other) {

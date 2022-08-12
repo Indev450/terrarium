@@ -67,7 +67,7 @@ namespace Terrarium {
         }
     }
 
-    void World::save(std::ostream &file) {
+    void World::save(std::ostream &file) const {
         write(file, width);
         write(file, height);
 

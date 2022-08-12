@@ -64,14 +64,14 @@ namespace Terrarium {
         // Tile                              tiles[width*height]
         void load(std::istream &file, GameState &game);
 
-        void save(std::ostream &file);
+        void save(std::ostream &file) const;
 
-        inline bool isInRange(int x, int y) {
+        inline bool isInRange(int x, int y) const {
             return x >= 0 && x < static_cast<int>(width) &&
                    y >= 0 && y < static_cast<int>(height);
         }
 
-        inline const Tile *getTile(int x, int y) {
+        inline const Tile *getTile(int x, int y) const {
             if (!isInRange(x, y)) {
                 return nullptr;
             }
@@ -79,7 +79,7 @@ namespace Terrarium {
             return &tiles[y*width + x];
         }
 
-        inline blockid getBlock(int x, int y) {
+        inline blockid getBlock(int x, int y) const {
             if (!isInRange(x, y)) {
                 return 0;
             }
@@ -87,7 +87,7 @@ namespace Terrarium {
             return tiles[y*width + x].fg;
         }
 
-        inline blockid getWall(int x, int y) {
+        inline blockid getWall(int x, int y) const {
             if (!isInRange(x, y)) {
                 return 0;
             }
@@ -130,11 +130,11 @@ namespace Terrarium {
         }
 
         // To be used in WorldRenderer
-        inline bool isUpdated() {
+        inline bool isUpdated() const {
             return !updated_blocks.empty();
         }
 
-        inline bool isUpdated(sf::Vector2i pos) {
+        inline bool isUpdated(const sf::Vector2i &pos) const {
             return updated_blocks.count(pos) != 0;
         }
 
@@ -142,11 +142,11 @@ namespace Terrarium {
             updated_blocks.clear();
         }
 
-        inline uint16_t getWidth() {
+        inline uint16_t getWidth() const {
             return width;
         }
 
-        inline uint16_t getHeight() {
+        inline uint16_t getHeight() const {
             return height;
         }
     };

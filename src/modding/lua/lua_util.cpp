@@ -234,6 +234,44 @@ namespace Terrarium {
             return color;
         }
 
+        template <>
+        sf::Vector2<float> checkvector<float>(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            sf::Vector2<float> vec;
+
+            lua_getfield(L, idx, "x");
+            vec.x = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "y");
+            vec.y = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            return vec;
+        }
+
+        template <>
+        sf::Vector2<int> checkvector<int>(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            sf::Vector2<int> vec;
+
+            lua_getfield(L, idx, "x");
+            vec.x = luaL_checkinteger(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "y");
+            vec.y = luaL_checkinteger(L, -1);
+            lua_pop(L, 1);
+
+            return vec;
+        }
+
         Animation checkanimation(lua_State *L, int idx) {
             Animation anim;
 
