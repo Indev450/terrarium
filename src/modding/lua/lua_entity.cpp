@@ -128,6 +128,12 @@ namespace Terrarium {
             entity->anims.setMirror(mirror);
         }
 
+        void LuaEntityUD::setTexture(const sf::Texture &texture) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.setTexture(texture);
+        }
+
         void LuaEntityUD::kill(EntityManager &entity_mgr) {
             entity_mgr.del(getID());
         }
@@ -187,6 +193,9 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_set_mirror);
             lua_setfield(L, -2, "set_mirror");
+
+            lua_interface.pushClosure(entity_set_texture);
+            lua_setfield(L, -2, "set_texture");
 
             lua_interface.pushClosure(entity_kill);
             lua_setfield(L, -2, "kill");
@@ -482,6 +491,20 @@ namespace Terrarium {
 
             try {
                 entity_ref->setMirror(LuaUtil::checkboolean(L, 2));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_set_texture(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->setTexture(lua_interface->game->gfx.textures.get(luaL_checkstring(L, 2)));
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }
