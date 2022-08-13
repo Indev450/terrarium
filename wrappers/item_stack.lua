@@ -3,7 +3,7 @@ local function string_to_itemstack(s)
     -- All symbols until whitespace are item name
     local item_type = s:match("[^%s]+")
 
-    local item_count = tonumber(s:sub(s:find(item_type) + #item_type))
+    local item_count = tonumber(s:sub(s:find(item_type) + #item_type)) or 1
 
     local istack = core._new_item_stack()
 
