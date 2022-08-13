@@ -58,6 +58,8 @@ namespace Terrarium {
                                   const sf::Transform &transform,
                                   const ItemCellRendererSettings &settings) {
 
+        sf::Transform combined_transform = transform * getTransform();
+
         sf::Vector2f cell_position(
             (CELL_SIZE * settings.grid_x) + (settings.grid_x+1) * SPACE,
             (CELL_SIZE * settings.grid_y) + (settings.grid_y+1) * SPACE);
@@ -69,7 +71,7 @@ namespace Terrarium {
 
         cell.setPosition(cell_position);
 
-        target.draw(cell, transform);
+        target.draw(cell, combined_transform);
 
         if (item_stack.empty()) {
             return;
@@ -79,12 +81,12 @@ namespace Terrarium {
 
         item_def->inventory_image.setPosition(cell_position);
 
-        target.draw(item_def->inventory_image, transform);
+        target.draw(item_def->inventory_image, combined_transform);
 
         if (item_stack.getCount() > 1) {
             count_text.setString(std::to_string(item_stack.getCount()));
             count_text.setPosition(cell_position);
-            target.draw(count_text, transform);
+            target.draw(count_text, combined_transform);
         }
     }
 
