@@ -51,7 +51,11 @@ namespace Terrarium {
         if (future.wait_for(std::chrono::seconds(0)) != std::future_status::timeout) {
             game->world = std::move(*world);
 
+            // Replace activity with game activity
             am.setActivity(std::make_unique<GameActivity>(am, game, save_name));
+
+            // `this` is now invalid pointer. E S C A P E !
+            return;
         }
 
         text_timer -= dtime;
