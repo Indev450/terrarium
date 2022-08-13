@@ -26,6 +26,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <optional>
 
 #include "../tile/tile.hpp"
 #include "../world/world.hpp"
@@ -43,59 +44,14 @@ namespace Terrarium {
 
         float place_chance = 0.5;
 
-        bool canPlace(const World &world, int x, int y) const {
-            // TODO - maybe add something like "check_tile" or "place_on_tile"
-            // into decor definition?
-            const Tile *place_on_tile = world.getTile(x, y + 1);
+        std::optional<Tile> getLocalTile(int x, int y) const;
 
-            if (place_on_tile == nullptr) { return false; }
+        // Checks if decoration can be placed without replacing other blocks
+        bool canPlace(const World &world, int x, int y) const;
 
-            if (place_on_tile->fg == 0) { return false; }
-
-            for (int off_x = 0; off_x < static_cast<int>(width); ++off_x) {
-                for (int off_y = 0; off_y < static_cast<int>(height); ++off_y) {
-                    int check_x = x + (off_x - origin.x);
-                    int check_y = y + (off_y - origin.y);
-
-                    const Tile *tile = world.getTile(check_x, check_y);
-                    const Tile &place_tile = tiles[off_y*width + off_x];
-
-                    // Out of bounds
-                    if (tile == nullptr) {
-                        return false;
-                    }
-
-                    if (place_tile.fg != 0 && tile->fg != 0) {
-                        return false;
-                    }
-
-                    if (place_tile.bg != 0 && tile->bg != 0) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        void place(World &world, int x, int y) const {
-            for (int off_x = 0; off_x < static_cast<int>(width); ++off_x) {
-                for (int off_y = 0; off_y < static_cast<int>(height); ++off_y) {
-                    int place_x = x + (off_x - origin.x);
-                    int place_y = y + (off_y - origin.y);
-
-                    const Tile &place_tile = tiles[off_y*width + off_x];
-
-                    if (place_tile.fg != 0) {
-                        world.setBlock(place_x, place_y, place_tile.fg);
-                    }
-
-                    if (place_tile.bg != 0) {
-                        world.setWall(place_x, place_y, place_tile.bg);
-                    }
-                }
-            }
-        }
+        // Places decoration into the world. This function does NOT checks
+        // if it can be placed or not. That lies on the mapgen
+        void place(World &world, int x, int y) const;
     };
 
     struct Biome {

@@ -139,10 +139,6 @@ namespace Terrarium {
             }
         }
 
-        for (auto &pair: decor_to_place) {
-            pair.second->place(world, pair.first.x, pair.first.y);
-        }
-
         // Ores
         for (auto it = ores.begin(); it != ores.end(); ++it) {
             // For distributing ores in world
@@ -183,6 +179,14 @@ namespace Terrarium {
                         }
                     }
                 }
+            }
+        }
+
+        // Place decorations only after everything else placed
+        for (auto &pair: decor_to_place) {
+            // This check fixes overlaps
+            if (pair.second->canPlace(world, pair.first.x, pair.first.y)) {
+                pair.second->place(world, pair.first.x, pair.first.y);
             }
         }
     }
