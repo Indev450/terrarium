@@ -1,5 +1,9 @@
 -- Convert item string, like "default:stone 5", into item stack object
 local function string_to_itemstack(s)
+    if #s == 0 then
+        return core._new_item_stack()
+    end
+
     -- All symbols until whitespace are item name
     local item_type = s:match("[^%s]+")
 
