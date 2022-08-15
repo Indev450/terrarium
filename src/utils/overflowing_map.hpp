@@ -34,10 +34,6 @@ namespace Terrarium {
     class OverflowingMap {
         Key last_key = 0;
 
-        bool isKeyFree(Key key) {
-            return key != 0 && map.find(key) == map.end();
-        }
-
         Key getFreeKey() {
             Key start_key = last_key;
 
@@ -53,6 +49,9 @@ namespace Terrarium {
     protected:
         std::unordered_map<Key, std::shared_ptr<Value>> map;
 
+        virtual bool isKeyFree(Key key) {
+            return key != 0 && map.find(key) == map.end();
+        }
     public:
         Key add(std::shared_ptr<Value> value) {
             Key key = getFreeKey();

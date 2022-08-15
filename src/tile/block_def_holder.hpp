@@ -25,6 +25,7 @@
 
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #include "block_def.hpp"
 #include "../utils/overflowing_map.hpp"
@@ -35,6 +36,14 @@ namespace Terrarium {
     class BlockDefHolder: public OverflowingMap<blockid, BlockDef> {
         BlockDef unknown;
         std::unordered_map<std::string, blockid> block_names;
+
+        bool isKeyFree(blockid key) override {
+            return key != 0 && map.find(key) == map.end() && std::all_of(
+                block_names.begin(),
+                block_names.end(),
+                [&] (auto &pair) { return pair.second != key; }
+            );
+        }
 
     public:
         // Instead of pointer, returns reference to found block def,
@@ -56,10 +65,14 @@ namespace Terrarium {
             if (pair != block_names.end()) {
                 set(pair->second, def);
 
+                std::cout<<"Existing block: "<<def->name;
+                std::cout<<" #"<<pair->second<<std::endl;
+
                 return pair->second;
             } else {
                 blockid id = OverflowingMap<blockid, BlockDef>::add(def);
 
+                std::cout<<"New block: "<<def->name<<" #"<<id<<std::endl;
                 block_names[def->name] = id;
 
                 return id;
