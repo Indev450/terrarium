@@ -65,14 +65,10 @@ namespace Terrarium {
             if (pair != block_names.end()) {
                 set(pair->second, def);
 
-                std::cout<<"Existing block: "<<def->name;
-                std::cout<<" #"<<pair->second<<std::endl;
-
                 return pair->second;
             } else {
                 blockid id = OverflowingMap<blockid, BlockDef>::add(def);
 
-                std::cout<<"New block: "<<def->name<<" #"<<id<<std::endl;
                 block_names[def->name] = id;
 
                 return id;
