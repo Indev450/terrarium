@@ -37,6 +37,8 @@ local block_defaults = {
     description = "Block",
     max_count = 999,
 
+    drop = nil,
+
     dig_sound = nil,
     place_sound = nil,
 
@@ -44,11 +46,17 @@ local block_defaults = {
     on_place = function(position, user) return true end,
     on_destroy = function(position, user) return true end,
 
+    -- where can be "up", "down", "left" and "right"
+    on_neighbour_destroy = function(position, where, block_name, user) end,
+
     on_interact = function(position, user) end
 }
 
 function terrarium.register_block(name, def)
     apply_defaults(def, block_defaults)
+
+    -- If you need block that drops nothing, use "" as drops
+    def.drop = def.drop or name
 
     def.block_id = core._register_block(name, def)
 
@@ -137,6 +145,25 @@ function terrarium._dig(x, y, user, fg)
         return false
     end
 
+    -- NOTE: where means where is OUR block, relative to neighbour, not where
+    -- neighbour itself
+    local neighbours = {
+        { x = x, y = y - 1, where = "down" },
+        { x = x, y = y + 1, where = "up" },
+        { x = x - 1, y = y, where = "right" },
+        { x = x + 1, y = y, where = "left" },
+    }
+
+    for _, neighbour in pairs(neighbours) do
+        local def = terrarium.registered_blocks[terrarium.get_block(
+            neighbour.x, neighbour.y
+        )]
+
+        if def ~= nil then
+            def.on_neighbour_destroy(neighbour, neighbour.where, dig_name, user)
+        end
+    end
+
     -- Change that block to air
     _set(x, y, 0)
 
@@ -194,6 +221,13 @@ function terrarium.get_block_inventory(x, y)
     return core._get_block_inventory(x, y)
 end
 
+function terrarium.give_block_drops(block_name, user)
+    local def = terrarium.registered_blocks[block_name]
+
+    if def == nil then return end
+
+    user.ref:get_player_inventory():add_item(ItemStack(def.drop))
+end
 
 core._event_handlers["BlockActivate"] = function(event)
     local block_id = core._get_block(event.block_event.position.x, event.block_event.position.y)
