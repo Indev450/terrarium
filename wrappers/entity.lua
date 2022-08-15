@@ -24,16 +24,16 @@ local entity_defaults = {
 
 local entity_methods = {
     kill = function(self)
-        if not self.obj:is_valid() then return end
+        if not self.ref:is_valid() then return end
 
-        core._entities.to_be_removed[self.id] = true
+        core._entities.to_be_removed[self] = true
     end,
 }
 
 function terrarium.register_entity(name, def)
     apply_defaults(def, entity_defaults)
 
-    def.prefab_id = core._register_entity_prefab(def)
+    def.prefab_id = core._new_entity_prefab(def)
 
     terrarium.registered_entities[name] = def
 end
@@ -66,60 +66,154 @@ function terrarium.new_entity(name, position, data)
 
     luaentity.ref = core._new_entity(def.prefab_id)
 
-    luaentity.id = core._entities:get_free_id()
+    luaentity.ref:set_position(position)
 
-    core._entities.to_be_added[luaentity.id] = luaentity
+    table.insert(core._entities.to_be_added, luaentity)
 
     luaentity:on_create(data)
 
     return luaentity
 end
 
+-- Tries to spawn entity off every player's screen, but near specified player.
+-- `dist` is maximum distance from player camera border
+-- If `predicate` isn't nil, it is used as `function(position)` that should
+-- return true if entity should be spawned at selected spot. If attempts count
+-- set, this function will retry at most `attempts` times until it doesn't fail.
+-- Infinite amount attempts not supported to avoid locking the game
+-- FIXME - too many arguments.
+function terrarium.try_spawn_entity_at(name, data, player, dist, predicate, attempts)
+    local dist = dist or 4
+    local predicate = predicate or function(position) return true end
+    local attempts = attempts or 1
 
-core._entities = {
-    last_id = 0,
+    local camera = player.ref:get_player_camera()
 
-    get_free_id = function(self)
-        self.last_id = self.last_id + 1
+    while attempts > 0 do
+        attempts = attempts - 1
 
-        while self.list[self.last_id] ~= nil or self.to_be_added[self.last_id] ~= nil do
-            self.last_id = self.last_id + 1
+        local variant = math.random(1, 3)
+        -- 3 |  2  | 3
+        -- --+-----+--
+        --   |  o  |
+        -- 1 | /T\ | 1
+        --   |  A  |
+        -- --+-----+--
+        -- 3 |  2  | 3
+        local position = {
+            x = 0,
+            y = 0,
+        }
+
+        if variant == 1 then
+            local xoff = dist - math.random()*2*dist
+
+            position.x = camera.x + xoff
+
+            if xoff >= 0 then position.x = position.x + camera.width end
+
+            position.y = camera.y + math.random()*camera.height
+        elseif variant == 2 then
+            local yoff = dist - math.random()*2*dist
+
+            position.x = camera.x + math.random()*camera.width
+
+            position.y = camera.y + yoff
+
+            if yoff >= 0 then position.y = position.y + camera.height end
+        else
+            local xoff = dist - math.random()*2*dist
+            local yoff = dist - math.random()*2*dist
+
+            position.x = camera.x + xoff
+            position.y = camera.y + yoff
+
+            if xoff >= 0 then position.x = position.x + camera.width end
+            if yoff >= 0 then position.y = position.y + camera.height end
         end
 
-        return self.last_id
-    end,
+        -- Should iterate over every player and check if this position is within
+        -- their camera. No need for this currently, because there is only one
+        -- player and no api designed for multiple players
 
-    to_be_added = {}, -- In case new_entity is called when iterating over list
+        if predicate(position) then
+            return terrarium.new_entity(name, position, data)
+        end
+    end
+end
 
+-- Returns an iterator over entity list. If predicate is not nil, then
+-- it used as function that takes one argument - entity, and returns boolean.
+-- Iterator goes through all entities which for predicate returns true
+function terrarium.iter_entities(predicate)
+    local predicate = predicate or function(entity) return true end
+    local i = 0
+
+    return function()
+        repeat
+            i = i + 1
+        until i > #core._entities.list or predicate(core._entities.list[i])
+
+        return core._entities.list[i]
+    end
+end
+
+-- Returns iterator that goes through all entities which have all required keys
+-- For example: terrarium.iter_entities_with {"health", "hunger"}
+function terrarium.iter_entities_with(keys)
+    return terrarium.iter_entities(function(entity)
+        for _, key in pairs(keys) do
+            if entity[key] == nil then return false end
+        end
+
+        return true
+    end)
+end
+
+core._entities = {
+    -- List of entities to add in this frame
+    to_be_added = {},
+
+    -- Set of entities to remove in this frame (keys are entities themself,
+    -- values are true, usually)
     to_be_removed = {},
 
+    -- List of active lua entities
     list = {},
 }
 
 core._update_hooks["entity"] = function(dtime)
+    -- Add entities
     if #core._entities.to_be_added ~= 0 then
-        for id, entity in pairs(core._entities.to_be_added) do
-            core._entities.list[id] = entity
+        for i = 1, #core._entities.to_be_added do
+            table.insert(core._entities.list, core._entities.to_be_added[i])
         end
 
         core._entities.to_be_added = {}
     end
 
-    if #core._entities.to_be_removed ~= 0 then
-        local to_be_removed = core._entities.to_be_removed
-        core._entities.to_be_removed = {}
+    -- on_removed callback may modify core._entities.to_be_removed, so we
+    -- need this little protection
+    local to_be_removed = core._entities.to_be_removed
+    core._entities.to_be_removed = {}
 
-        for id, _ in pairs(to_be_removed) do
-            core._entities.list[id]:on_removed()
-        end
+    local indices_to_remove = {}
 
-        for id, _ in pairs(to_be_removed) do
-            core._entities.list[id].obj:kill()
-            core._entities.list[id] = nil
+    for i, entity in ipairs(core._entities.list) do
+        -- If entity needed to be removed, add its index to list, otherwise just
+        -- update it
+        if to_be_removed[entity] then
+            table.insert(indices_to_remove, i)
+            entity:on_removed()
+            entity.ref:kill()
+        else
+            entity:update(dtime)
         end
     end
 
-    for _, entity in pairs(core._entities.list) do
-        entity:update(dtime)
+    -- indices_to_remove is sorted, so we can just iterate
+    -- backwards, and because of that we don't need to shift indices
+    for i = #indices_to_remove, 1, -1 do
+        table.remove(core._entities.list, indices_to_remove[i])
     end
 end
