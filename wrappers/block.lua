@@ -108,24 +108,24 @@ function terrarium.set_wall(x, y, block_name)
 end
 
 -- These functions use callbacks, use them when blocks modified by user
-function terrarium.dig_block(x, y, user)
-    return terrarium._dig(x, y, user, true)
+function terrarium.dig_block(x, y, user, nosound)
+    return terrarium._dig(x, y, user, nosound, true)
 end
 
 function terrarium.dig_wall(x, y, user)
-    return terrarium._dig(x, y, user, false)
+    return terrarium._dig(x, y, user, nosound, false)
 end
 
-function terrarium.place_block(x, y, block_name, user)
-    return terrarium._place(x, y, block_name, user, true)
+function terrarium.place_block(x, y, block_name, user, nosound)
+    return terrarium._place(x, y, block_name, user, nosound, true)
 end
 
-function terrarium.place_wall(x, y, block_name, user)
-    return terrarium._place(x, y, block_name, user, false)
+function terrarium.place_wall(x, y, block_name, user, nosound)
+    return terrarium._place(x, y, block_name, user, nosound, false)
 end
 
 
-function terrarium._dig(x, y, user, fg)
+function terrarium._dig(x, y, user, nosound, fg)
     -- Select layer, foreground or background
     local _get = fg and core._get_block or core._get_wall
     local _set = fg and core._set_block or core._set_wall
@@ -167,7 +167,7 @@ function terrarium._dig(x, y, user, fg)
     -- Change that block to air
     _set(x, y, 0)
 
-    if def ~= nil and def.dig_sound ~= nil then
+    if def ~= nil and def.dig_sound ~= nil and not nosound then
         core._play_sound({
             name = def.dig_sound.name,
             volume = def.dig_sound.volume,
@@ -184,7 +184,7 @@ function terrarium._dig(x, y, user, fg)
     return true
 end
 
-function terrarium._place(x, y, block_name, user, fg)
+function terrarium._place(x, y, block_name, user, nosound, fg)
     -- Select layer, foreground or background
     local _get = fg and core._get_block or core._get_wall
     local _set = fg and core._set_block or core._set_wall
@@ -201,7 +201,7 @@ function terrarium._place(x, y, block_name, user, fg)
 
     def.on_place({ x = x, y = y }, user)
 
-    if def.place_sound ~= nil then
+    if def.place_sound ~= nil and not nosound then
         core._play_sound({
             name = def.place_sound.name,
             volume = def.place_sound.volume,
