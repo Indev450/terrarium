@@ -17,17 +17,19 @@ function terrarium.register_recipe(category, def)
     -- "then we can craft item, take 15 default:stone from player inventory"
     -- This won't make item count negative, but it makes craft aviable
     -- even if it isn't meant to be.
+    local used_item_types = {}
     local items = {}
 
-    for idx, item in pairs(def.requirements) do
+    for _, item in ipairs(def.requirements) do
         local istack = ItemStack(item)
         local name = istack:get_item_name()
 
-        if items[name] then
+        if used_item_types[name] then
             error("multiple items of same type in recipe requirements are not supported")
         end
 
-        items[name] = istack
+        table.insert(items, istack)
+        used_item_types[name] = true
     end
 
     core._register_recipe(category, {
