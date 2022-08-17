@@ -9,6 +9,7 @@ dofile("wrappers/item_stack.lua")
 
 dofile("wrappers/block.lua")
 dofile("wrappers/item.lua")
+dofile("wrappers/tools.lua")
 dofile("wrappers/entity.lua")
 dofile("wrappers/player.lua")
 dofile("wrappers/mapgen.lua")

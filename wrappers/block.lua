@@ -34,8 +34,7 @@ local block_defaults = {
     is_solid = true,
     is_interactive = false,
 
-    description = "Block",
-    max_count = 999,
+    groups = {},
 
     drop = nil,
 
@@ -49,7 +48,11 @@ local block_defaults = {
     -- where can be "up", "down", "left" and "right"
     on_neighbour_destroy = function(position, where, block_name, user) end,
 
-    on_interact = function(position, user) end
+    on_interact = function(position, user) end,
+
+    -- Block item
+    description = "Block",
+    max_count = 999,
 }
 
 function terrarium.register_block(name, def)
