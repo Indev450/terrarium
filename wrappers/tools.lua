@@ -7,7 +7,7 @@ local tool_defaults = {
 -- Block groups should have minimum required levels to break them, and tool
 -- groups are these levels. This function returns true if it finds block group
 -- which level less than tool level
-local function check_groups(tool_groups, block_groups)
+local function check_groups(block_groups, tool_groups)
     for group, level in pairs(tool_groups) do
         local block_level = block_groups[group]
 
