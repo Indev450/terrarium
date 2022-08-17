@@ -32,7 +32,6 @@ local block_defaults = {
     image = "",
     slippery = 0,
     is_solid = true,
-    is_interactive = false,
 
     groups = {},
 
@@ -48,7 +47,7 @@ local block_defaults = {
     -- where can be "up", "down", "left" and "right"
     on_neighbour_destroy = function(position, where, block_name, user) end,
 
-    on_interact = function(position, user) end,
+    on_interact = nil,
 
     -- Block item
     description = "Block",
@@ -57,6 +56,7 @@ local block_defaults = {
 
 function terrarium.register_block(name, def)
     apply_defaults(def, block_defaults)
+    def.is_interactive = def.on_interact ~= nil
 
     -- If you need block that drops nothing, use "" as drops
     def.drop = def.drop or name
