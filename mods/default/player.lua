@@ -11,7 +11,6 @@ terrarium.override_player({
 terrarium.register_on_player_join(function(player)
     -- TODO - add easier way to add items to player inventory
     player.ref:get_player_inventory():get(0):set("default:copper_pickaxe", 1)
-    player.ref:get_player_inventory():get(1):set("default:chest", 5)
-
-    player:set_bar_value("energy", 15)
+    player.ref:get_player_inventory():get(1):set("default:copper_axe", 1)
+    player.ref:get_player_inventory():get(2):set("default:chest", 5)
 end)

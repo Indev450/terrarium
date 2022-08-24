@@ -1,4 +1,6 @@
 dofile("blocks.lua")
+dofile("items.lua")
+dofile("tree.lua")
 dofile("mapgen.lua")
 dofile("tools.lua")
 dofile("player.lua")

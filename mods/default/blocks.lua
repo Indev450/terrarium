@@ -4,6 +4,10 @@ terrarium.register_block("default:stone", {
     slippery = 0.2,
 
     is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
 })
 
 terrarium.register_block("default:copper_ore", {
@@ -13,11 +17,60 @@ terrarium.register_block("default:copper_ore", {
 
     is_solid = true,
 
+    groups = {
+        ["ground"] = 1,
+    },
+
     dig_sound = {
         name = "dig_metal.wav",
         volume = 1.0,
         pitch = 1.0,
     },
+
+    inventory_image = "copper_ore.png",
+    max_count = 999,
+})
+
+terrarium.register_block("default:iron_ore", {
+    image = "iron.png",
+
+    slippery = 0.2,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_metal.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    inventory_image = "iron_ore.png",
+    max_count = 999,
+})
+
+terrarium.register_block("default:gold_ore", {
+    image = "gold.png",
+
+    slippery = 0.2,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 2,
+    },
+
+    dig_sound = {
+        name = "dig_metal.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    inventory_image = "gold_ore.png",
+    max_count = 999,
 })
 
 terrarium.register_block("default:dirt", {
@@ -26,6 +79,10 @@ terrarium.register_block("default:dirt", {
     slippery = 0.8,
 
     is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
 
     dig_sound = {
         name = "dig_soil.wav",
@@ -47,6 +104,10 @@ terrarium.register_block("default:grass", {
 
     is_solid = true,
 
+    groups = {
+        ["ground"] = 1,
+    },
+
     dig_sound = {
         name = "dig_soil.wav",
         volume = 1.0,
@@ -57,6 +118,53 @@ terrarium.register_block("default:grass", {
         name = "dig_soil.wav",
         volume = 1.0,
         pitch = 1.4,
+    },
+})
+
+terrarium.register_block("default:cactus", {
+    image = "cactus.png",
+
+    is_solid = false,
+
+    groups = {
+        ["tree"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.2,
+    },
+})
+
+terrarium.register_block("default:wood", {
+    image = "wood_block.png",
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    description = "Wood",
+    inventory_image = "wood.png",
+
+    dig_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.2,
     },
 })
 
@@ -67,6 +175,10 @@ terrarium.register_block("default:sand", {
 
     is_solid = true,
 
+    groups = {
+        ["ground"] = 1,
+    },
+
     dig_sound = {
         name = "dig_soil.wav",
         volume = 1.0,
@@ -80,12 +192,50 @@ terrarium.register_block("default:sand", {
     },
 })
 
+terrarium.register_block("default:glass", {
+    image = "glass.png",
+
+    slippery = 0.7,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+})
+
+terrarium.register_block("default:stone_bricks", {
+    image = "stone_bricks.png",
+
+    slippery = 0.2,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+})
+
 terrarium.register_block("default:chest", {
     image = "chest.png",
 
     is_solid = false,
 
-    is_interactive = true,
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.2,
+    },
 
     on_place = function(position, user)
         terrarium.get_block_inventory(position.x, position.y):resize(8*4)
@@ -108,6 +258,72 @@ terrarium.register_block("default:chest", {
         end
 
         return false
+    end,
+})
+
+terrarium.register_block("default:workbench", {
+    image = "workbench.png",
+
+    is_solid = false,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.2,
+    },
+
+    on_interact = function(position, user)
+        user:show_crafting_ui("workbench")
+    end,
+})
+
+terrarium.register_block("default:furnace", {
+    image = "furnace.png",
+
+    is_solid = false,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    on_interact = function(position, user)
+        user:show_crafting_ui("furnace")
+    end,
+})
+
+terrarium.register_block("default:anvil", {
+    image = "anvil.png",
+
+    is_solid = false,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_metal.wav",
+        volume = 1.0,
+        pitch = 0.6,
+    },
+
+    place_sound = {
+        name = "dig_metal.wav",
+        volume = 1.0,
+        pitch = 0.8,
+    },
+
+    on_interact = function(position, user)
+        user:show_crafting_ui("anvil")
     end,
 })
 

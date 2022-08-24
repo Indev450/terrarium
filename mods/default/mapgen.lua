@@ -1,10 +1,4 @@
 terrarium.register_biome("default:grassland", {
-    humidity_min = -0.2,
-    humidity_max = 0.6,
-
-    heat_min = -0.2,
-    heat_max = 0.8,
-
     top = {
         block = "default:grass",
         wall = "default:grass",
@@ -25,6 +19,42 @@ terrarium.register_biome("default:grassland", {
     max_depth = 0.2,
 
     priority = 1,
+
+    decorations = {
+        tree = {
+            origin = {
+                x = 1,
+                y = 11,
+            },
+
+            tile_aliases = {
+                ['I'] = { block = "default:tree_base" },
+                ['|'] = { block = "default:tree_trunk" },
+                ['q'] = { block = "default:tree_trunk_branch_left" },
+                ['p'] = { block = "default:tree_trunk_branch_right" },
+                ['A'] = { block = "default:tree_trunk_top" },
+                ['<'] = { block = "default:tree_branch_left" },
+                ['>'] = { block = "default:tree_branch_right" },
+            },
+
+            tiles = {
+                " A ",
+                " p>",
+                "<q ",
+                " | ",
+                " p>",
+                " p>",
+                " | ",
+                "<q ",
+                " | ",
+                " p>",
+                " | ",
+                " I ",
+            },
+
+            place_chance = 0.05,
+        }
+    }
 })
 
 terrarium.register_biome("default:grassland_overgrowth", {
@@ -40,14 +70,14 @@ terrarium.register_biome("default:grassland_overgrowth", {
     top_depth = 4,
 
     filler = {
-        block = "default:dirt",
+        block = "default:grass",
         wall = "default:grass",
     },
 
     filler_depth = 8,
 
     stone = {
-        block = "default:stone",
+        block = "default:dirt",
         wall = "default:grass",
     },
 
@@ -57,9 +87,9 @@ terrarium.register_biome("default:grassland_overgrowth", {
 })
 
 terrarium.register_biome("default:desert", {
-    humidity_max = 0.9,
+    humidity_max = 0.4,
 
-    heat_min = -0.9,
+    heat_min = -0.2,
 
     top = {
         block = "default:sand",
@@ -90,7 +120,7 @@ terrarium.register_biome("default:desert", {
             },
 
             tile_aliases = {
-                ['c'] = { block = "default:grass" },
+                ['c'] = { block = "default:cactus" },
             },
 
             tiles = {
@@ -109,7 +139,55 @@ terrarium.register_biome("default:desert", {
 terrarium.register_ore({
     cluster_tiles = 12,
 
+    max_depth = 0.4,
+
     tile = {
         block = "default:copper_ore",
-    }
+    },
+})
+
+terrarium.register_ore({
+    cluster_tiles = 18,
+
+    min_depth = 0.4,
+
+    tile = {
+        block = "default:copper_ore",
+    },
+})
+
+
+terrarium.register_ore({
+    cluster_tiles = 12,
+    distribution = 64,
+
+    min_depth = 0.2,
+
+    max_depth = 0.6,
+
+    tile = {
+        block = "default:iron_ore",
+    },
+})
+
+terrarium.register_ore({
+    cluster_tiles = 18,
+    distribution = 64,
+
+    min_depth = 0.6,
+
+    tile = {
+        block = "default:iron_ore",
+    },
+})
+
+terrarium.register_ore({
+    cluster_tiles = 12,
+    distribution = 64,
+
+    min_depth = 0.4,
+
+    tile = {
+        block = "default:gold_ore",
+    },
 })
