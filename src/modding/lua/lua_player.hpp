@@ -63,6 +63,9 @@ namespace Terrarium {
             float getMaxSpeed();
             void setMaxSpeed(float max_speed);
 
+            bool isControlled();
+            void setControlled(bool controlled);
+
             std::weak_ptr<Inventory> getInventory();
         };
 
@@ -97,6 +100,12 @@ namespace Terrarium {
 
         // void PlayerRef:set_player_max_speed(float max_speed)
         int player_set_player_max_speed(lua_State *L);
+
+        // bool PlayerRef:is_player_controlled()
+        int player_is_player_controlled(lua_State *L);
+
+        // void PlayerRef:set_player_controlled(bool controlled)
+        int player_set_player_controlled(lua_State *L);
 
         // InventoryRef PlayerRef:get_player_inventory()
         int player_get_player_inventory(lua_State *L);

@@ -76,6 +76,8 @@ namespace Terrarium {
 
         PlayerStats stats;
 
+        bool controlled = true;
+
         std::shared_ptr<Inventory> inventory = std::make_shared<Inventory>(
             HOTBAR_SIZE*INVENTORY_ROWS);
 

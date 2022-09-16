@@ -75,6 +75,18 @@ namespace Terrarium {
             player->stats.max_speed = max_speed;
         }
 
+        bool LuaPlayerUD::isControlled() {
+            std::shared_ptr<Player> player = checkedLock();
+
+            return player->controlled;
+        }
+
+        void LuaPlayerUD::setControlled(bool controlled) {
+            std::shared_ptr<Player> player = checkedLock();
+
+            player->controlled = controlled;
+        }
+
         std::weak_ptr<Inventory> LuaPlayerUD::getInventory() {
             std::shared_ptr<Player> player = checkedLock();
 
@@ -116,6 +128,12 @@ namespace Terrarium {
 
             lua_pushcfunction(L, player_set_player_max_speed);
             lua_setfield(L, -2, "set_player_max_speed");
+
+            lua_pushcfunction(L, player_is_player_controlled);
+            lua_setfield(L, -2, "is_player_controlled");
+
+            lua_pushcfunction(L, player_set_player_controlled);
+            lua_setfield(L, -2, "set_player_controlled");
 
             lua_pushcfunction(L, player_get_player_inventory);
             lua_setfield(L, -2, "get_player_inventory");
@@ -241,6 +259,30 @@ namespace Terrarium {
 
             try {
                 player_ref->setMaxSpeed(luaL_checknumber(L, 2));
+
+                return 1;
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+        }
+
+        int player_is_player_controlled(lua_State *L) {
+            LuaPlayerUD *player_ref = reinterpret_cast<LuaPlayerUD*>(luaL_checkudata(L, 1, LUA_PLAYERREF.c_str()));
+
+            try {
+                lua_pushboolean(L, player_ref->isControlled());
+
+                return 1;
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+        }
+
+        int player_set_player_controlled(lua_State *L) {
+            LuaPlayerUD *player_ref = reinterpret_cast<LuaPlayerUD*>(luaL_checkudata(L, 1, LUA_PLAYERREF.c_str()));
+
+            try {
+                player_ref->setControlled(lua_toboolean(L, 2));
 
                 return 1;
             } catch (const std::invalid_argument &e) {

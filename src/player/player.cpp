@@ -35,6 +35,10 @@ namespace Terrarium {
     void Player::update(GameState &game, float dtime) {
         Entity::update(game, dtime);
 
+        if (!controlled) {
+            return;
+        }
+
         if ((controls.left && speed.x < 0) || (controls.right && speed.x > 0))
             physics.slippery = 1;
 
