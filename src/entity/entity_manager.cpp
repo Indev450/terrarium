@@ -44,12 +44,7 @@ namespace Terrarium {
     void EntityManager::draw(GameState &game, sf::RenderTarget &target) {
         for (auto &pair: map) {
             if (pair.second->hitbox.intersects(game.camera)) {
-                sf::Vector2f position = {
-                    pair.second->hitbox.left - game.camera.left,
-                    pair.second->hitbox.top - game.camera.top,
-                };
-
-                pair.second->anims.draw(target, game.blocks_to_pixels.transformPoint(position));
+                pair.second->draw(game, target);
             }
         }
     }

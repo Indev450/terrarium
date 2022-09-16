@@ -68,6 +68,8 @@ namespace Terrarium {
         AnimationMap anims;
 
         virtual void update(GameState &game, float dtime);
+
+        virtual void draw(GameState &game, sf::RenderTarget &target);
     };
 
 } // namespace Terrarium

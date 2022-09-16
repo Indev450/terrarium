@@ -49,6 +49,14 @@ namespace Terrarium {
         }
     }
 
+    void Entity::draw(GameState &game, sf::RenderTarget &target) {
+        sf::Vector2f position = game.blocks_to_pixels.transformPoint(
+            hitbox.left - game.camera.left,
+            hitbox.top - game.camera.top);
+
+        anims.draw(target, position);
+    }
+
     void Entity::collide(GameState &game, bool by_x) {
         if (by_x) {
             collision_info.blockl = false;
