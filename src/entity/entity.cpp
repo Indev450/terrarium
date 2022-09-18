@@ -74,15 +74,23 @@ namespace Terrarium {
 
         for (int y = y_min; y < y_max; ++y) {
             for (int x = x_min; x < x_max; ++x) {
-                blockid block = game.world.getBlock(x, y);
+                bool solid = true;
+                float slippery = 1;
 
-                if (block == 0) {
-                    continue;
+                if (game.world.isInRange(x, y)) {
+                    blockid block = game.world.getBlock(x, y);
+
+                    if (block == 0) {
+                        continue;
+                    }
+
+                    BlockDef &block_def = game.block_defs.getOrUnknown(block);
+
+                    solid = block_def.is_solid;
+                    slippery = block_def.slippery;
                 }
 
-                BlockDef &block_def = game.block_defs.getOrUnknown(block);
-
-                if (block_def.is_solid) {
+                if (solid) {
 
                     if (by_x) {
 
@@ -103,7 +111,7 @@ namespace Terrarium {
                             hitbox.top = y - hitbox.height;
                             collision_info.blockd = true;
 
-                            physics.slippery = block_def.slippery;
+                            physics.slippery = slippery;
                         } else {
                             hitbox.top = y + 1;
                             collision_info.blocku = true;

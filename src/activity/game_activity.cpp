@@ -47,8 +47,17 @@ namespace Terrarium {
 
         sf::Vector2f camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
 
-        game->camera.left = camera_pos.x;
-        game->camera.top = camera_pos.y;
+        game->camera.left = std::max<float>(
+            0,
+            std::min<float>(
+                camera_pos.x,
+                game->world.getWidth() - game->camera.width));
+
+        game->camera.top = std::max<float>(
+            0,
+            std::min<float>(
+                camera_pos.y,
+                game->world.getHeight() - game->camera.height));
 
         sf::Vector2i mouse_pos_pixels = sf::Mouse::getPosition(window);
         sf::Vector2f mouse_pos = game->pixels_to_blocks.transformPoint(mouse_pos_pixels.x, mouse_pos_pixels.y);
