@@ -131,6 +131,7 @@ end
 function terrarium._dig(x, y, user, nosound, fg)
     -- Select layer, foreground or background
     local _get = fg and core._get_block or core._get_wall
+    local _get_name = fg and terrarium.get_block or terrarium.get_wall
     local _set = fg and core._set_block or core._set_wall
 
     local dig_id = _get(x, y)
@@ -158,7 +159,7 @@ function terrarium._dig(x, y, user, nosound, fg)
     }
 
     for _, neighbour in pairs(neighbours) do
-        local def = terrarium.registered_blocks[terrarium.get_block(
+        local def = terrarium.registered_blocks[_get_name(
             neighbour.x, neighbour.y
         )]
 
