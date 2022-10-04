@@ -93,6 +93,15 @@ namespace Terrarium {
                 if (solid) {
 
                     if (by_x) {
+                        if (y + 1 >= y_max) {
+                            hitbox.top -= 1;
+
+                            if (isCollide(game)) {
+                                hitbox.top += 1;
+                            }
+
+                            continue;
+                        }
 
                         if (speed.x > 0) {
                             hitbox.left = x - hitbox.width;
@@ -127,4 +136,35 @@ namespace Terrarium {
         }
     }
 
+    bool Entity::isCollide(GameState &game) {
+        int y_min = floor(hitbox.top);
+        float y_max = hitbox.top + hitbox.height;
+
+        int x_min = floor(hitbox.left);
+        float x_max = hitbox.left + hitbox.width;
+
+        for (int y = y_min; y < y_max; ++y) {
+            for (int x = x_min; x < x_max; ++x) {
+                bool solid = true;
+
+                if (game.world.isInRange(x, y)) {
+                    blockid block = game.world.getBlock(x, y);
+
+                    if (block == 0) {
+                        continue;
+                    }
+
+                    BlockDef &block_def = game.block_defs.getOrUnknown(block);
+
+                    solid = block_def.is_solid;
+                }
+
+                if (solid) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 } // namespace Terrarium

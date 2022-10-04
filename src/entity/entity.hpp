@@ -53,6 +53,7 @@ namespace Terrarium {
 
     class Entity {
         void collide(GameState &game, bool by_x);
+        bool isCollide(GameState &game);
 
     public:
         sf::FloatRect hitbox = {0, 0, 0, 0};
