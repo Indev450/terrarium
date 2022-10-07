@@ -24,6 +24,7 @@
 #define ENTITY_HPP
 
 #include <cstdint>
+#include <memory>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -51,6 +52,13 @@ namespace Terrarium {
         bool enable_collision = true;
     };
 
+    class Entity;
+
+    struct Parent {
+        std::weak_ptr<Entity> ref;
+        sf::Vector2f local_position;
+    };
+
     class Entity {
         void collide(GameState &game, bool by_x);
         bool isCollide(GameState &game);
@@ -67,6 +75,8 @@ namespace Terrarium {
         entityid id = 0;
 
         AnimationMap anims;
+
+        Parent parent;
 
         virtual void update(GameState &game, float dtime);
 

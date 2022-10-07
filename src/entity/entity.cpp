@@ -30,6 +30,15 @@ namespace Terrarium {
     void Entity::update(GameState &game, float dtime) {
         anims.update(dtime);
 
+        std::shared_ptr<Entity> parent_entity = parent.ref.lock();
+
+        if (parent_entity != nullptr) {
+            hitbox.left = parent_entity->hitbox.left + parent.local_position.x;
+            hitbox.top = parent_entity->hitbox.top + parent.local_position.y;
+
+            return;
+        }
+
         if (!collision_info.blockd) {
             speed.y += physics.gravity * dtime;
         } else {

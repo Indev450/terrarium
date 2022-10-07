@@ -61,6 +61,18 @@ namespace Terrarium {
             entity->hitbox.top = position.y;
         }
 
+        sf::Vector2f LuaEntityUD::getLocalPosition() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return entity->parent.local_position;
+        }
+
+        void LuaEntityUD::setLocalPosition(const sf::Vector2f &position) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->parent.local_position = position;
+        }
+
         sf::Vector2f LuaEntityUD::getSpeed() {
             std::shared_ptr<Entity> entity = checkedLock();
 
@@ -84,6 +96,33 @@ namespace Terrarium {
             std::shared_ptr<Entity> other = other_ref.checkedLock();
 
             return self->hitbox.intersects(other->hitbox);
+        }
+
+        bool LuaEntityUD::isAttachedTo(LuaEntityUD &other_ref) {
+            std::shared_ptr<Entity> self = checkedLock();
+            std::shared_ptr<Entity> other = other_ref.checkedLock();
+
+            std::shared_ptr<Entity> self_parent = self->parent.ref.lock();
+
+            return self_parent == other;
+        }
+
+        void LuaEntityUD::attachTo(LuaEntityUD &other_ref) {
+            std::shared_ptr<Entity> self = checkedLock();
+            std::shared_ptr<Entity> other = other_ref.checkedLock();
+
+            if (other_ref.isAttachedTo(*this)) {
+                throw std::invalid_argument("attaching entity to its child is bad idea");
+            }
+
+            self->parent.ref = other_ref.getPtr();
+            self->parent.local_position = { 0, 0 };
+        }
+
+        void LuaEntityUD::deattach() {
+            std::shared_ptr<Entity> self = checkedLock();
+
+            self->parent.ref.reset();
         }
 
         bool LuaEntityUD::isCollisionEnabled() {
@@ -161,6 +200,12 @@ namespace Terrarium {
             lua_pushcfunction(L, entity_set_position);
             lua_setfield(L, -2, "set_position");
 
+            lua_pushcfunction(L, entity_get_local_position);
+            lua_setfield(L, -2, "get_local_position");
+
+            lua_pushcfunction(L, entity_set_local_position);
+            lua_setfield(L, -2, "set_local_position");
+
             lua_pushcfunction(L, entity_get_speed);
             lua_setfield(L, -2, "get_speed");
 
@@ -172,6 +217,15 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_is_collide);
             lua_setfield(L, -2, "is_collide");
+
+            lua_pushcfunction(L, entity_is_attached_to);
+            lua_setfield(L, -2, "is_attached_to");
+
+            lua_pushcfunction(L, entity_attach_to);
+            lua_setfield(L, -2, "attach_to");
+
+            lua_pushcfunction(L, entity_deattach);
+            lua_setfield(L, -2, "deattach");
 
             lua_pushcfunction(L, entity_is_collision_enabled);
             lua_setfield(L, -2, "is_collision_enabled");
@@ -317,6 +371,54 @@ namespace Terrarium {
             return 0;
         }
 
+        int entity_get_local_position(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            sf::Vector2f position;
+
+            try {
+                position = entity_ref->getLocalPosition();
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            lua_newtable(L);
+
+            lua_pushnumber(L, position.x);
+            lua_setfield(L, -2, "x");
+
+            lua_pushnumber(L, position.y);
+            lua_setfield(L, -2, "y");
+
+            return 1;
+        }
+
+        int entity_set_local_position(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            if (!lua_istable(L, 2)) {
+                return luaL_error(L, "expected table argument");
+            }
+
+            sf::Vector2f position;
+
+            lua_getfield(L, 2, "x");
+            position.x = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, 2, "y");
+            position.y = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            try {
+                entity_ref->setLocalPosition(position);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
         int entity_get_speed(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
@@ -399,6 +501,44 @@ namespace Terrarium {
 
             try {
                 lua_pushboolean(L, self->isCollide(*other));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_is_attached_to(lua_State *L) {
+            LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *other = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 2, LUA_ENTITYREF));
+
+            try {
+                lua_pushboolean(L, self->isAttachedTo(*other));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_attach_to(lua_State *L) {
+            LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+            LuaEntityUD *other = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 2, LUA_ENTITYREF));
+
+            try {
+                self->attachTo(*other);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_deattach(lua_State *L) {
+            LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                self->deattach();
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }

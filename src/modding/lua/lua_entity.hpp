@@ -69,12 +69,21 @@ namespace Terrarium {
             sf::Vector2f getPosition();
             void setPosition(const sf::Vector2f &position);
 
+            sf::Vector2f getLocalPosition();
+            void setLocalPosition(const sf::Vector2f &position);
+
             sf::Vector2f getSpeed();
             void setSpeed(const sf::Vector2f &speed);
 
             const CollisionInfo &getCollisionInfo();
 
-            bool isCollide(LuaEntityUD &other);
+            bool isCollide(LuaEntityUD &other_ref);
+
+            bool isAttachedTo(LuaEntityUD &other_ref);
+
+            void attachTo(LuaEntityUD &other_ref);
+
+            void deattach();
 
             bool isCollisionEnabled();
 
@@ -122,6 +131,12 @@ namespace Terrarium {
         // void EntityRef:set_position(Vector2f position)
         int entity_set_position(lua_State *L);
 
+        // Vector2f EntityRef:get_local_position()
+        int entity_get_local_position(lua_State *L);
+
+        // void EntityRef:set_local_position(Vector2f position)
+        int entity_set_local_position(lua_State *L);
+
         // Vector2f EntityRef:get_speed()
         int entity_get_speed(lua_State *L);
 
@@ -131,8 +146,17 @@ namespace Terrarium {
         // CollisionInfo EntityRef:get_collision_info()
         int entity_get_collision_info(lua_State *L);
 
-        // bool EntityRef:is_collide(Entity other)
+        // bool EntityRef:is_collide(EntityRef other)
         int entity_is_collide(lua_State *L);
+
+        // bool EntityRef:is_attached_to(EntityRef other)
+        int entity_is_attached_to(lua_State *L);
+
+        // void EntityRef:attach_to(EntityRef other)
+        int entity_attach_to(lua_State *L);
+
+        // void EntityRef:deattach()
+        int entity_deattach(lua_State *L);
 
         // bool EntityRef:is_collision_enabled()
         int entity_is_collision_enabled(lua_State *L);
