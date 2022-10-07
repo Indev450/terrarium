@@ -98,9 +98,9 @@ namespace Terrarium {
 
                             if (isCollide(game)) {
                                 hitbox.top += 1;
+                            } else {
+                                continue;
                             }
-
-                            continue;
                         }
 
                         if (speed.x > 0) {
