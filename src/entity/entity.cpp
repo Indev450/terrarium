@@ -63,7 +63,9 @@ namespace Terrarium {
             hitbox.left - game.camera.left,
             hitbox.top - game.camera.top);
 
-        anims.draw(target, position);
+        anims.setPosition(position + anims.getOrigin());
+
+        target.draw(anims);
     }
 
     void Entity::collide(GameState &game, bool by_x) {

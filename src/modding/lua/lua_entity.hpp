@@ -75,6 +75,13 @@ namespace Terrarium {
             sf::Vector2f getSpeed();
             void setSpeed(const sf::Vector2f &speed);
 
+            sf::Vector2f getOrigin();
+            void setOrigin(const sf::Vector2f &origin);
+
+            float getRotation();
+            void setRotation(float angle);
+            void rotate(float angle);
+
             const CollisionInfo &getCollisionInfo();
 
             bool isCollide(LuaEntityUD &other_ref);
@@ -142,6 +149,21 @@ namespace Terrarium {
 
         // void EntityRef:set_speed(Vector2f speed)
         int entity_set_speed(lua_State *L);
+
+        // Vector2f EntityRef:get_origin()
+        int entity_get_origin(lua_State *L);
+
+        // void EntityRef:set_origin(Vector2f origin)
+        int entity_set_origin(lua_State *L);
+
+        // float EntityRef:get_rotation()
+        int entity_get_rotation(lua_State *L);
+
+        // void EntityRef:set_rotation(float angle)
+        int entity_set_rotation(lua_State *L);
+
+        // void EntityRef:set_rotation(float angle)
+        int entity_rotate(lua_State *L);
 
         // CollisionInfo EntityRef:get_collision_info()
         int entity_get_collision_info(lua_State *L);

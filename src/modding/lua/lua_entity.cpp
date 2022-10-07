@@ -85,6 +85,36 @@ namespace Terrarium {
             entity->speed = speed;
         }
 
+        sf::Vector2f LuaEntityUD::getOrigin() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return entity->anims.getOrigin();
+        }
+
+        void LuaEntityUD::setOrigin(const sf::Vector2f &origin) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.setOrigin(origin);
+        }
+
+        float LuaEntityUD::getRotation() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return entity->anims.getRotation();
+        }
+
+        void LuaEntityUD::setRotation(float angle) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.setRotation(angle);
+        }
+
+        void LuaEntityUD::rotate(float angle) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.rotate(angle);
+        }
+
         const CollisionInfo &LuaEntityUD::getCollisionInfo() {
             std::shared_ptr<Entity> entity = checkedLock();
 
@@ -211,6 +241,21 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_set_speed);
             lua_setfield(L, -2, "set_speed");
+
+            lua_interface.pushClosure(entity_get_origin);
+            lua_setfield(L, -2, "get_origin");
+
+            lua_interface.pushClosure(entity_set_origin);
+            lua_setfield(L, -2, "set_origin");
+
+            lua_pushcfunction(L, entity_get_rotation);
+            lua_setfield(L, -2, "get_rotation");
+
+            lua_pushcfunction(L, entity_set_rotation);
+            lua_setfield(L, -2, "set_rotation");
+
+            lua_pushcfunction(L, entity_rotate);
+            lua_setfield(L, -2, "rotate");
 
             lua_pushcfunction(L, entity_get_collision_info);
             lua_setfield(L, -2, "get_collision_info");
@@ -460,6 +505,92 @@ namespace Terrarium {
 
             try {
                 entity_ref->setSpeed(speed);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_get_origin(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            sf::Vector2f origin;
+
+            try {
+                origin = lua_interface->game->pixels_to_blocks.transformPoint(entity_ref->getOrigin());
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            lua_newtable(L);
+
+            lua_pushnumber(L, origin.x);
+            lua_setfield(L, -2, "x");
+
+            lua_pushnumber(L, origin.y);
+            lua_setfield(L, -2, "y");
+
+            return 1;
+        }
+
+        int entity_set_origin(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            if (!lua_istable(L, 2)) {
+                return luaL_error(L, "expected table argument");
+            }
+
+            sf::Vector2f origin;
+
+            lua_getfield(L, 2, "x");
+            origin.x = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, 2, "y");
+            origin.y = luaL_checknumber(L, -1);
+            lua_pop(L, 1);
+
+            try {
+                entity_ref->setOrigin(lua_interface->game->blocks_to_pixels.transformPoint(origin));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_get_rotation(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                lua_pushnumber(L, entity_ref->getRotation());
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_set_rotation(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->setRotation(luaL_checknumber(L, 2));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_rotate(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->rotate(luaL_checknumber(L, 2));
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }

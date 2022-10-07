@@ -27,13 +27,13 @@
 #include <string>
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/System.hpp>
 
 #include "animation.hpp"
 
 namespace Terrarium {
 
-    class AnimationMap {
+    class AnimationMap: public sf::Drawable, public sf::Transformable {
         std::unordered_map<std::string, Animation> anims;
         Animation *current = nullptr;
         std::string current_name;
@@ -96,10 +96,10 @@ namespace Terrarium {
             }
         }
 
-        void draw(sf::RenderTarget &target, const sf::Vector2f &position) {
-            sprite.setPosition(position);
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+            states.transform *= getTransform();
 
-            target.draw(sprite);
+            target.draw(sprite, states);
         }
     };
 
