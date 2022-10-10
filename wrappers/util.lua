@@ -83,7 +83,11 @@ end
 function apply_defaults(table, defaults)
     for key, value in pairs(defaults) do
         if type(defaults[key]) ~= 'boolean' then
-            table[key] = table[key] or deep_copy(defaults[key])
+            if type(defaults[key]) == 'table' and table[key] ~= nil then
+                apply_defaults(table[key], defaults[key])
+            else
+                table[key] = table[key] or deep_copy(defaults[key])
+            end
         elseif table[key] == nil then
             table[key] = defaults[key]
         end
