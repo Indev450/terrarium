@@ -121,6 +121,10 @@ function timer:tick(dtime)
     return false
 end
 
+function timer:ready()
+    return self.timer < 0
+end
+
 function timer:restart()
     self.timer = self.time_to_wait
 end
