@@ -62,6 +62,15 @@ function terrarium.register_ore(def)
     terrarium.registered_ores[#terrarium.registered_ores + 1] = def
 end
 
+function terrarium.single_tile_decor(def)
+    return {
+        origin = { x = 0, y = 0 },
+        tile_aliases = { ['b'] = def.tile },
+        tiles = {"b"},
+        place_chance = def.place_chance,
+    }
+end
+
 -- Converts block names into ids
 local function parse_tile(tile)
     return {
