@@ -43,7 +43,7 @@ function terrarium.override_entity(name, def)
         error("attempt to override entity prefab "..name.." that doesn't exist")
     end
 
-    apply_defaults(def, entity_default)
+    apply_defaults(def, entity_defaults)
 
     core._override_entity_prefab(terrarium.registered_entities[name].prefab_id, def)
 
