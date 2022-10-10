@@ -137,7 +137,16 @@ namespace Terrarium {
                             collision_info.blocku = true;
                         }
 
-                        speed.y = 0;
+                        if (speed.y < 0) {
+                            speed.y = 0;
+                        } else {
+                            // Maybe not the best way to do this, but it fixes
+                            // bug when collision_info.blockd blinks every frame
+                            // instead of staying true when entity stands on the
+                            // ground.
+                            speed.y = 0.01;
+                        }
+
                         return;
 
                     }
