@@ -22,15 +22,7 @@ terrarium.register_block("default:tree_base", {
 
     drop = "default:wood 2",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "down" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_base", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
 terrarium.register_block("default:tree_trunk", {
@@ -50,15 +42,7 @@ terrarium.register_block("default:tree_trunk", {
 
     drop = "default:wood 2",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "down" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_trunk", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
 terrarium.register_block("default:tree_trunk_branch_left", {
@@ -78,15 +62,7 @@ terrarium.register_block("default:tree_trunk_branch_left", {
 
     drop = "default:wood 2",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "down" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_trunk_branch_left", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
 terrarium.register_block("default:tree_trunk_branch_right", {
@@ -106,15 +82,7 @@ terrarium.register_block("default:tree_trunk_branch_right", {
 
     drop = "default:wood 2",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "down" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_trunk_branch_right", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
 terrarium.register_block("default:tree_trunk_top", {
@@ -134,15 +102,7 @@ terrarium.register_block("default:tree_trunk_top", {
 
     drop = "default:wood 2",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "down" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_trunk_top", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
 terrarium.register_block("default:tree_branch_left", {
@@ -162,15 +122,7 @@ terrarium.register_block("default:tree_branch_left", {
 
     drop = "default:sapling",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "right" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_branch_left", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"right"}),
 })
 
 terrarium.register_block("default:tree_branch_right", {
@@ -190,13 +142,5 @@ terrarium.register_block("default:tree_branch_right", {
 
     drop = "default:sapling",
 
-    on_neighbour_destroy = function(position, where, block_name, user)
-        if where == "left" then
-            if user ~= nil then
-                terrarium.give_block_drops("default:tree_branch_right", user)
-            end
-
-            terrarium.dig_block(position.x, position.y, user, true)
-        end
-    end
+    on_neighbour_destroy = terrarium.connected_to_blocks({"left"}),
 })
