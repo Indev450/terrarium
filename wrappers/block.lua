@@ -83,6 +83,31 @@ function terrarium.get_block_id(name)
     return terrarium.registered_blocks[name].block_id
 end
 
+function terrarium.connected_to_blocks(names)
+    return terrarium._connected_to(names, terrarium.dig_block)
+end
+
+function terrarium.connected_to_walls(names)
+    return terrarium._connected_to(names, terrarium.dig_wall)
+end
+
+function terrarium._connected_to(names, dig_func)
+    local names_set = {}
+
+    for _, name in ipairs(names) do names_set[name] = true end
+
+    return function(position, where, block_name, user)
+        if names_set[where] then
+            if user ~= nil then
+                terrarium.give_block_drops(
+                    terrarium.get_block(position.x, position.y), user)
+            end
+
+            dig_func(position.x, position.y, user, true)
+        end
+    end
+end
+
 function terrarium.get_tile(x, y)
     local tile = core._get_tile()
 
