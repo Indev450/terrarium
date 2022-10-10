@@ -98,7 +98,7 @@ terrarium.register_block("default:dirt", {
 })
 
 terrarium.register_block("default:grass", {
-    image = "grass.png",
+    image = "grass_block.png",
 
     slippery = 0.4,
 
@@ -119,6 +119,20 @@ terrarium.register_block("default:grass", {
         volume = 1.0,
         pitch = 1.4,
     },
+})
+
+terrarium.register_block("default:grass_decor", {
+    image = "grass.png",
+
+    is_solid = false,
+
+    drop = "",
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
 terrarium.register_block("default:cactus", {
