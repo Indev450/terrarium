@@ -49,6 +49,12 @@ local ore_defaults = {
     }
 }
 
+local decor_defaults = {
+    origin = { x = 0, y = 0, },
+    place_chance = 0.5,
+    conditions = {},
+}
+
 
 function terrarium.register_biome(name, def)
     apply_defaults(def, biome_defaults)
@@ -68,6 +74,7 @@ function terrarium.single_tile_decor(def)
         tile_aliases = { ['b'] = def.tile },
         tiles = {"b"},
         place_chance = def.place_chance,
+        conditions = def.conditions,
     }
 end
 
@@ -79,7 +86,41 @@ local function parse_tile(tile)
     }
 end
 
+local function parse_condition(cond)
+    if cond == nil then return end
+
+    local result = {
+        type = cond.type,
+    }
+
+    if cond.type == "AnyOfBlocks" or cond.type == "NoneOfBlocks" then
+        result.blocks = {}
+
+        for i, block_name in ipairs(cond.blocks) do
+            result.blocks[i] = terrarium.get_block_id(block_name)
+        end
+    elseif cond.type == "ExactBlock" then
+        result.block = terrarium.get_block_id(cond.block)
+    end
+
+    return result
+end
+
+-- Tile condition is simply constructed from 2 block conditions
+local function parse_tile_condition(tile_cond)
+    local result = {
+        position = tile_cond.position or { x = 0, y = 0 },
+    }
+
+    result.fg = parse_condition(tile_cond.fg)
+    result.bg = parse_condition(tile_cond.bg)
+
+    return result
+end
+
 local function parse_decoration(def)
+    apply_defaults(def, decor_defaults)
+
     local result = {
         origin = def.origin,
 
@@ -88,7 +129,9 @@ local function parse_decoration(def)
 
         place_chance = def.place_chance,
 
-        tiles = {}
+        tiles = {},
+
+        conditions = {},
     }
 
     -- First, create 2d array of tiles
@@ -114,6 +157,10 @@ local function parse_decoration(def)
         for x = 1, result.width do
             result.tiles[#result.tiles+1] = tiles_tmp[y][x] or { block = 0, wall = 0 }
         end
+    end
+
+    for i = 1, #def.conditions do
+        result.conditions[i] = parse_tile_condition(def.conditions[i])
     end
 
     return result

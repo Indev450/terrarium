@@ -35,13 +35,18 @@ namespace Terrarium {
     }
 
     bool Decoration::canPlace(const World &world, int x, int y) const {
-        // TODO - maybe add something like "check_tile" or "place_on_tile"
-        // into decor definition?
-        const Tile *place_on_tile = world.getTile(x, y + 1);
+        for (auto &cond: conditions) {
+            const Tile *check_tile = world.getTile(x + cond.position.x,
+                                                   y + cond.position.y);
 
-        if (place_on_tile == nullptr) { return false; }
+            if (check_tile == nullptr) {
+                return false;
+            }
 
-        if (place_on_tile->fg == 0) { return false; }
+            if (!cond.satisfied(*check_tile)) {
+                return false;
+            }
+        }
 
         for (int off_x = 0; off_x < static_cast<int>(width); ++off_x) {
             for (int off_y = 0; off_y < static_cast<int>(height); ++off_y) {

@@ -24,6 +24,7 @@
 #define MAPGEN_BASE_HPP
 
 #include <vector>
+#include <unordered_set>
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -32,6 +33,83 @@
 #include "../world/world.hpp"
 
 namespace Terrarium {
+
+    namespace PlaceConditions {
+        struct Condition {
+            virtual bool satisfied(blockid block) = 0;
+        };
+
+        struct AnySolidBlock: public Condition {
+            bool satisfied(blockid block) override {
+                return block != 0;
+            }
+        };
+
+        struct AirBlock: public Condition {
+            bool satisfied(blockid block) override {
+                return block == 0;
+            }
+        };
+
+        struct AnyOfBlocks: public Condition {
+            std::unordered_set<blockid> blocks;
+
+            AnyOfBlocks(const std::unordered_set<blockid> &_blocks):
+                blocks(_blocks)
+            {}
+
+            bool satisfied(blockid block) override {
+                return blocks.count(block) != 0;
+            }
+        };
+
+        struct NoneOfBlocks: public Condition {
+            std::unordered_set<blockid> blocks;
+
+            NoneOfBlocks(const std::unordered_set<blockid> &_blocks):
+                blocks(_blocks)
+            {}
+
+            bool satisfied(blockid block) override {
+                return blocks.count(block) == 0;
+            }
+        };
+
+        struct ExactBlock: public Condition {
+            blockid block;
+
+            ExactBlock(blockid _block):
+                block(_block)
+            {}
+
+            bool satisfied(blockid block) override {
+                return block == this->block;
+            }
+        };
+    }
+
+    struct TileCondition {
+        sf::Vector2i position;
+
+        std::unique_ptr<PlaceConditions::Condition> fg;
+        std::unique_ptr<PlaceConditions::Condition> bg;
+
+        bool satisfied(const Tile &tile) const {
+            if (fg != nullptr) {
+                if (!fg->satisfied(tile.fg)) {
+                    return false;
+                }
+            }
+
+            if (bg != nullptr) {
+                if (!bg->satisfied(tile.bg)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    };
 
     // Trees, grass, etc
     struct Decoration {
@@ -43,6 +121,8 @@ namespace Terrarium {
         std::vector<Tile> tiles;
 
         float place_chance = 0.5;
+
+        std::vector<TileCondition> conditions;
 
         std::optional<Tile> getLocalTile(int x, int y) const;
 

@@ -52,12 +52,25 @@ terrarium.register_biome("default:grassland", {
                 " I ",
             },
 
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                },
+            },
+
             place_chance = 0.05,
         },
 
         grass = terrarium.single_tile_decor {
             tile = { block = "default:grass_decor" },
             place_chance = 0.9,
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
         },
     }
 })
@@ -94,6 +107,12 @@ terrarium.register_biome("default:grassland_overgrowth", {
         grass = terrarium.single_tile_decor {
             tile = { block = "default:grass_decor" },
             place_chance = 1,
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
         },
     },
 })
@@ -144,6 +163,41 @@ terrarium.register_biome("default:desert", {
             },
 
             place_chance = 0.05,
+
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
+        },
+
+        upwards_cactus = {
+            origin = {
+                x = 2,
+                y = 0,
+            },
+
+            tile_aliases = {
+                ['c'] = { block = "default:cactus" },
+            },
+
+            tiles = {
+                "  c  ",
+                "  c  ",
+                "ccccc",
+                "c c c",
+                "  c  ",
+            },
+
+            place_chance = 0.01,
+
+            conditions = {
+                {
+                    position = { x = 0, y = -1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
         }
     }
 })

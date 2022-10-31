@@ -23,6 +23,8 @@
 #ifndef MODDING_LUA_MAPGEN_HPP
 #define MODDING_LUA_MAPGEN_HPP
 
+#include <memory>
+
 #include <lua.hpp>
 
 #include "../../mapgen/mapgen_base.hpp"
@@ -41,6 +43,7 @@ namespace Terrarium {
 
         Ore checkore(lua_State *L, int idx);
 
+        std::unique_ptr<PlaceConditions::Condition> checkcondition(lua_State *L, int idx);
     }
 
 }

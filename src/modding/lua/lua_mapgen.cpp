@@ -80,6 +80,34 @@ namespace Terrarium {
             }
             lua_pop(L, 1);
 
+            lua_getfield(L, idx, "conditions");
+            size_t len = luaL_len(L, -1);
+            for (size_t i = 1; i <= len; ++i) {
+                lua_geti(L, -1, i);
+
+                sf::Vector2i position;
+                std::unique_ptr<PlaceConditions::Condition> fg, bg;
+
+                lua_getfield(L, -1, "position");
+                position = LuaUtil::checkvector<int>(L, -1);
+                lua_pop(L, 1);
+
+                lua_getfield(L, -1, "fg");
+                fg = checkcondition(L, -1);
+                lua_pop(L, 1);
+
+                lua_getfield(L, -1, "bg");
+                bg = checkcondition(L, -1);
+                lua_pop(L, 1);
+
+                decor.conditions.emplace_back(
+                    TileCondition { position, std::move(fg), std::move(bg) }
+                );
+
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 1);
+
             lua_getfield(L, idx, "place_chance");
             decor.place_chance = LuaUtil::checknumber_ranged(L, -1, 0, 1);
             lua_pop(L, 1);
@@ -192,6 +220,70 @@ namespace Terrarium {
             return ore;
         }
 
+        std::unique_ptr<PlaceConditions::Condition> checkcondition(lua_State *L, int idx) {
+            // Null conditions are valid
+            if (lua_isnil(L, idx)) {
+                return nullptr;
+            }
+
+            idx = lua_absindex(L, idx);
+
+            static const char* conditions[] = {
+                "AnySolidBlock",
+                "AirBlock",
+                "AnyOfBlocks",
+                "NoneOfBlocks",
+                "ExactBlock",
+                nullptr
+            };
+
+            lua_getfield(L, idx, "type");
+            int condition_type = luaL_checkoption(L, -1, "AnySolidBlock", conditions);
+            lua_pop(L, 1);
+
+            switch (condition_type) {
+                case 0: return std::make_unique<PlaceConditions::AnySolidBlock>();
+
+                case 1: return std::make_unique<PlaceConditions::AirBlock>();
+
+                case 2:
+                case 3:
+                {
+                    std::unordered_set<blockid> blocks;
+
+                    lua_getfield(L, idx, "blocks");
+                    size_t len = luaL_len(L, -1);
+                    for (size_t i = 1; i <= len; ++i) {
+                        lua_geti(L, -1, i);
+
+                        blocks.insert(LuaUtil::checkinteger_ranged<blockid>(L, -1));
+
+                        lua_pop(L, 1);
+                    }
+                    lua_pop(L, 1);
+
+                    if (condition_type == 2)
+                        return std::make_unique<PlaceConditions::AnyOfBlocks>(blocks);
+
+                    return std::make_unique<PlaceConditions::NoneOfBlocks>(blocks);
+                }
+
+                case 4:
+                {
+                    lua_getfield(L, idx, "block");
+                    blockid block = LuaUtil::checkinteger_ranged<blockid>(L, -1);
+                    lua_pop(L, 1);
+
+                    return std::make_unique<PlaceConditions::ExactBlock>(block);
+                }
+
+                default: luaL_error(L, "Unreachable statement reached in LuaMapgenAPI::checkcondition");
+            }
+
+            // luaL_error does long jump, so this statement will never be
+            // executed
+            return nullptr;
+        }
     }
 
 }
