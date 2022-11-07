@@ -2,6 +2,8 @@ terrarium.players = {}
 
 terrarium.on_player_join = {}
 
+terrarium.on_player_update = {}
+
 local hud_bar_defaults = {
     geometry = {
         x = 0,
@@ -28,6 +30,12 @@ local hud_bar_defaults = {
 local player_methods = {
     get_controls = function(self)
         return self.ref:get_player_controls()
+    end,
+
+    update = function(self, dtime)
+        for _, func in ipairs(terrarium.on_player_update) do
+            func(self, dtime)
+        end
     end,
 
     -- Currently, those methods don't care (as well as core functions)
@@ -67,7 +75,11 @@ local function create_player(player_ref)
 end
 
 function terrarium.register_on_player_join(func)
-    terrarium.on_player_join[#terrarium.on_player_join+1] = func
+    table.insert(terrarium.on_player_join, func)
+end
+
+function terrarium.register_on_player_update(func)
+    table.insert(terrarium.on_player_update, func)
 end
 
 function terrarium.get_player(name)
@@ -78,9 +90,10 @@ function core._on_player_join(player_ref)
     -- should be replaced with something like "player_ref:get_player_name()"
     local player_name = "singleplayer"
 
-    terrarium.players[player_name] = create_player(player_ref)
+    local player = create_player(player_ref)
 
-    local player = terrarium.players[player_name]
+    terrarium.players[player_name] = player
+    table.insert(core._entities.list, player)
 
     for _, func in pairs(terrarium.on_player_join) do
         func(player)
