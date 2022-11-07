@@ -30,7 +30,7 @@ end
 
 local block_defaults = {
     image = "",
-    slippery = 0,
+    slippery = 0.1,
     is_solid = true,
 
     groups = {},
