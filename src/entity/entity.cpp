@@ -39,9 +39,9 @@ namespace Terrarium {
             return;
         }
 
-        if (!collision_info.blockd) {
-            speed.y += physics.gravity * dtime;
-        } else {
+        speed.y += physics.gravity * dtime;
+
+        if (collision_info.blockd) {
             speed.x *= physics.slippery;
         }
 
@@ -105,10 +105,11 @@ namespace Terrarium {
 
                     if (by_x) {
                         if (y + 1 >= y_max) {
-                            hitbox.top -= 1;
+                            double dy = std::min(hitbox.height/2, 1.f);
+                            hitbox.top -= dy;
 
                             if (isCollide(game)) {
-                                hitbox.top += 1;
+                                hitbox.top += dy;
                             } else {
                                 continue;
                             }
