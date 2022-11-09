@@ -26,6 +26,8 @@ local entity_methods = {
     kill = function(self)
         if not self.ref:is_valid() then return end
 
+        self:on_removed()
+
         core._entities.to_be_removed[self] = true
     end,
 }
@@ -202,10 +204,14 @@ core._update_hooks["entity"] = function(dtime)
     for i, entity in ipairs(core._entities.list) do
         -- If entity needed to be removed, add its index to list, otherwise just
         -- update it
-        if to_be_removed[entity] then
+        local valid = entity.ref:is_valid()
+
+        if to_be_removed[entity] or not valid then
             table.insert(indices_to_remove, i)
-            entity:on_removed()
-            entity.ref:kill()
+
+            if valid then
+                entity.ref:kill()
+            end
         else
             entity:update(dtime)
         end
