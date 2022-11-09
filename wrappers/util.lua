@@ -2,7 +2,7 @@
 function enum(values)
     local result = {}
 
-    for i, name in pairs(values) do
+    for i, name in ipairs(values) do
         result[name] = i
     end
 
@@ -12,23 +12,35 @@ end
 -- Creates enum that can combine its values with | operator
 function binenum(values)
     local result = {
-        NONE = 0,
+        None = 0,
     }
 
     local i = 1
 
-    for _, name in pairs(values) do
+    for _, name in ipairs(values) do
         result[name] = i
 
-        i = i * 2
+        i = i << 1
     end
 
     return result
 end
 
 ------------------------------------------------------------------------
-function fmt_table(t, spaces)
-    if type(t) ~= 'table' then return string.format("%q", t) end
+function fmt_table(t, spaces, seen)
+    -- No recursive tables
+    if seen and seen[t] then return seen[t] end
+
+    local s = seen or {}
+
+    s[t] = tostring(t)
+
+    -- Funny but unreadable way to avoid multiple '=='
+    if ({['function'] = true, ['userdata'] = true, ['thread'] = true})[type(t)] then
+        return tostring(t)
+    elseif type(t) ~= 'table' then
+        return string.format("%q", t)
+    end
 
     spaces = spaces or 0
 
@@ -37,8 +49,8 @@ function fmt_table(t, spaces)
     for k, v in pairs(t) do
         result = result..string.format("%s[%s] = %s,\n",
             string.rep(' ', spaces+4),
-            fmt_table(k, spaces+4),
-            fmt_table(v, spaces+4))
+            fmt_table(k, spaces+4, s),
+            fmt_table(v, spaces+4, s))
     end
 
     return result..string.rep(' ', spaces).."}"
@@ -94,37 +106,4 @@ function apply_defaults(table, defaults)
     end
 
     return table
-end
-
-------------------------------------------------------------------------
-timer = {}
-
-function timer.new(time_to_wait, is_repeat)
-    return setmetatable({
-        timer = time_to_wait,
-        is_repeat = is_repeat or false,
-        time_to_wait = time_to_wait,
-    }, {__index = timer})
-end
-
-function timer:tick(dtime)
-    self.timer = self.timer - dtime
-
-    if self.timer < 0 then
-        if self.is_repeat then
-            self.timer = self.time_to_wait
-        end
-
-        return true
-    end
-
-    return false
-end
-
-function timer:ready()
-    return self.timer < 0
-end
-
-function timer:restart()
-    self.timer = self.time_to_wait
 end
