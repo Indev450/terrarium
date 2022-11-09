@@ -5,6 +5,7 @@ core._update_hooks = {}
 
 dofile("wrappers/util.lua")
 dofile("wrappers/timer.lua")
+dofile("wrappers/vec2.lua")
 dofile("wrappers/color.lua")
 dofile("wrappers/item_stack.lua")
 dofile("wrappers/step.lua")
