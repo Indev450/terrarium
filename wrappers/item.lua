@@ -15,6 +15,8 @@ local item_defaults = {
     description = "Default description",
     inventory_image = "",
     max_count = 1,
+    use_rate = 4, -- Uses per second
+    alt_use_rate = nil,
 
     on_start_use = function(user, itemstack, position, use_ctx) end,
     on_start_alt_use = function(user, itemstack, position, use_ctx) end,
@@ -32,6 +34,10 @@ local item_defaults = {
 function terrarium.register_item(name, def)
     apply_defaults(def, item_defaults)
 
+    if def.alt_use_rate == nil then
+        def.alt_use_rate = def.use_rate
+    end
+
     core._register_item(name, def)
 
     terrarium.registered_items[name] = def
@@ -42,6 +48,9 @@ end
 core._item_users = setmetatable({}, {__mode='k'})
 core._item_alt_users = setmetatable({}, {__mode='k'})
 core._item_wielders = setmetatable({}, {__mode='k'})
+
+core._item_timers = setmetatable({}, {__mode='k'})
+core._alt_item_timers = setmetatable({}, {__mode='k'})
 
 -- Convert user from item_event.user to table. If user_ref is player,
 -- return player table from terrarium.players. If it is not, then it is already
@@ -62,6 +71,16 @@ core._event_handlers["ItemUseStart"] = function(event)
     local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
+
+    local use_timer = core._item_timers[user]
+
+    if use_timer ~= nil and not use_timer:ready() then
+        return
+    end
+
+    if use_timer ~= nil then
+        use_timer:restart()
+    end
 
     local name = itemstack:get_item_name()
 
@@ -95,6 +114,16 @@ core._event_handlers["ItemAltUseStart"] = function(event)
     local user = core.get_user(event.item_event.user)
     local itemstack = event.item_event.item_stack
     local position = event.item_event.position
+
+    local use_timer = core._alt_item_timers[user]
+
+    if use_timer ~= nil and not use_timer:ready() then
+        return
+    end
+
+    if use_timer ~= nil then
+        use_timer:restart()
+    end
 
     local name = itemstack:get_item_name()
 
@@ -147,8 +176,14 @@ core._event_handlers["ItemSelect"] = function(event)
 
     core._item_wielders[user] = nil
 
+    core._item_timers[user] = nil
+    core._alt_item_timers[user] = nil
+
     -- If player switched to non-empty item stack, execute callback for its item type
     if def ~= nil then
+        core._item_timers[user] = timer.new(1/def.use_rate)
+        core._alt_item_timers[user] = timer.new(1/def.alt_use_rate)
+
         core._item_wielders[user] = create_use_context(user, itemstack, position, name)
         local new_ctx = core._item_wielders[user]
 
@@ -189,6 +224,12 @@ core._update_hooks["item"] = function(dtime)
 
         ctx.use_time = ctx.use_time + dtime
         ctx.dtime = dtime
+
+        local timer = core._item_timers[user]
+        local alt_timer = core._alt_item_timers[user]
+
+        if timer ~= nil then timer:tick(dtime) end
+        if alt_timer ~= nil then alt_timer:tick(dtime) end
 
         local def = terrarium.registered_items[ctx.itemstack:get_item_name()]
 
