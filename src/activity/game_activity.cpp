@@ -196,7 +196,15 @@ namespace Terrarium {
                     break;
 
                     case sf::Keyboard::Escape:
-                        game->hud.setVisible("pause", !game->hud.isVisible("pause"));
+                    {
+                        if (game->hud.isVisible("inventory")) {
+                            game->hud.setVisible("inventory", false);
+                            game->hud.setVisible("craft", false);
+                            game->hud.setVisible("opened_inventory", false);
+                        } else {
+                            game->hud.setVisible("pause", !game->hud.isVisible("pause"));
+                        }
+                    }
                     break;
 
                     default:
