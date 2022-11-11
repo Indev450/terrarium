@@ -341,5 +341,17 @@ terrarium.register_block("default:anvil", {
     end,
 })
 
+terrarium.register_block("default:vine", {
+    image = "vine.png",
+
+    is_solid = false,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    on_neighbour_destroy = terrarium.connected_to_blocks({"up"}),
+})
+
 terrarium.register_block_alias("default:stone", "mapgen:filler_block")
 terrarium.register_block_alias("default:stone", "mapgen:filler_wall")

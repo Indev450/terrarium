@@ -62,6 +62,68 @@ terrarium.register_biome("default:grassland", {
             place_chance = 0.05,
         },
 
+        vine = {
+            origin = {
+                x = 0,
+                y = 0
+            },
+
+            tile_aliases = {
+                ['|'] = { block = "default:vine" },
+            },
+
+            tiles = {
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+            },
+
+            conditions = {
+                {
+                    position = { x = 0, y = -1 },
+                    fg = { type = "AnySolidBlock" },
+                },
+            },
+
+            place_chance = 0.1,
+        },
+
+        long_vine = {
+            origin = {
+                x = 0,
+                y = 0
+            },
+
+            tile_aliases = {
+                ['|'] = { block = "default:vine" },
+            },
+
+            tiles = {
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+            },
+
+            conditions = {
+                {
+                    position = { x = 0, y = -1 },
+                    fg = { type = "AnySolidBlock" },
+                },
+            },
+
+            place_chance = 0.05,
+        },
+
         grass = terrarium.single_tile_decor {
             tile = { block = "default:grass_decor" },
             place_chance = 0.9,
@@ -113,6 +175,68 @@ terrarium.register_biome("default:grassland_overgrowth", {
                     fg = { type = "AnySolidBlock" }
                 }
             },
+        },
+
+        vine = {
+            origin = {
+                x = 0,
+                y = 0
+            },
+
+            tile_aliases = {
+                ['|'] = { block = "default:vine" },
+            },
+
+            tiles = {
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+            },
+
+            conditions = {
+                {
+                    position = { x = 0, y = -1 },
+                    fg = { type = "AnySolidBlock" },
+                },
+            },
+
+            place_chance = 0.4,
+        },
+
+        long_vine = {
+            origin = {
+                x = 0,
+                y = 0
+            },
+
+            tile_aliases = {
+                ['|'] = { block = "default:vine" },
+            },
+
+            tiles = {
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+                "|",
+            },
+
+            conditions = {
+                {
+                    position = { x = 0, y = -1 },
+                    fg = { type = "AnySolidBlock" },
+                },
+            },
+
+            place_chance = 0.2,
         },
     },
 })
