@@ -24,7 +24,7 @@ local entity_defaults = {
 
 local entity_methods = {
     kill = function(self)
-        if not self.ref:is_valid() then return end
+        if not self.ref:is_valid() and not core._entities.to_be_removed[self] then return end
 
         self:on_removed()
 
@@ -209,9 +209,6 @@ core._update_hooks["entity"] = function(dtime)
         if to_be_removed[entity] or not valid then
             table.insert(indices_to_remove, i)
 
-            if valid then
-                entity.ref:kill()
-            end
         else
             entity:update(dtime)
         end
@@ -220,6 +217,7 @@ core._update_hooks["entity"] = function(dtime)
     -- indices_to_remove is sorted, so we can just iterate
     -- backwards, and because of that we don't need to shift indices
     for i = #indices_to_remove, 1, -1 do
+        core._entities.list[indices_to_remove[i]].ref:kill()
         table.remove(core._entities.list, indices_to_remove[i])
     end
 end
