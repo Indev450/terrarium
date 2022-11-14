@@ -109,23 +109,22 @@ namespace Terrarium {
         }
 
         void push_vector2f(lua_State *L, const sf::Vector2f &vec) {
-            lua_newtable(L);
+            lua_getfield(L, LUA_REGISTRYINDEX, "vec2.new");
 
             lua_pushnumber(L, vec.x);
-            lua_setfield(L, -2, "x");
-
             lua_pushnumber(L, vec.y);
-            lua_setfield(L, -2, "y");
+
+            lua_call(L, 2, 1);
         }
 
         void push_vector2i(lua_State *L, const sf::Vector2i &vec) {
-            lua_newtable(L);
+            lua_getfield(L, LUA_REGISTRYINDEX, "vec2.new");
 
             lua_pushinteger(L, vec.x);
-            lua_setfield(L, -2, "x");
 
             lua_pushinteger(L, vec.y);
-            lua_setfield(L, -2, "y");
+
+            lua_call(L, 2, 1);
         }
 
         void push_floatrect(lua_State *L, const sf::FloatRect &rect) {

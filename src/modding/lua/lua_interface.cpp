@@ -61,6 +61,13 @@ namespace Terrarium {
             throw std::runtime_error("could not initialize lua wrappers");
         }
 
+        lua_getglobal(L, "vec2");
+        lua_getfield(L, -1, "new");
+
+        lua_setfield(L, LUA_REGISTRYINDEX, "vec2.new");
+
+        lua_pop(L, 1);
+
         loadMods("mods");
     }
 

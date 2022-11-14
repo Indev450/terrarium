@@ -379,13 +379,7 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            lua_newtable(L);
-
-            lua_pushnumber(L, position.x);
-            lua_setfield(L, -2, "x");
-
-            lua_pushnumber(L, position.y);
-            lua_setfield(L, -2, "y");
+            LuaUtil::push_vector2f(L, position);
 
             return 1;
         }
@@ -427,13 +421,7 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            lua_newtable(L);
-
-            lua_pushnumber(L, position.x);
-            lua_setfield(L, -2, "x");
-
-            lua_pushnumber(L, position.y);
-            lua_setfield(L, -2, "y");
+            LuaUtil::push_vector2f(L, position);
 
             return 1;
         }
@@ -475,13 +463,7 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            lua_newtable(L);
-
-            lua_pushnumber(L, speed.x);
-            lua_setfield(L, -2, "x");
-
-            lua_pushnumber(L, speed.y);
-            lua_setfield(L, -2, "y");
+            LuaUtil::push_vector2f(L, speed);
 
             return 1;
         }
@@ -524,13 +506,7 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            lua_newtable(L);
-
-            lua_pushnumber(L, origin.x);
-            lua_setfield(L, -2, "x");
-
-            lua_pushnumber(L, origin.y);
-            lua_setfield(L, -2, "y");
+            LuaUtil::push_vector2f(L, origin);
 
             return 1;
         }
