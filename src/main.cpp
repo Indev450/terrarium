@@ -50,13 +50,17 @@
 // Those were in terrarium_config.hpp, but i anyway wasn't using any configuration
 // in cmake other than version, so maybe it is not bad to set version here?
 #define TERRARIUM_VERSION_MAJOR 0
-#define TERRARIUM_VERSION_MINOR 1
+#define TERRARIUM_VERSION_MINOR 2
+#define TERRARIUM_VERSION_PATCH 0
 
 const char *TITLE = "TerrariumEngine";
 
 int main(int argc, char **argv)
 {
-    std::cout<<"TerrariumEngine version "<<TERRARIUM_VERSION_MAJOR<<'.'<<TERRARIUM_VERSION_MINOR<<std::endl;
+    std::cout<<"TerrariumEngine version "
+             <<TERRARIUM_VERSION_MAJOR<<'.'
+             <<TERRARIUM_VERSION_MINOR<<'.'
+             <<TERRARIUM_VERSION_PATCH<<std::endl;
 
     auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 640), TITLE);
     window->setVerticalSyncEnabled(true);

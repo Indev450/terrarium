@@ -22,10 +22,13 @@
 
 #include <stdexcept>
 #include <string>
+#include <list>
+#include <functional>
 #include <system_error>
 #include <iostream>
 
 #include "lua_interface.hpp"
+#include "lua_mod_config.hpp"
 #include "lua_util.hpp"
 #include "lua_entity.hpp"
 #include "lua_item.hpp"
@@ -232,6 +235,139 @@ namespace Terrarium {
             throw std::runtime_error(msg);
         }
 
+        std::vector<LuaModConfig> mods_unsorted;
+
+        // Separate state for configs
+        lua_State *L_conf = luaL_newstate();
+
+        // Load configs
+        for (const auto &entry: fs::directory_iterator(mods_path)) {
+            if (entry.is_directory(ec)) {
+                try {
+                    mods_unsorted.push_back(load_config(L_conf, entry.path()));
+                } catch (const std::runtime_error &e) {
+                    std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
+                    std::cerr<<entry;
+                    std::cerr<<": "<<e.what()<<std::endl;
+                }
+            }
+        }
+
+        lua_close(L_conf);
+
+        // This dependency resolving algorithm is pretty much copy of one from
+        // minetest.
+
+        // First, make a set of mod names
+        std::set<std::string> mod_names;
+        for (const auto &mod: mods_unsorted) {
+            mod_names.insert(mod.name);
+        }
+
+        // Now add dependencies that are going to be checked, including optional
+        std::list<std::reference_wrapper<LuaModConfig>> satisfied, unsatisfied;
+        for (auto &mod: mods_unsorted) {
+            mod.unsatisfied_depends = mod.depends;
+
+            for (const auto &mod_name: mod.optional_depends) {
+                if (mod_names.count(mod_name) != 0) {
+                    mod.unsatisfied_depends.insert(mod_name);
+                }
+            }
+
+            if (mod.unsatisfied_depends.empty()) {
+                satisfied.push_back(mod);
+            } else {
+                unsatisfied.push_back(mod);
+            }
+        }
+
+        // Finally, add mods without unsatisfied dependencies into this
+        // sorted_mods list. Each time all other mods remove this 'satisfied'
+        // one from unsatisfied list. If all mods have their dependencies
+        // satisfied, after some time both satisfied and unsatisfied lists will
+        // become empty. If some mod misses its dependency, it will be left in
+        // the unsatisfied list.
+        std::list<std::reference_wrapper<LuaModConfig>> sorted_mods;
+        while (!satisfied.empty()) {
+            LuaModConfig &mod = satisfied.back();
+            sorted_mods.push_back(mod);
+            satisfied.pop_back();
+
+            for (auto it = unsatisfied.begin(); it != unsatisfied.end();) {
+                LuaModConfig &other_mod = it->get();
+
+                other_mod.unsatisfied_depends.erase(mod.name);
+
+                // Hooray, this mod have all its dependencies satisfied, now
+                // we can add it to the satisfied list!
+                if (other_mod.unsatisfied_depends.empty()) {
+                    satisfied.push_back(other_mod);
+
+                    // Remove this mod from unsatisfied list and pick next one
+                    it = unsatisfied.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+        }
+
+        if (!unsatisfied.empty()) {
+            std::cerr<<"Terrarium::LuaModdingInterface::loadMods: "
+                     <<"mods with unsatisfied dependencies detected"<<std::endl;
+
+            for (auto mod_ref: unsatisfied) {
+                LuaModConfig &mod = mod_ref.get();
+
+                std::cerr<<"Mod: "<<mod.name<<" ("<<mod.root<<")"<<std::endl;
+                std::cerr<<"Missing dependencies:"<<std::endl;
+
+                for (auto &dependency_name: mod.unsatisfied_depends) {
+                    std::cerr<<'\t'<<dependency_name<<std::endl;
+                }
+            }
+
+            throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: mods with unsatisfied dependencies detected");
+        }
+
+        for (auto mod_ref: sorted_mods) {
+            LuaModConfig &mod = mod_ref.get();
+
+            try {
+                fs::current_path(mod.root);
+                const fs::path textures_dir = mod.root / "textures";
+
+                // If there is textures directory, load it
+                if (fs::is_directory(textures_dir, ec)) {
+                    game->gfx.textures.addSearchPath(textures_dir);
+
+                    for (const auto &texture_path: fs::directory_iterator(textures_dir)) {
+                        game->gfx.textures.load(texture_path.path().filename());
+                    }
+                }
+
+                const fs::path sounds_dir = mod.root / "sounds";
+
+                // If there is sounds directory, load it
+                if (fs::is_directory(sounds_dir, ec)) {
+                    game->sfx.sounds.addSearchPath(sounds_dir);
+
+                    for (const auto &sound_path: fs::directory_iterator(sounds_dir)) {
+                        game->sfx.sounds.load(sound_path.path().filename());
+                    }
+                }
+
+                if (!LuaUtil::run_script(L, (mod.root / "init.lua").c_str())) {
+                    throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: unexpected error when loading mod");
+                }
+            } catch (const fs::filesystem_error &e) {
+                std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
+                std::cerr<<mod.root;
+                std::cerr<<": "<<e.what()<<std::endl;
+            }
+        }
+
+        /*
         for (const auto &entry: fs::directory_iterator(mods_path)) {
             if (entry.is_directory(ec)) {
                 try {
@@ -259,6 +395,7 @@ namespace Terrarium {
                         }
                     }
 
+                    std::cout<<"Loading "<<(entry.path() / "init.lua")<<std::endl;
                     LuaUtil::run_script(L, (entry.path() / "init.lua").c_str());
                 } catch (const fs::filesystem_error &e) {
                     std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
@@ -271,6 +408,7 @@ namespace Terrarium {
                 std::cerr<<": "<<ec.message()<<std::endl;
             }
         }
+        */
     }
 
     void LuaModdingInterface::pushClosure(lua_CFunction fn) {
