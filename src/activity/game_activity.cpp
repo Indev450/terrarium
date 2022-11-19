@@ -105,6 +105,8 @@ namespace Terrarium {
 
         world_renderer->render(target);
 
+        game->world_interact.highlightInteractive(*game, target);
+
         game->entity_mgr.draw(*game, target);
 
         game->hud.render(target, *game);

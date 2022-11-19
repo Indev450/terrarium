@@ -21,14 +21,51 @@
  */
 
 #include <cmath>
-#include <optional>
 
 #include "world_interact.hpp"
 #include "../game.hpp"
 
 namespace Terrarium {
 
+    WorldInteractHelper::WorldInteractHelper():
+        highlight_shape(sf::Vector2f(1, 1)) {
+
+        highlight_shape.setFillColor(sf::Color::Transparent);
+        highlight_shape.setOutlineColor(sf::Color::Yellow);
+        highlight_shape.setOutlineThickness(3.0/Tile::SIZE);
+    }
+
     void WorldInteractHelper::interact(GameState &game) {
+        std::optional<sf::Vector2i> found_block = findNearestInteractiveBlock(game);
+
+        if (found_block) {
+            BlockEvent *block_event = new BlockEvent();
+
+            block_event->position = *found_block;
+            block_event->user = game.player;
+
+            game.events.emplace(Event::BlockActivate, block_event);
+        }
+    }
+
+    void WorldInteractHelper::highlightInteractive(GameState &game, sf::RenderTarget &target) {
+        std::optional<sf::Vector2i> found_block = findNearestInteractiveBlock(game);
+
+        if (!found_block) {
+            return;
+        }
+
+        sf::Vector2f draw_pos = sf::Vector2f(
+            found_block->x - game.camera.left,
+            found_block->y - game.camera.top
+        );
+
+        highlight_shape.setPosition(draw_pos);
+
+        target.draw(highlight_shape, game.blocks_to_pixels);
+    }
+
+    std::optional<sf::Vector2i> WorldInteractHelper::findNearestInteractiveBlock(GameState &game) {
         const sf::Vector2f &mouse_pos = game.player->controls.mouse_pos;
 
         float found_distance_sqr = interact_distance*interact_distance;
@@ -53,14 +90,6 @@ namespace Terrarium {
             }
         }
 
-        if (found_block) {
-            BlockEvent *block_event = new BlockEvent();
-
-            block_event->position = *found_block;
-            block_event->user = game.player;
-
-            game.events.emplace(Event::BlockActivate, block_event);
-        }
+        return found_block;
     }
-
 }

@@ -23,6 +23,12 @@
 #ifndef PLAYER_WORLD_INTERACT_HPP
 #define PLAYER_WORLD_INTERACT_HPP
 
+#include <optional>
+
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+
 namespace Terrarium {
 
     class GameState;
@@ -31,7 +37,14 @@ namespace Terrarium {
     struct WorldInteractHelper {
         float interact_distance = 4;
 
+        sf::RectangleShape highlight_shape;
+
+        WorldInteractHelper();
+
         void interact(GameState &game);
+        void highlightInteractive(GameState &game, sf::RenderTarget &target);
+
+        std::optional<sf::Vector2i> findNearestInteractiveBlock(GameState &game);
     };
 
 }
