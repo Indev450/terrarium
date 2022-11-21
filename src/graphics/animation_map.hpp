@@ -41,8 +41,11 @@ namespace Terrarium {
         bool mirror = false;
 
     public:
+        sf::Vector2f draw_size;
+
+    public:
         inline void setTexture(const sf::Texture &texture) {
-            sprite.setTexture(texture);
+            sprite.setTexture(texture, true);
         }
 
         inline const std::string &get() {
@@ -97,7 +100,14 @@ namespace Terrarium {
         }
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+            sf::IntRect rect = sprite.getTextureRect();
+
+            float scale_x = draw_size.x / rect.width;
+            float scale_y = draw_size.y / rect.height;
+
             states.transform *= getTransform();
+
+            states.transform.scale(scale_x, scale_y);
 
             target.draw(sprite, states);
         }

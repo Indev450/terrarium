@@ -39,6 +39,15 @@ namespace Terrarium {
             return;
         }
 
+        // When collision gets disabled, those fields may be true, so we need to
+        // fix that
+        if (!physics.enable_collision) {
+            collision_info.blocku = false;
+            collision_info.blockd = false;
+            collision_info.blockl = false;
+            collision_info.blockr = false;
+        }
+
         speed.y += physics.gravity * dtime;
 
         if (collision_info.blockd) {
@@ -64,6 +73,8 @@ namespace Terrarium {
             hitbox.top - game.camera.top);
 
         anims.setPosition(position + anims.getOrigin());
+        anims.draw_size.x = hitbox.width * Tile::SIZE;
+        anims.draw_size.y = hitbox.height * Tile::SIZE;
 
         target.draw(anims);
     }
