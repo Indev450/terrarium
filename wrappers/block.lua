@@ -98,11 +98,6 @@ function terrarium._connected_to(names, dig_func)
 
     return function(position, where, block_name, user)
         if names_set[where] then
-            if user ~= nil then
-                terrarium.give_block_drops(
-                    terrarium.get_block(position.x, position.y), user)
-            end
-
             dig_func(position.x, position.y, user, true)
         end
     end
@@ -196,6 +191,10 @@ function terrarium._dig(x, y, user, nosound, fg)
     -- Change that block to air
     _set(x, y, 0)
 
+    if def ~= nil and def.drop ~= "" then
+        terrarium.drop_item(ItemStack(def.drop), vec2.new(x, y))
+    end
+
     if def ~= nil and def.dig_sound ~= nil and not nosound then
         core._play_sound({
             name = def.dig_sound.name,
@@ -248,14 +247,6 @@ end
 
 function terrarium.get_block_inventory(x, y)
     return core._get_block_inventory(x, y)
-end
-
-function terrarium.give_block_drops(block_name, user)
-    local def = terrarium.registered_blocks[block_name]
-
-    if def == nil then return end
-
-    user.ref:get_player_inventory():add_item(ItemStack(def.drop))
 end
 
 core._event_handlers["BlockActivate"] = function(event)

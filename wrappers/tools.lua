@@ -49,10 +49,6 @@ function terrarium.register_tool(name, def)
            and terrarium.dig_block(x, y, user) then
 
            use_ctx.timer:restart()
-
-            if user.ref.is_player then
-                terrarium.give_block_drops(block_name, user)
-            end
         end
     end
 
@@ -74,10 +70,6 @@ function terrarium.register_tool(name, def)
            and terrarium.dig_wall(x, y, user) then
 
             use_ctx.timer:restart()
-
-            if user.ref.is_player then
-                terrarium.give_block_drops(block_name, user)
-            end
         end
     end
 
