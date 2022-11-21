@@ -51,7 +51,7 @@
 // in cmake other than version, so maybe it is not bad to set version here?
 #define TERRARIUM_VERSION_MAJOR 0
 #define TERRARIUM_VERSION_MINOR 2
-#define TERRARIUM_VERSION_PATCH 1
+#define TERRARIUM_VERSION_PATCH 2
 
 const char *TITLE = "TerrariumEngine";
 
@@ -82,6 +82,9 @@ int main(int argc, char **argv)
     if (!game->gfx.font.loadFromFile("assets/dpcomic.ttf")) {
         std::cerr<<"Cannot load font"<<std::endl;
     }
+
+    game->gfx.textures.addSearchPath("assets");
+    game->gfx.textures.load("null.png");
 
     Terrarium::SavesManager saves_mgr("saves");
 
