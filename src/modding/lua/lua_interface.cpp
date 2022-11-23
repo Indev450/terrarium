@@ -84,7 +84,7 @@ namespace Terrarium {
 
             // Pops _update and dtime
             if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
-                LuaUtil::printerr(L);
+                LuaUtil::error(L, "core._update() generated a lua error");
             }
         } else {
             lua_pop(L, 1); // pops _update
@@ -133,7 +133,7 @@ namespace Terrarium {
 
             // Pops _on_event and event table
             if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
-                LuaUtil::printerr(L);
+                LuaUtil::error(L, "core._on_event() generated a lua error");
             }
 
         } else {
@@ -150,7 +150,7 @@ namespace Terrarium {
 
         if (lua_isfunction(L, -1)) {
             if (LuaUtil::pcall(L, 0, 1) != LUA_OK) {
-                LuaUtil::printerr(L);
+                LuaUtil::error(L, "core._get_mapgen_data() generated a lua error");
             } else {
                 if (!lua_istable(L, -1)) {
                     throw std::runtime_error("core._get_mapgen_data() should return table");
@@ -209,7 +209,7 @@ namespace Terrarium {
 
             // Pops _on_player_join and player
             if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
-                LuaUtil::printerr(L);
+                LuaUtil::error(L, "core._on_player_join() generated a lua error");
             }
         } else {
             lua_pop(L, 1); // pops _on_player_join
@@ -225,7 +225,7 @@ namespace Terrarium {
 
         if (lua_isfunction(L, -1)) {
             if (LuaUtil::pcall(L, 0, 0) != LUA_OK) {
-                LuaUtil::printerr(L);
+                LuaUtil::error(L, "core._on_mapgen_finish() generated a lua error");
             }
         } else {
             lua_pop(L, 1);
@@ -380,51 +380,10 @@ namespace Terrarium {
                 std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
                 std::cerr<<mod.root;
                 std::cerr<<": "<<e.what()<<std::endl;
+
+                throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: unexpected error when loading mod");
             }
         }
-
-        /*
-        for (const auto &entry: fs::directory_iterator(mods_path)) {
-            if (entry.is_directory(ec)) {
-                try {
-                    fs::current_path(entry);
-
-                    const fs::path textures_dir = entry.path() / "textures";
-
-                    // If there is textures directory, load it
-                    if (fs::is_directory(textures_dir, ec)) {
-                        game->gfx.textures.addSearchPath(textures_dir);
-
-                        for (const auto &texture_path: fs::directory_iterator(textures_dir)) {
-                            game->gfx.textures.load(texture_path.path().filename());
-                        }
-                    }
-
-                    const fs::path sounds_dir = entry.path() / "sounds";
-
-                    // If there is sounds directory, load it
-                    if (fs::is_directory(sounds_dir, ec)) {
-                        game->sfx.sounds.addSearchPath(sounds_dir);
-
-                        for (const auto &sound_path: fs::directory_iterator(sounds_dir)) {
-                            game->sfx.sounds.load(sound_path.path().filename());
-                        }
-                    }
-
-                    std::cout<<"Loading "<<(entry.path() / "init.lua")<<std::endl;
-                    LuaUtil::run_script(L, (entry.path() / "init.lua").c_str());
-                } catch (const fs::filesystem_error &e) {
-                    std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
-                    std::cerr<<entry;
-                    std::cerr<<": "<<e.what()<<std::endl;
-                }
-            } else {
-                std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
-                std::cerr<<entry;
-                std::cerr<<": "<<ec.message()<<std::endl;
-            }
-        }
-        */
     }
 
     void LuaModdingInterface::pushClosure(lua_CFunction fn) {

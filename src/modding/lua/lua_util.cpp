@@ -99,6 +99,12 @@ namespace Terrarium {
             lua_pop(L, 1);
         }
 
+        void error(lua_State *L, const char *msg) {
+            printerr(L);
+
+            throw std::runtime_error(msg);
+        }
+
         bool run_script(lua_State *L, const char *path) {
             if (luaL_dofile(L, path) != LUA_OK) {
                 printerr(L);

@@ -101,6 +101,9 @@ namespace Terrarium {
         // Print error message occured in pcall and pop it
         void printerr(lua_State *L);
 
+        // Print error message and throw an exception
+        void error(lua_State *L, const char *msg);
+
         bool run_script(lua_State *L, const char *path);
 
         void push_vector2f(lua_State *L, const sf::Vector2f &vec);
