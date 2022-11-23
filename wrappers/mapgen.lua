@@ -1,5 +1,6 @@
 terrarium.registered_biomes = {}
 terrarium.registered_ores = {}
+terrarium.on_map_generated = {}
 
 local biome_defaults = {
     humidity_min = -1.0,
@@ -76,6 +77,10 @@ function terrarium.single_tile_decor(def)
         place_chance = def.place_chance,
         conditions = def.conditions,
     }
+end
+
+function terrarium.register_on_map_generated(func)
+    table.insert(terrarium.on_map_generated, func)
 end
 
 -- Converts block names into ids
@@ -211,4 +216,10 @@ function core._get_mapgen_data()
     end
 
     return data
+end
+
+function core._on_mapgen_finish()
+    for _, func in ipairs(terrarium.on_map_generated) do
+        func()
+    end
 end

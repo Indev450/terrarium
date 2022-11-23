@@ -218,6 +218,22 @@ namespace Terrarium {
         lua_pop(L, 1); // pops core
     }
 
+    void LuaModdingInterface::onMapgenFinish() {
+        lua_getglobal(L, "core");
+
+        lua_getfield(L, -1, "_on_mapgen_finish");
+
+        if (lua_isfunction(L, -1)) {
+            if (LuaUtil::pcall(L, 0, 0) != LUA_OK) {
+                LuaUtil::printerr(L);
+            }
+        } else {
+            lua_pop(L, 1);
+        }
+
+        lua_pop(L, 1);
+    }
+
     void LuaModdingInterface::loadMods(const fs::path &path) {
         const fs::path working_dir = fs::current_path();
 

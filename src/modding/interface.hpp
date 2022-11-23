@@ -45,6 +45,7 @@ namespace Terrarium {
         virtual void handleEvent(Event &event) {};
         virtual void initMapgen(MapgenBase &mapgen) {};
         virtual void onPlayerJoin(std::shared_ptr<Player> player) {};
+        virtual void onMapgenFinish() {};
     };
 
 } // namespace Terrarium
