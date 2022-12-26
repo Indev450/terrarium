@@ -49,7 +49,11 @@ namespace Terrarium {
         bool needs_update = true;
         int step;
 
-        inline void renderTile(sf::RenderTexture &target, BlockDefHolder &block_defs, int x, int y, const Tile &tile);
+        inline void renderTile(
+                sf::RenderTexture &target,
+                GameState &game,
+                int x, int y, int world_x, int world_y,
+                const Tile &tile);
 
     public:
         WorldRenderer(const sf::Vector2u &screen_size, int _step = 4):

@@ -58,6 +58,24 @@ namespace Terrarium {
             block_def->sprite.setTexture(lua_interface->game->gfx.textures.get(image));
             lua_pop(L, 1);
 
+            lua_getfield(L, 2, "draw_type");
+
+            static const char *draw_type_names[] = {
+                "None",
+                "Image",
+                "Autotile",
+            };
+
+            static const BlockDef::DrawType draw_type_values[] = {
+                BlockDef::DrawType::None,
+                BlockDef::DrawType::Image,
+                BlockDef::DrawType::Autotile,
+            };
+
+            block_def->draw_type = draw_type_values[luaL_checkoption(L, -1, "None", draw_type_names)];
+
+            lua_pop(L, 1);
+
             lua_getfield(L, 2, "slippery");
             float slippery = LuaUtil::checknumber_ranged(L, -1, 0, 1);
 

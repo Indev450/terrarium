@@ -75,9 +75,11 @@ namespace Terrarium {
                 if (tile != nullptr) {
                     renderTile(
                         *first,
-                        game.block_defs,
+                        game,
                         x - start_x,
                         y - start_y,
+                        x,
+                        y,
                         *tile);
                 }
             }
@@ -96,27 +98,88 @@ namespace Terrarium {
         needs_update = false;
     }
 
-    inline void WorldRenderer::renderTile(sf::RenderTexture &target, BlockDefHolder &block_defs, int x, int y, const Tile &tile) {
+    inline void WorldRenderer::renderTile(
+                sf::RenderTexture &target,
+                GameState &game,
+                int x, int y, int world_x, int world_y,
+                const Tile &tile) {
+        bool draw_anything = false;
+
         if (tile.bg) {
-            BlockDef &def = block_defs.getOrUnknown(tile.bg);
+            BlockDef &def = game.block_defs.getOrUnknown(tile.bg);
 
-            // Maybe i should use game.blocks_to_pixels? I don't wanna change function signature tho
-            def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
-            def.sprite.setColor(sf::Color(127, 127, 127, 255)); // Make wall darker
+            if (def.draw_type != BlockDef::DrawType::None) {
+                draw_anything = true;
 
-            target.draw(def.sprite);
+                if (def.draw_type == BlockDef::DrawType::Autotile) {
+                    unsigned idx = 0;
+
+                    // TODO - Check if other blocks count as neighbours for this
+                    // one
+                    if (game.world.getWall(world_x-1, world_y)) {
+                        idx |= 0b0001;
+                    }
+
+                    if (game.world.getWall(world_x+1, world_y)) {
+                        idx |= 0b0010;
+                    }
+
+                    if (game.world.getWall(world_x, world_y-1)) {
+                        idx |= 0b0100;
+                    }
+
+                    if (game.world.getWall(world_x, world_y+1)) {
+                        idx |= 0b1000;
+                    }
+
+                    def.sprite.setTextureRect(block_autotile_rects[idx]);
+                }
+
+                def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
+                def.sprite.setColor(sf::Color(127, 127, 127, 255)); // Make wall darker
+
+                target.draw(def.sprite);
+            }
         }
 
         if (tile.fg) {
-            BlockDef &def = block_defs.getOrUnknown(tile.fg);
+            BlockDef &def = game.block_defs.getOrUnknown(tile.fg);
 
-            def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
-            def.sprite.setColor(sf::Color(255, 255, 255, 255));
+            if (def.draw_type != BlockDef::DrawType::None) {
+                draw_anything = true;
 
-            target.draw(def.sprite);
+                if (def.draw_type == BlockDef::DrawType::Autotile) {
+                    unsigned idx = 0;
+
+                    // TODO - Check if other blocks count as neighbours for this
+                    // one
+                    if (game.world.getBlock(world_x-1, world_y)) {
+                        idx |= 0b0001;
+                    }
+
+                    if (game.world.getBlock(world_x+1, world_y)) {
+                        idx |= 0b0010;
+                    }
+
+                    if (game.world.getBlock(world_x, world_y-1)) {
+                        idx |= 0b0100;
+                    }
+
+                    if (game.world.getBlock(world_x, world_y+1)) {
+                        idx |= 0b1000;
+                    }
+
+                    def.sprite.setTextureRect(block_autotile_rects[idx]);
+                }
+
+                def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
+                def.sprite.setColor(sf::Color(255, 255, 255)); // Make wall darker
+
+                target.draw(def.sprite);
+            }
         }
 
-        if (!tile.fg && !tile.bg) {
+        if (!draw_anything) {
             air_block.setPosition(x*Tile::SIZE, y*Tile::SIZE);
 
             target.draw(air_block, sf::BlendNone);

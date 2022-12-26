@@ -30,6 +30,7 @@ end
 
 local block_defaults = {
     image = "",
+    draw_type = "Image",
     slippery = 0.1,
     is_solid = true,
 
