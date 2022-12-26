@@ -13,3 +13,6 @@ end
 function terrarium.stop_sound(handle)
     core._stop_sound(handle)
 end
+
+-- Unchanged, currently
+terrarium.play_music = core._play_music

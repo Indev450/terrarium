@@ -22,11 +22,13 @@
 
 #include <list>
 
+#include <cmath>
+
 #include "sfx.hpp"
 #include "../game.hpp"
 
 namespace Terrarium {
-    void Sfx::update(GameState &game) {
+    void Sfx::update(GameState &game, float dtime) {
         std::list<sound_handle> to_delete;
 
         for (auto it = playing_sounds.begin(); it != playing_sounds.end(); ++it) {
@@ -40,6 +42,46 @@ namespace Terrarium {
         for (auto handle: to_delete) {
             playing_sounds.del(handle);
         }
+
+        if (music_volume < 100.0) {
+            music_volume += 100.0*dtime;
+
+            if (music_volume > 100.0) {
+                music_volume = 100.0;
+
+                if (music_fading) {
+                    music_fading->stop();
+                }
+            } else if (music_fading) {
+                music_fading->setVolume(100.0 - music_volume);
+            }
+
+            if (music_playing) {
+                music_playing->setVolume(music_volume);
+            }
+        }
+    }
+
+    void Sfx::playMusic(const std::string &name) {
+        auto music_new = &music.get(name);
+
+        if (music_new == music_playing) {
+            return;
+        }
+
+        music_fading = music_playing;
+
+        music_playing = music_new;
+
+        // Instead of instantly starting, music will slowly increase its volume
+        // while previous one is fading
+        if (music_playing) {
+            music_playing->setVolume(0);
+            music_playing->setLoop(true);
+            music_playing->play();
+        }
+
+        music_volume = 0.0;
     }
 
     sound_handle Sfx::playSound(

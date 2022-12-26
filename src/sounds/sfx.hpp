@@ -40,8 +40,18 @@ namespace Terrarium {
     struct Sfx {
         OverflowingMap<sound_handle, SoundController> playing_sounds;
         ResourceHolder<sf::SoundBuffer> sounds;
+        ResourceHolder<sf::Music> music;
 
-        void update(GameState &game);
+        sf::Music *music_playing = nullptr;
+        sf::Music *music_fading = nullptr;
+
+        // This value is used for fading old music which was replaced by new
+        // I'll add actual volume control later
+        float music_volume = 0.0;
+
+        void update(GameState &game, float dtime);
+
+        void playMusic(const std::string &name);
 
         sound_handle playSound(
             const std::string &name,

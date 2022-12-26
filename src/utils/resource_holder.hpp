@@ -55,12 +55,15 @@ namespace Terrarium {
             default_res = resource;
         }
 
-        bool load(const std::string &name) {
+        // Entire freaking same function only to make this class work with sf::Music
+        // Thank you sfml devs that made sf::Music::openFromFile instead of
+        // loadFromFile
+        bool open(const std::string &name) {
             if (resources.find(name) != resources.end()) {
                 return true;
             }
 
-            Resource res;
+            resources.try_emplace(name);
 
             auto it = std::find_if(
                 search_path.begin(),
@@ -69,15 +72,50 @@ namespace Terrarium {
 
             if (it == search_path.end()) {
                 // File doesn't even exists
+
+                resources.erase(name);
+
                 return false;
             }
 
-            if (!res.loadFromFile(*it / name)) {
+            if (!resources[name].openFromFile(*it / name)) {
                 // File exists, but failed to load
+
+                resources.erase(name);
+
                 return false;
             }
 
-            resources[name] = res;
+            return true;
+        }
+
+        bool load(const std::string &name) {
+            if (resources.find(name) != resources.end()) {
+                return true;
+            }
+
+            resources.try_emplace(name);
+
+            auto it = std::find_if(
+                search_path.begin(),
+                search_path.end(),
+                [&] (const fs::path &path) { return std::filesystem::exists(path / name); });
+
+            if (it == search_path.end()) {
+                // File doesn't even exists
+
+                resources.erase(name);
+
+                return false;
+            }
+
+            if (!resources[name].loadFromFile(*it / name)) {
+                // File exists, but failed to load
+
+                resources.erase(name);
+
+                return false;
+            }
 
             return true;
         }

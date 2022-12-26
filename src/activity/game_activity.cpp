@@ -94,7 +94,7 @@ namespace Terrarium {
 
         game->modding_interface->update(dtime);
 
-        game->sfx.update(*game);
+        game->sfx.update(*game, dtime);
 
         world_renderer->updatePosition(game->camera);
         world_renderer->update(*game);

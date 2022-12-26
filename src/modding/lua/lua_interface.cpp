@@ -373,6 +373,17 @@ namespace Terrarium {
                     }
                 }
 
+                const fs::path music_dir = mod.root / "music";
+
+                // If there is music directory, load it
+                if (fs::is_directory(music_dir, ec)) {
+                    game->sfx.music.addSearchPath(music_dir);
+
+                    for (const auto &music_path: fs::directory_iterator(music_dir)) {
+                        game->sfx.music.open(music_path.path().filename());
+                    }
+                }
+
                 if (!LuaUtil::run_script(L, (mod.root / "init.lua").c_str())) {
                     throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: unexpected error when loading mod");
                 }
