@@ -36,7 +36,7 @@
 #include "world/world.hpp"
 #include "tile/block_def_holder.hpp"
 #include "item/item_def_manager.hpp"
-#include "item/cis.hpp"
+#include "item/inventory_storage.hpp"
 #include "craft/craft.hpp"
 #include "player/player.hpp"
 #include "player/world_interact.hpp"
@@ -60,7 +60,7 @@ namespace Terrarium {
         BlockDefHolder block_defs;
         ItemDefManager item_defs;
         CraftManager crafts;
-        CIS inventories;
+        InventoryStorage inventories;
 
         SavesManager saves;
         std::string save_name;

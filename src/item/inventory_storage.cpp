@@ -20,12 +20,12 @@
  *
  */
 
-#include "cis.hpp"
+#include "inventory_storage.hpp"
 #include "../utils/binary_io.hpp"
 
 namespace Terrarium {
 
-    std::shared_ptr<Inventory> CIS::get(const InventoryLocation &location) {
+    std::shared_ptr<Inventory> InventoryStorage::get(const InventoryLocation &location) {
         auto pair = inventories.find(location);
 
         if (pair != inventories.end()) {
@@ -35,7 +35,7 @@ namespace Terrarium {
         return nullptr;
     }
 
-    std::shared_ptr<Inventory> CIS::getOrCreate(const InventoryLocation &location) {
+    std::shared_ptr<Inventory> InventoryStorage::getOrCreate(const InventoryLocation &location) {
         if (inventories.count(location) == 0) {
             inventories[location] = std::make_shared<Inventory>(0);
         }
@@ -43,7 +43,7 @@ namespace Terrarium {
         return inventories[location];
     }
 
-    void CIS::load(std::istream &s, GameState &game) {
+    void InventoryStorage::load(std::istream &s, GameState &game) {
         uint32_t count = read<uint32_t>(s);
 
         for (unsigned int i = 0; i < count; ++i) {
@@ -84,7 +84,7 @@ namespace Terrarium {
         }
     }
 
-    void CIS::save(std::ostream &s) {
+    void InventoryStorage::save(std::ostream &s) {
         write<uint32_t>(s, inventories.size());
 
         for (auto &pair: inventories) {

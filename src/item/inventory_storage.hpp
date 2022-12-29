@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CIS_HPP
-#define CIS_HPP
+#ifndef InventoryStorage_HPP
+#define InventoryStorage_HPP
 
 #include <memory>
 #include <unordered_map>
@@ -42,7 +42,7 @@ namespace Terrarium {
     typedef std::variant<sf::Vector2i, entityid, std::string> InventoryLocation;
 
     // Centralized Inventory Storage
-    class CIS {
+    class InventoryStorage {
         std::unordered_map<InventoryLocation, std::shared_ptr<Inventory>> inventories;
 
     public:
@@ -50,7 +50,7 @@ namespace Terrarium {
 
         std::shared_ptr<Inventory> getOrCreate(const InventoryLocation &location);
 
-        // CIS save format:
+        // InventoryStorage save format:
         // u32                               count
         // vector<{
         //     u8 location_type,
