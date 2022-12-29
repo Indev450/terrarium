@@ -39,6 +39,11 @@ namespace Terrarium {
 
         ItemCellRenderer item_cell_renderer;
 
+        float zoom = 0.5;
+
+        const float ZOOM_MIN = 0.25;
+        const float ZOOM_MAX = 1.0;
+
     public:
         GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name);
 

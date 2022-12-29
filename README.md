@@ -14,7 +14,7 @@ Controls
 | i                   | Open inventory                                     |
 | e                   | Interact with world                                |
 | escape              | Open pause menu (WIP)                              |
-
+| =, -                | Zoom in/out                                        |
 Dependencies
 ------------
 

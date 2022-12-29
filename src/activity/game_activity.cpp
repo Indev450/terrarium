@@ -47,20 +47,29 @@ namespace Terrarium {
 
         sf::Vector2f camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
 
+        // Offset caused by zoom
+        float camera_off_x = (game->camera.width - game->camera.width * zoom) / 2;
+        float camera_off_y = (game->camera.height - game->camera.height * zoom) / 2;
+
         game->camera.left = std::max<float>(
-            0,
+            -camera_off_x,
             std::min<float>(
                 camera_pos.x,
-                game->world.getWidth() - game->camera.width));
+                game->world.getWidth() + camera_off_x - game->camera.width));
 
         game->camera.top = std::max<float>(
-            0,
+            -camera_off_y,
             std::min<float>(
                 camera_pos.y,
-                game->world.getHeight() - game->camera.height));
+                game->world.getHeight() + camera_off_y  - game->camera.height));
+
+        sf::Vector2u win_size = window.getSize();
+
+        float cam_off_x = (win_size.x - win_size.x * zoom) / 2;
+        float cam_off_y = (win_size.y - win_size.y * zoom) / 2;
 
         sf::Vector2i mouse_pos_pixels = sf::Mouse::getPosition(window);
-        sf::Vector2f mouse_pos = game->pixels_to_blocks.transformPoint(mouse_pos_pixels.x, mouse_pos_pixels.y);
+        sf::Vector2f mouse_pos = game->pixels_to_blocks.transformPoint(mouse_pos_pixels.x*zoom + cam_off_x, mouse_pos_pixels.y*zoom + cam_off_y);
 
         game->player->controls.mouse_pos.x = game->camera.left + mouse_pos.x;
         game->player->controls.mouse_pos.y = game->camera.top + mouse_pos.y;
@@ -101,13 +110,20 @@ namespace Terrarium {
     }
 
     void GameActivity::render(sf::RenderTarget &target) {
-        target.clear(sf::Color::Blue);
+        auto view = target.getDefaultView();
+        view.zoom(zoom);
+        target.setView(view);
+
+        target.clear(sf::Color(90, 120, 240));
 
         world_renderer->render(target);
 
         game->world_interact.highlightInteractive(*game, target);
 
         game->entity_mgr.draw(*game, target);
+
+        view = target.getDefaultView();
+        target.setView(view);
 
         game->hud.render(target, *game);
 
@@ -159,6 +175,14 @@ namespace Terrarium {
 
                     case sf::Keyboard::Space:
                         game->player->controls.jump = true;
+                    break;
+
+                    case sf::Keyboard::Hyphen:
+                        zoom = std::min(ZOOM_MAX, zoom * 2);
+                    break;
+
+                    case sf::Keyboard::Equal:
+                        zoom = std::max(ZOOM_MIN, zoom / 2);
                     break;
 
                     case sf::Keyboard::B:
