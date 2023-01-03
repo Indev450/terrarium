@@ -21,6 +21,7 @@
  */
 
 #include <iostream>
+#include <cmath>
 
 #include "game_activity.hpp"
 #include "activity_manager.hpp"
@@ -30,9 +31,12 @@ namespace Terrarium {
     GameActivity::GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name):
         game(_game),
         world_renderer(std::make_unique<WorldRenderer>(am.getWindow().getSize() + sf::Vector2u(Tile::SIZE, Tile::SIZE))),
-        item_cell_renderer(game->gfx, sf::Color::White, sf::Color::Transparent, sf::Color::Transparent)
+        item_cell_renderer(game->gfx, sf::Color::White, sf::Color::Transparent, sf::Color::Transparent),
+        def_view()
     {
         game->modding_interface->onPlayerJoin(game->player);
+
+        def_view = am.getWindow().getDefaultView();
 
         auto win_size = game->pixels_to_blocks.transformPoint(sf::Vector2f(am.getWindow().getSize()));
 
@@ -42,6 +46,8 @@ namespace Terrarium {
 
     void GameActivity::update(ActivityManager &am, float dtime) {
         auto &window = am.getWindow();
+
+        game->time += dtime;
 
         game->entity_mgr.update(*game, dtime);
 
@@ -110,11 +116,42 @@ namespace Terrarium {
     }
 
     void GameActivity::render(sf::RenderTarget &target) {
-        auto view = target.getDefaultView();
+        auto view = def_view;
         view.zoom(zoom);
         target.setView(view);
 
-        target.clear(sf::Color(90, 120, 240));
+        sf::Color sky_color = sf::Color(90, 120, 240);
+
+        if (!game->day_night_cycle.empty()) {
+            float daytime = game->time - std::floor(game->time / game->day_length) * game->day_length;
+            unsigned phases = game->day_night_cycle.size();
+
+            float timestamp = 0;
+
+            for (unsigned i = 0; i < phases; ++i) {
+                timestamp += game->day_night_cycle[i].second;
+
+                if (daytime < timestamp || i == phases - 1) {
+                    sf::Color prev = game->day_night_cycle[i].first;
+
+                    float interpolation = 1 - (timestamp - daytime) / game->day_night_cycle[i].second;
+
+                    i = (i + 1 == phases) ? 0 : (i + 1);
+
+                    sf::Color next = game->day_night_cycle[i].first;
+
+                    sky_color.r = float(prev.r) + (float(next.r) - float(prev.r)) * interpolation;
+                    sky_color.g = float(prev.g) + (float(next.g) - float(prev.g)) * interpolation;
+                    sky_color.b = float(prev.b) + (float(next.b) - float(prev.b)) * interpolation;
+
+                    //std::cout<<daytime<<" "<<timestamp<<std::endl;
+                    //std::cout<<interpolation<<" "<<int(sky_color.r)<<" "<<int(sky_color.g)<<" "<<int(sky_color.b)<<std::endl;
+                    break;
+                }
+            }
+        }
+
+        target.clear(sky_color);
 
         world_renderer->render(target);
 
@@ -122,7 +159,7 @@ namespace Terrarium {
 
         game->entity_mgr.draw(*game, target);
 
-        view = target.getDefaultView();
+        view = def_view;
         target.setView(view);
 
         game->hud.render(target, *game);
@@ -144,7 +181,7 @@ namespace Terrarium {
             case sf::Event::Resized:
             {
                 sf::FloatRect visible_area(0, 0, event.size.width, event.size.height);
-                window.setView(sf::View(visible_area));
+                def_view = sf::View(visible_area);
 
                 sf::Vector2f new_size = game->pixels_to_blocks.transformPoint(event.size.width, event.size.height);
 

@@ -44,6 +44,8 @@ namespace Terrarium {
         const float ZOOM_MIN = 0.25;
         const float ZOOM_MAX = 1.0;
 
+        sf::View def_view;
+
     public:
         GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name);
 

@@ -23,6 +23,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include <utility>
 #include <queue>
 #include <iostream>
 #include <cstring>
@@ -65,6 +66,10 @@ namespace Terrarium {
         SavesManager saves;
         std::string save_name;
 
+        std::vector<std::pair<sf::Color, float>> day_night_cycle;
+        float time = 0;
+        float day_length = 60*12;
+
         // TODO - maybe move this into Player class?
         WorldInteractHelper world_interact;
 
@@ -97,10 +102,10 @@ namespace Terrarium {
         void saveWorld(std::ostream &file);
 
         // Inventories save file format:
-        // char[8]    signature       should be "terrinvs"
-        // u32        version         format version
+        // char[8]              signature       should be "terrinvs"
+        // u32                  version         format version
         //
-        // CIS        inventories     (see src/items/cis.hpp)
+        // InventoryStorage     inventories     (see src/items/inventory_storage.hpp)
         void loadInventories(std::istream &file);
 
         void saveInventories(std::ostream &file);

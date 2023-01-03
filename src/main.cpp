@@ -77,6 +77,16 @@ int main(int argc, char **argv)
 
     std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(save_name);
 
+    game->day_length = 60*16;
+
+    game->day_night_cycle = {
+        { sf::Color(70, 100, 220), 60.0*8 },
+        { sf::Color(50, 80, 200), 60.0*2 },
+        { sf::Color(130, 80, 180), 60.0 },
+        { sf::Color(20, 10, 70), 60.0*4 },
+        { sf::Color(30, 20, 80), 60.0 },
+    };
+
     game->hud.setScreenSize(sf::Vector2f(800, 640));
 
     if (!game->gfx.font.loadFromFile("assets/dpcomic.ttf")) {
