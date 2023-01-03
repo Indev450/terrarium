@@ -63,6 +63,8 @@ namespace Terrarium {
         void set(const std::string &name, bool restart = false) {
             auto pair = anims.find(name);
 
+            restart = restart || name != current_name;
+
             current_name = name;
 
             if (pair != anims.end()) {
@@ -71,6 +73,7 @@ namespace Terrarium {
                 if (restart) {
                     current->current_frame = 0;
                     current->timer = 0;
+                    current->ended = false;
                 }
             } else {
                 current = nullptr;
