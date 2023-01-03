@@ -55,6 +55,8 @@ namespace Terrarium {
                 int x, int y, int world_x, int world_y,
                 const Tile &tile);
 
+        inline bool isAutotileNeighbour(GameState &game, BlockDef &tile, blockid neighbour_id);
+
     public:
         WorldRenderer(const sf::Vector2u &screen_size, int _step = 4):
             air_block(sf::Vector2f(Tile::SIZE, Tile::SIZE)), step(_step) {

@@ -71,6 +71,9 @@ namespace Terrarium {
             Autotile,
         } draw_type = Image;
 
+        bool autotile_neighbour = true;
+        bool autotile_single = false;
+
         bool is_solid = true;
         float slippery = 0;
 

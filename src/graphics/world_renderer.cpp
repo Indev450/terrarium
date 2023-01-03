@@ -116,19 +116,19 @@ namespace Terrarium {
 
                     // TODO - Check if other blocks count as neighbours for this
                     // one
-                    if (game.world.getWall(world_x-1, world_y)) {
+                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x-1, world_y))) {
                         idx |= 0b0001;
                     }
 
-                    if (game.world.getWall(world_x+1, world_y)) {
+                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x+1, world_y))) {
                         idx |= 0b0010;
                     }
 
-                    if (game.world.getWall(world_x, world_y-1)) {
+                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x, world_y-1))) {
                         idx |= 0b0100;
                     }
 
-                    if (game.world.getWall(world_x, world_y+1)) {
+                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x, world_y+1))) {
                         idx |= 0b1000;
                     }
 
@@ -153,19 +153,19 @@ namespace Terrarium {
 
                     // TODO - Check if other blocks count as neighbours for this
                     // one
-                    if (game.world.getBlock(world_x-1, world_y)) {
+                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x-1, world_y))) {
                         idx |= 0b0001;
                     }
 
-                    if (game.world.getBlock(world_x+1, world_y)) {
+                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x+1, world_y))) {
                         idx |= 0b0010;
                     }
 
-                    if (game.world.getBlock(world_x, world_y-1)) {
+                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x, world_y-1))) {
                         idx |= 0b0100;
                     }
 
-                    if (game.world.getBlock(world_x, world_y+1)) {
+                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x, world_y+1))) {
                         idx |= 0b1000;
                     }
 
@@ -184,6 +184,20 @@ namespace Terrarium {
 
             target.draw(air_block, sf::BlendNone);
         }
+    }
+
+    inline bool WorldRenderer::isAutotileNeighbour(GameState &game, BlockDef &tile, blockid neighbour_id) {
+        if (neighbour_id == 0) {
+            return false;
+        }
+
+        BlockDef &neighbour = game.block_defs.getOrUnknown(neighbour_id);
+
+        if (tile.autotile_single) {
+            return &tile == &neighbour;
+        }
+
+        return neighbour.autotile_neighbour;
     }
 
     void WorldRenderer::updatePosition(const sf::FloatRect &camera) {

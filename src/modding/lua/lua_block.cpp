@@ -76,6 +76,14 @@ namespace Terrarium {
 
             lua_pop(L, 1);
 
+            lua_getfield(L, 2, "autotile_neighbour");
+            block_def->autotile_neighbour = LuaUtil::checkboolean(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, 2, "autotile_single");
+            block_def->autotile_single = LuaUtil::checkboolean(L, -1);
+            lua_pop(L, 1);
+
             lua_getfield(L, 2, "slippery");
             float slippery = LuaUtil::checknumber_ranged(L, -1, 0, 1);
 
