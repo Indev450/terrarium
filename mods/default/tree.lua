@@ -8,6 +8,7 @@ terrarium.register_item("default:sapling", {
 terrarium.register_block("default:tree_base", {
     image = "tree_base.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -28,6 +29,7 @@ terrarium.register_block("default:tree_base", {
 terrarium.register_block("default:tree_trunk", {
     image = "tree_trunk.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -48,6 +50,7 @@ terrarium.register_block("default:tree_trunk", {
 terrarium.register_block("default:tree_trunk_branch_left", {
     image = "tree_trunk_branch_left.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -68,6 +71,7 @@ terrarium.register_block("default:tree_trunk_branch_left", {
 terrarium.register_block("default:tree_trunk_branch_right", {
     image = "tree_trunk_branch_right.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -88,6 +92,7 @@ terrarium.register_block("default:tree_trunk_branch_right", {
 terrarium.register_block("default:tree_trunk_top", {
     image = "tree_trunk_top.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -108,6 +113,7 @@ terrarium.register_block("default:tree_trunk_top", {
 terrarium.register_block("default:tree_branch_left", {
     image = "tree_branch_left.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -128,6 +134,7 @@ terrarium.register_block("default:tree_branch_left", {
 terrarium.register_block("default:tree_branch_right", {
     image = "tree_branch_right.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {

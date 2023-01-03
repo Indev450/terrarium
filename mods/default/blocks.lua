@@ -10,6 +10,18 @@ terrarium.register_block("default:stone", {
     },
 })
 
+terrarium.register_block("default:obsidian", {
+    image = "obsidian.png",
+
+    slippery = 0.2,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 3,
+    },
+})
+
 terrarium.register_block("default:copper_ore", {
     image = "copper.png",
 
@@ -98,6 +110,34 @@ terrarium.register_block("default:dirt", {
 })
 
 terrarium.register_block("default:grass", {
+    image = "grass_dirt.png",
+    draw_type = "Autotile",
+    inventory_image = "grass_block.png",
+
+    drop = "default:dirt",
+
+    slippery = 0.4,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_soil.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_soil.wav",
+        volume = 1.0,
+        pitch = 1.4,
+    },
+})
+
+terrarium.register_block("default:overgrowth_grass", {
     image = "grass_block.png",
 
     slippery = 0.4,
@@ -124,6 +164,7 @@ terrarium.register_block("default:grass", {
 terrarium.register_block("default:grass_decor", {
     image = "grass.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     drop = "",
@@ -138,6 +179,7 @@ terrarium.register_block("default:grass_decor", {
 terrarium.register_block("default:cactus", {
     image = "cactus.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -233,6 +275,7 @@ terrarium.register_block("default:stone_bricks", {
 terrarium.register_block("default:chest", {
     image = "chest.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -278,6 +321,7 @@ terrarium.register_block("default:chest", {
 terrarium.register_block("default:workbench", {
     image = "workbench.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -304,6 +348,7 @@ terrarium.register_block("default:workbench", {
 terrarium.register_block("default:furnace", {
     image = "furnace.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -318,6 +363,7 @@ terrarium.register_block("default:furnace", {
 terrarium.register_block("default:anvil", {
     image = "anvil.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {
@@ -344,6 +390,7 @@ terrarium.register_block("default:anvil", {
 terrarium.register_block("default:vine", {
     image = "vine.png",
 
+    autotile_neighbour = false,
     is_solid = false,
 
     groups = {

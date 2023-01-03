@@ -143,22 +143,22 @@ terrarium.register_biome("default:grassland_overgrowth", {
     heat_min = 0.4,
 
     top = {
-        block = "default:grass",
-        wall = "default:grass",
+        block = "default:overgrowth_grass",
+        wall = "default:overgrowth_grass",
     },
 
     top_depth = 4,
 
     filler = {
-        block = "default:grass",
-        wall = "default:grass",
+        block = "default:overgrowth_grass",
+        wall = "default:overgrowth_grass",
     },
 
     filler_depth = 8,
 
     stone = {
         block = "default:dirt",
-        wall = "default:grass",
+        wall = "default:overgrowth_grass",
     },
 
     max_depth = 0.2,
