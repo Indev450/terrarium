@@ -47,8 +47,13 @@ namespace Terrarium {
 
         // Very rare case
         if (dist != 0) {
-            sound->setVolume(
-                volume * std::max(0.f, std::min(1.f, fade_dist/dist)));
+            float dist_volume = std::min(1.f, fade_dist/dist);
+
+            if (dist_volume < 0.1) {
+                dist_volume = 0;
+            }
+
+            sound->setVolume(volume * dist_volume);
         } else {
             sound->setVolume(volume);
         }
