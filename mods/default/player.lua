@@ -5,6 +5,48 @@ terrarium.override_player({
     },
 
     image = "player.png",
+
+    animations = {
+        idle = {
+            time_per_frame = 999,
+
+            frames = {
+                { x = 0, y = 0, width = 24, height = 48 },
+            },
+        },
+
+        jump_start = {
+            time_per_frame = 0.1,
+
+            next = "jump",
+
+            frames = {
+                { x = 24*1, y = 0, width = 24, height = 48 },
+                { x = 24*2, y = 0, width = 24, height = 48 },
+            },
+        },
+
+        jump = {
+            time_per_frame = 999,
+
+            frames = {
+                { x = 24*3, y = 0, width = 24, height = 48 },
+            },
+        },
+
+        walk = {
+            time_per_frame = 0.09,
+
+            frames = {
+                { x = 24*0, y = 48, width = 24, height = 48 },
+                { x = 24*1, y = 48, width = 24, height = 48 },
+                { x = 24*2, y = 48, width = 24, height = 48 },
+                { x = 24*3, y = 48, width = 24, height = 48 },
+                { x = 24*4, y = 48, width = 24, height = 48 },
+                { x = 24*5, y = 48, width = 24, height = 48 },
+            }
+        }
+    },
 })
 
 
@@ -68,6 +110,8 @@ terrarium.register_on_player_join(function(player)
 
         if self.hp < 0 then self.hp = 0 end
     end
+
+    player.ref:set_animation("idle")
 end)
 
 terrarium.register_on_player_update(function(player, dtime)
@@ -77,5 +121,37 @@ terrarium.register_on_player_update(function(player, dtime)
     if player.hp == 0 then
         player.hp = player.max_hp
         player.ref:set_position({x = 0, y = 0})
+    end
+end)
+
+-- Update animation
+terrarium.register_on_player_update(function(player, dtime)
+    local speed = player.ref:get_speed()
+    local collision = player.ref:get_collision_info()
+    local input = player.ref:get_player_controls()
+
+    if input.right and speed.x > 0 then
+        player.ref:set_mirror(false)
+    end
+
+    if input.left and speed.x < 0 then
+        player.ref:set_mirror(true)
+    end
+
+    if collision.blockd and input.jump then
+        player.ref:set_animation("jump_start")
+        return
+    end
+
+    if (input.left or input.right) and collision.blockd then
+        player.ref:set_animation("walk")
+        return
+    end
+
+    if collision.blockd then
+        player.ref:set_animation("idle")
+        return
+    elseif player.ref:get_animation() ~= "jump_start" then
+        player.ref:set_animation("jump")
     end
 end)
