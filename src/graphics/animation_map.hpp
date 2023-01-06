@@ -105,7 +105,7 @@ namespace Terrarium {
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
             sf::IntRect rect = sprite.getTextureRect();
 
-            float scale_x = draw_size.x / rect.width;
+            float scale_x = draw_size.x / std::abs(rect.width);
             float scale_y = draw_size.y / rect.height;
 
             states.transform *= getTransform();
