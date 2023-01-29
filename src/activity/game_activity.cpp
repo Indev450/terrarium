@@ -51,7 +51,7 @@ namespace Terrarium {
 
         game->entity_mgr.update(*game, dtime);
 
-        sf::Vector2f camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
+        sf::Vector2f target_camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
 
         // Offset caused by zoom
         float camera_off_x = (game->camera.width - game->camera.width * zoom) / 2;
@@ -60,13 +60,13 @@ namespace Terrarium {
         game->camera.left = std::max<float>(
             -camera_off_x,
             std::min<float>(
-                camera_pos.x,
+                (target_camera_pos.x + game->camera.left) / 2,
                 game->world.getWidth() + camera_off_x - game->camera.width));
 
         game->camera.top = std::max<float>(
             -camera_off_y,
             std::min<float>(
-                camera_pos.y,
+                (target_camera_pos.y + game->camera.top) / 2,
                 game->world.getHeight() + camera_off_y  - game->camera.height));
 
         sf::Vector2u win_size = window.getSize();
