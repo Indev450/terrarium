@@ -35,6 +35,20 @@ namespace Terrarium {
     void Player::update(GameState &game, float dtime) {
         Entity::update(game, dtime);
 
+        // Stick to ground so 1-block stairs going down are not thet annoying
+        // when you trying to jump
+        if (physics.enable_collision) {
+            if (!collision_info.blockd && speed.y > 0) {
+                hitbox.top += 1;
+
+                if (!isCollide(game)) {
+                    hitbox.top -= 1;
+                } else {
+                    collide(game, false);
+                }
+            }
+        }
+
         if (!controlled) {
             return;
         }

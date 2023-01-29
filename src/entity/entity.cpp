@@ -54,16 +54,26 @@ namespace Terrarium {
             speed.x *= physics.slippery;
         }
 
-        // FIXME - skipping blocks when speed.x * dtime > 1
-        hitbox.left += speed.x * dtime;
-        if (physics.enable_collision) {
-            collide(game, true);
+        float dx = speed.x * dtime;
+        while (dx != 0) {
+            float step = std::min(1.f, std::max(-1.f, dx));
+            dx -= step;
+
+            hitbox.left += step;
+            if (physics.enable_collision) {
+                collide(game, true);
+            }
         }
 
-        // FIXME - ^
-        hitbox.top += speed.y * dtime;
-        if (physics.enable_collision) {
-            collide(game, false);
+        float dy = speed.y * dtime;
+        while (dy != 0) {
+            float step = std::min(1.f, std::max(-1.f, dy));
+            dy -= step;
+
+            hitbox.top += step;
+            if (physics.enable_collision) {
+                collide(game, false);
+            }
         }
     }
 

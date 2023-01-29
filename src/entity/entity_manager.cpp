@@ -20,8 +20,6 @@
  *
  */
 
-#include <iostream>
-
 #include "entity_manager.hpp"
 #include "../game.hpp"
 

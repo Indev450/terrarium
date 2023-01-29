@@ -60,6 +60,7 @@ namespace Terrarium {
     };
 
     class Entity {
+    protected:
         void collide(GameState &game, bool by_x);
         bool isCollide(GameState &game);
 
