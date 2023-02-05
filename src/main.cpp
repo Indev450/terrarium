@@ -50,8 +50,8 @@
 // Those were in terrarium_config.hpp, but i anyway wasn't using any configuration
 // in cmake other than version, so maybe it is not bad to set version here?
 #define TERRARIUM_VERSION_MAJOR 0
-#define TERRARIUM_VERSION_MINOR 3
-#define TERRARIUM_VERSION_PATCH 6
+#define TERRARIUM_VERSION_MINOR 4
+#define TERRARIUM_VERSION_PATCH 0
 
 const char *TITLE = "TerrariumEngine";
 
