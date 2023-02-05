@@ -26,7 +26,7 @@
 #include "lua_inventory.hpp"
 #include "lua_interface.hpp"
 #include "lua_util.hpp"
-#include "../../tile/block_def.hpp"
+#include "../../../tile/block_def.hpp"
 
 namespace Terrarium {
 

@@ -19,36 +19,23 @@
  * MA 02110-1301, USA.
  *
  */
+#ifndef MODDING_LUA_CLIENT_INTERFACE_HPP
+#define MODDING_LUA_CLIENT_INTERFACE_HPP
 
-#ifndef MODDING_LUA_INTERFACE_HPP
-#define MODDING_LUA_INTERFACE_HPP
-
-#include <filesystem>
+#include <queue>
 
 #include <lua.hpp>
 
-#include "../interface.hpp"
-#include "../../game.hpp"
-
-namespace fs = std::filesystem;
+#include "../../client_interface.hpp"
 
 namespace Terrarium {
 
-    class LuaModdingInterface: public ModdingInterface {
+    class LuaClientModdingInterface: public ClientModdingInterface {
         lua_State *L = nullptr;
 
-        void pushItemEvent(ItemEvent &item_event);
-        void pushUIEvent(UIEvent &ui_event);
-        void pushBlockEvent(BlockEvent &block_event);
-
+        void pushModCmdEvent(ModCmdEvent &cmd_event);
     public:
-        LuaModdingInterface(std::shared_ptr<GameState> game);
-
-        void update(float dtime) override;
-        void handleEvent(Event &event) override;
-        void initMapgen(MapgenBase &mapgen) override;
-        void onPlayerJoin(std::shared_ptr<Player> player) override;
-        void onMapgenFinish() override;
+        LuaClientModdingInterface(std::shared_ptr<GameState> game);
 
         // Makes closure with 1 upvalue - `this` pointer and leaves it on stack top
         void pushClosure(lua_CFunction fn);
@@ -57,11 +44,18 @@ namespace Terrarium {
         // with 1 upvalue - light userdata, which is `this` pointer
         void registerFunction(const char *name, lua_CFunction fn);
 
-        void loadMods(const fs::path &path);
+        lua_State *getLuaState() { return L; }
 
-        inline lua_State *getLuaState() { return L; }
+        void loadScript(const fs::path &path) override;
+
+        void update(float dtime) override;
+        bool ui_click(const std::string &id, const sf::Vector2f &position) override;
+        bool ui_scroll(const std::string &id, const sf::Vector2f &position, float delta) override;
+        void ui_render(const std::string &id) override;
+
+        void handleModCmd(ModCmdEvent &cmd_event) override;
     };
 
-} // namespace Terrarium
+}
 
 #endif

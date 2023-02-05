@@ -29,7 +29,7 @@
 
 #include <lua.hpp>
 
-#include "../../item/inventory.hpp"
+#include "../../../item/inventory.hpp"
 
 namespace Terrarium {
 

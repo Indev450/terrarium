@@ -35,14 +35,14 @@
 #include "ui/hud.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/inventory.hpp"
-#include "ui/form.hpp"
 #include "ui/rect_button.hpp"
 #include "ui/container.hpp"
 #include "ui/bar.hpp"
 #include "ui/craft_ui.hpp"
 #include "utils/saves.hpp"
 #include "mapgen/mapgen_perlin.hpp"
-#include "modding/lua/lua_interface.hpp"
+#include "modding/lua/server/lua_interface.hpp"
+#include "modding/lua/client/lua_client_interface.hpp"
 #include "activity/activity_manager.hpp"
 #include "activity/game_activity.hpp"
 #include "activity/mapgen_activity.hpp"
@@ -105,6 +105,7 @@ int main(int argc, char **argv)
     }
 
     // Lua interface runs mods, that can override player prefab
+    game->client_modding_interface = std::make_unique<Terrarium::LuaClientModdingInterface>(game);
     game->modding_interface = std::make_unique<Terrarium::LuaModdingInterface>(game);
 
     // Now player gets spawned. Hopefully with a normal prefab...
@@ -176,12 +177,14 @@ int main(int argc, char **argv)
     ////////////////////////////////////////////////////////////////////
     auto pause_container = std::make_unique<Terrarium::UIContainer>(
         sf::Vector2f(100, 110));
-    pause_container->setPosition(255, 255);
-
-    auto pause_form = std::make_unique<Terrarium::Form>("pause");
+    pause_container->setPosition(-50, -55);
+    pause_container->setOriginType(ScreenTransformable::Origin::ScreenCenter);
 
     auto continue_button = std::make_unique<Terrarium::RectButton>(
-        game->gfx, sf::Vector2f(80, 40), "continue", 20);
+        game->gfx, sf::Vector2f(80, 40),
+        [&] (Terrarium::GameState &game) {
+            game.hud.setVisible("pause", false);
+        }, "continue", 20);
     continue_button->setTextColor(sf::Color::White);
     continue_button->setBackgroundColor(sf::Color(127, 127, 127, 127));
     continue_button->setOutlineColor(sf::Color(127, 127, 127, 255));
@@ -192,10 +195,13 @@ int main(int argc, char **argv)
     // this properly right now. Maybe later. UI is too hard for me
     continue_button->setScreenSize(sf::Vector2f(100, 110));
 
-    pause_form->addField("continue", std::move(continue_button));
+    pause_container->addElement(std::move(continue_button));
 
     auto exit_button = std::make_unique<Terrarium::RectButton>(
-        game->gfx, sf::Vector2f(80, 40), "exit", 20);
+        game->gfx, sf::Vector2f(80, 40),
+        [&] (Terrarium::GameState &game) {
+            am.getWindow().close();
+        }, "exit", 20);
     exit_button->setTextColor(sf::Color::White);
     exit_button->setBackgroundColor(sf::Color(127, 127, 127, 127));
     exit_button->setOutlineColor(sf::Color(127, 127, 127, 255));
@@ -205,11 +211,9 @@ int main(int argc, char **argv)
     // Same as above
     exit_button->setScreenSize(sf::Vector2f(100, 110));
 
-    pause_form->addField("exit", std::move(exit_button));
+    pause_container->addElement(std::move(exit_button));
 
     pause_container->visible = false;
-
-    pause_container->addElement(std::move(pause_form));
 
     game->hud.addElement("pause", std::move(pause_container));
 

@@ -24,7 +24,7 @@
 #include "lua_inventory.hpp"
 #include "lua_item.hpp"
 #include "lua_util.hpp"
-#include "../../ui/inventory.hpp"
+#include "../../../ui/inventory.hpp"
 
 namespace Terrarium {
 

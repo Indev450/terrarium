@@ -28,7 +28,7 @@
 #include <lua.hpp>
 
 #include "lua_entity.hpp"
-#include "../../player/player.hpp"
+#include "../../../player/player.hpp"
 #include "lua_util.hpp"
 
 namespace Terrarium {

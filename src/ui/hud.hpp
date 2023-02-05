@@ -43,7 +43,9 @@ namespace Terrarium {
         sf::Vector2f screen_size;
 
     public:
+        // Has to do custom logic when screen size changed so thats a setter
         void setScreenSize(const sf::Vector2f &size);
+        sf::Vector2f getScreenSize();
 
         void addElement(const std::string &name, std::unique_ptr<UIElement> element);
 
@@ -52,6 +54,8 @@ namespace Terrarium {
         void setVisible(const std::string &name, bool visible);
 
         bool isVisible(const std::string &name);
+
+        UIElement *getElement(const std::string &name);
 
         void delElement(const std::string &name);
 

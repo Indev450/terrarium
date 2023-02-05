@@ -33,7 +33,7 @@
 
 #include <lua.hpp>
 
-#include "../../graphics/animation.hpp"
+#include "../../../graphics/animation.hpp"
 
 namespace Terrarium {
 
@@ -86,6 +86,7 @@ namespace Terrarium {
         //
         // Found this solution at http://lua-users.org/lists/lua-l/2005-06/msg00000.html
         // (from stackoverflow answer)
+        void *trysubclass(lua_State *L, int idx, const std::string &base);
         void *checksubclass(lua_State *L, int idx, const std::string &base);
 
         inline std::string subclass(const std::string &base, const std::string &derived) {

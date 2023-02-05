@@ -48,6 +48,7 @@
 #include "utils/binary_io.hpp"
 #include "utils/saves.hpp"
 #include "modding/interface.hpp"
+#include "modding/client_interface.hpp"
 
 namespace Terrarium {
 
@@ -88,6 +89,7 @@ namespace Terrarium {
         sf::Transform pixels_to_blocks;
 
         std::unique_ptr<ModdingInterface> modding_interface;
+        std::unique_ptr<ClientModdingInterface> client_modding_interface;
 
         GameState(const std::string &_save_name);
 

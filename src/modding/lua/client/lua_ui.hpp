@@ -20,25 +20,33 @@
  *
  */
 
-#include "button.hpp"
-#include "../game.hpp"
+#ifndef MODDING_LUA_CLIENT_UI_HPP
+#define MODDING_LUA_CLIENT_UI_HPP
+
+#include <lua.hpp>
 
 namespace Terrarium {
 
-    Button::Button(const sf::Vector2f &_size, std::function<void(GameState&)> _on_click):
-        size(_size), on_click(_on_click)
-    {}
+    class LuaClientModdingInterface;
 
-    bool Button::click(GameState &game, const sf::Vector2f &position) {
-        sf::Vector2f rpos = getInverseTransform().transformPoint(position);
+    namespace LuaClientUIAPI {
 
-        if (rpos.x < 0 || rpos.x > size.x || rpos.y < 0 || rpos.y > size.y) {
-            return false;
-        }
+        void init(LuaClientModdingInterface &lua_interface);
 
-        on_click(game);
+        // RenderTarget *core._frame_new(string id, unsigned width, unsigned height)
+        int frame_new(lua_State *L);
 
-        return true;
+        // void core._set_hud_item_visible(string id, bool visible)
+        int set_hud_item_visible(lua_State *L);
+
+        // void core._set_hud_item_position(string id, Vector2f position)
+        int set_hud_item_position(lua_State *L);
+
+        // void core._set_hud_item_origin(string id, string origin_type)
+        int set_hud_item_origin(lua_State *L);
+
     }
 
 }
+
+#endif

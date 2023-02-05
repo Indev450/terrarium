@@ -2,7 +2,6 @@
 #include "lua_interface.hpp"
 #include "lua_item.hpp"
 
-
 namespace Terrarium {
 
     namespace LuaCraftingAPI {

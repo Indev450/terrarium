@@ -20,30 +20,22 @@
  *
  */
 
-#ifndef MODDING_LUA_MAPGEN_HPP
-#define MODDING_LUA_MAPGEN_HPP
-
-#include <memory>
+#ifndef MODDING_LUA_CMD_HPP
+#define MODDING_LUA_CMD_HPP
 
 #include <lua.hpp>
 
-#include "../../mapgen/mapgen_base.hpp"
-
 namespace Terrarium {
 
-    namespace LuaMapgenAPI {
+    class LuaModdingInterface;
 
-        // Functions to call from C++
+    namespace LuaCmdAPI {
 
-        Tile checktile(lua_State *L, int idx);
+        void init(LuaModdingInterface &lua_interface);
 
-        Decoration checkdecor(lua_State *L, int idx);
+        // void core._send_cmd(string name, string arg1, string arg2, ...)
+        int send_cmd(lua_State *L);
 
-        Biome checkbiome(lua_State *L, int idx);
-
-        Ore checkore(lua_State *L, int idx);
-
-        std::unique_ptr<PlaceConditions::Condition> checkcondition(lua_State *L, int idx);
     }
 
 }

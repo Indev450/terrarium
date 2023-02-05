@@ -7,6 +7,14 @@ terrarium.override_player({
     image = "player.png",
 
     animations = {
+        invisible = {
+            time_per_frame = 999,
+
+            frames = {
+                { x = 24*4, y = 0, width = 24, height = 48 },
+            },
+        },
+
         idle = {
             time_per_frame = 999,
 
@@ -83,7 +91,7 @@ terrarium.register_on_player_join(function(player)
     })
 
     player.hurt = function(self, damage, source, knockback, inv_time)
-        if not self.inv_timer:ready() then return end
+        if not self.inv_timer:ready() or self.hp <= 0 then return end
 
         knockback = knockback or 2
 
@@ -108,20 +116,31 @@ terrarium.register_on_player_join(function(player)
         self.inv_timer.time_to_wait = inv_time or 0.5
         self.inv_timer:restart()
 
-        if self.hp < 0 then self.hp = 0 end
+        if self.hp <= 0 then
+            terrarium.send_cmd(self, "default:player_died")
+        end
+    end
+
+    player.respawn = function(self)
+        player.hp = player.max_hp
+        player.ref:set_player_controlled(true)
+        player.ref:set_position({x = 0, y = 0})
     end
 
     player.ref:set_animation("idle")
 end)
 
 terrarium.register_on_player_update(function(player, dtime)
-    player:set_bar_value("hp", player.hp)
+    player:set_bar_value("hp", math.max(0, player.hp))
     player.inv_timer:tick(dtime)
 
-    if player.hp == 0 then
-        player.hp = player.max_hp
-        player.ref:set_position({x = 0, y = 0})
+    if player.hp <= 0 then
+        player.ref:set_player_controlled(false)
     end
+end)
+
+terrarium.on_cmd("default:player_respawn", function(player)
+    if player.hp <= 0 then player:respawn() end
 end)
 
 -- Update animation
@@ -129,6 +148,11 @@ terrarium.register_on_player_update(function(player, dtime)
     local speed = player.ref:get_speed()
     local collision = player.ref:get_collision_info()
     local input = player.ref:get_player_controls()
+
+    if player.hp <= 0 then
+        player.ref:set_animation("invisible")
+        return
+    end
 
     if input.right and speed.x > 0 then
         player.ref:set_mirror(false)

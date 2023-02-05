@@ -20,25 +20,30 @@
  *
  */
 
-#include "button.hpp"
-#include "../game.hpp"
+#ifndef UI_FRAME_HPP
+#define UI_FRAME_HPP
+
+#include "element.hpp"
 
 namespace Terrarium {
 
-    Button::Button(const sf::Vector2f &_size, std::function<void(GameState&)> _on_click):
-        size(_size), on_click(_on_click)
-    {}
+    class UIFrame: public UIElement {
+        sf::Sprite sprite;
 
-    bool Button::click(GameState &game, const sf::Vector2f &position) {
-        sf::Vector2f rpos = getInverseTransform().transformPoint(position);
+    public:
+        sf::RenderTexture rtexture;
+        std::string id;
 
-        if (rpos.x < 0 || rpos.x > size.x || rpos.y < 0 || rpos.y > size.y) {
-            return false;
-        }
+    public:
+        UIFrame(unsigned width, unsigned height, const std::string &_id);
 
-        on_click(game);
+        bool click(GameState &game, const sf::Vector2f &position) override;
 
-        return true;
-    }
+        bool scroll(GameState &game, const sf::Vector2f &position, float delta) override;
+
+        void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) override;
+    };
 
 }
+
+#endif

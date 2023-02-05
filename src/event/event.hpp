@@ -33,7 +33,6 @@
 
 #include "../entity/entity.hpp"
 #include "../item/item_stack.hpp"
-#include "../ui/form.hpp"
 #include "../player/player.hpp"
 
 namespace Terrarium {
@@ -45,17 +44,12 @@ namespace Terrarium {
         sf::Vector2f position;
     };
 
-    struct UIEvent {
-        // Form name
-        std::string form;
+    struct ModCmdEvent {
+        std::string name;
 
-        // List of data in a Form. Pair's first value is name of form field,
-        // and second is field value
-        std::vector<std::pair<std::string, std::string>> fields;
+        std::vector<std::string> args;
 
         std::weak_ptr<Player> user;
-
-        std::shared_ptr<FormSource> form_source;
     };
 
     struct BlockEvent {
@@ -74,7 +68,7 @@ namespace Terrarium {
 
             ItemSelect, // Start wield item. Can be used for torches
 
-            UISubmit, // Sent when a button pressed
+            ModCmd, // Arbitary client->server or server->client command
 
             BlockActivate, // Sent when using interactive block
         } type;
@@ -82,7 +76,7 @@ namespace Terrarium {
         const union {
             ItemEvent *item = nullptr;
 
-            UIEvent *ui;
+            ModCmdEvent *cmd;
 
             BlockEvent *block;
         };
@@ -93,10 +87,10 @@ namespace Terrarium {
             assert(type <= ItemSelect);
         }
 
-        Event(Type _type, UIEvent *_ui):
-            type(_type), ui(_ui) {
+        Event(Type _type, ModCmdEvent *_cmd):
+            type(_type), cmd(_cmd) {
 
-            assert(type == UISubmit);
+            assert(type == ModCmd);
         }
 
         Event(Type _type, BlockEvent *_block):
@@ -124,7 +118,7 @@ namespace Terrarium {
 
                 ENUM_TOSTRING(ItemSelect);
 
-                ENUM_TOSTRING(UISubmit);
+                ENUM_TOSTRING(ModCmd);
 
                 ENUM_TOSTRING(BlockActivate);
             }
@@ -144,8 +138,8 @@ namespace Terrarium {
                     delete item;
                 break;
 
-                case UISubmit:
-                    delete ui;
+                case ModCmd:
+                    delete cmd;
                 break;
 
                 case BlockActivate:

@@ -20,24 +20,38 @@
  *
  */
 
-#ifndef UI_BUTTON_HPP
-#define UI_BUTTON_HPP
+#ifndef MODDING_CLIENT_INTERFACE_HPP
+#define MODDING_CLIENT_INTERFACE_HPP
 
-#include <functional>
+#include <filesystem>
+#include <memory>
 
-#include "element.hpp"
+#include <SFML/Graphics.hpp>
+
+#include "../event/event.hpp"
+
+namespace fs = std::filesystem;
 
 namespace Terrarium {
 
-    class Button: public UIElement {
-    protected:
-        sf::Vector2f size;
-        std::function<void(GameState&)> on_click;
+    class GameState;
 
+    class ClientModdingInterface {
     public:
-        Button(const sf::Vector2f &_size, std::function<void(GameState&)> _on_click);
+        std::shared_ptr<GameState> game;
 
-        bool click(GameState &game, const sf::Vector2f &position) override;
+        ClientModdingInterface(std::shared_ptr<GameState> _game):
+            game(_game)
+        {}
+
+        virtual void loadScript(const fs::path &path) {};
+
+        virtual void update(float dtime) {};
+        virtual bool ui_click(const std::string &id, const sf::Vector2f &position) { return false; };
+        virtual bool ui_scroll(const std::string &id, const sf::Vector2f &position, float delta) { return false; };
+        virtual void ui_render(const std::string &id) {};
+
+        virtual void handleModCmd(ModCmdEvent &cmd_event) {};
     };
 
 }

@@ -28,7 +28,7 @@
 #include <lua.hpp>
 #include <memory>
 
-#include "../../item/item_stack.hpp"
+#include "../../../item/item_stack.hpp"
 
 namespace Terrarium {
 

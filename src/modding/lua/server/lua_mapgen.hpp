@@ -20,25 +20,32 @@
  *
  */
 
-#include "button.hpp"
-#include "../game.hpp"
+#ifndef MODDING_LUA_MAPGEN_HPP
+#define MODDING_LUA_MAPGEN_HPP
+
+#include <memory>
+
+#include <lua.hpp>
+
+#include "../../../mapgen/mapgen_base.hpp"
 
 namespace Terrarium {
 
-    Button::Button(const sf::Vector2f &_size, std::function<void(GameState&)> _on_click):
-        size(_size), on_click(_on_click)
-    {}
+    namespace LuaMapgenAPI {
 
-    bool Button::click(GameState &game, const sf::Vector2f &position) {
-        sf::Vector2f rpos = getInverseTransform().transformPoint(position);
+        // Functions to call from C++
 
-        if (rpos.x < 0 || rpos.x > size.x || rpos.y < 0 || rpos.y > size.y) {
-            return false;
-        }
+        Tile checktile(lua_State *L, int idx);
 
-        on_click(game);
+        Decoration checkdecor(lua_State *L, int idx);
 
-        return true;
+        Biome checkbiome(lua_State *L, int idx);
+
+        Ore checkore(lua_State *L, int idx);
+
+        std::unique_ptr<PlaceConditions::Condition> checkcondition(lua_State *L, int idx);
     }
 
 }
+
+#endif

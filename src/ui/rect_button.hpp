@@ -38,7 +38,9 @@ namespace Terrarium {
         void resetTextPosition();
 
     public:
-        RectButton(Gfx &gfx, const sf::Vector2f &size, const std::string &text_string, unsigned int text_size);
+        RectButton(Gfx &gfx,
+                   const sf::Vector2f &size, std::function<void(GameState&)> on_click,
+                   const std::string &text_string, unsigned int text_size);
 
         void setTextString(const std::string &text_string);
         void setTextColor(const sf::Color &color);

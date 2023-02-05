@@ -36,10 +36,11 @@
 #include "lua_inventory.hpp"
 #include "lua_block.hpp"
 #include "lua_player.hpp"
+#include "lua_cmd.hpp"
 #include "lua_mapgen.hpp"
 #include "lua_hud_bar.hpp"
 #include "lua_sound.hpp"
-#include "../../utils/path_guard.hpp"
+#include "../../../utils/path_guard.hpp"
 
 namespace Terrarium {
 
@@ -57,6 +58,7 @@ namespace Terrarium {
         LuaInventoryAPI::init(*this);
         LuaBlockAPI::init(*this);
         LuaPlayerAPI::init(*this);
+        LuaCmdAPI::init(*this);
         LuaHudBarAPI::init(*this);
         LuaSoundAPI::init(*this);
 
@@ -116,10 +118,10 @@ namespace Terrarium {
                 }
                 break;
 
-                case Event::UISubmit:
+                case Event::ModCmd:
                 {
-                    pushUIEvent(*event.ui);
-                    lua_setfield(L, -2, "ui_event");
+                    pushModCmdEvent(*event.cmd);
+                    lua_setfield(L, -2, "mod_cmd");
                 }
                 break;
 
@@ -384,6 +386,20 @@ namespace Terrarium {
                     }
                 }
 
+                // This may look really stupid, loading client scripts while in
+                // "server" environment, but later resources will be downloaded
+                // from server and loaded from some kind of "download" directory
+                const fs::path client_scripts_dir = mod.root / "client";
+
+                // If there is scripts directory, load it
+                if (fs::is_directory(client_scripts_dir, ec)) {
+                    PathGuard guard(mod.root);
+
+                    fs::current_path(client_scripts_dir);
+
+                    game->client_modding_interface->loadScript("init.lua");
+                }
+
                 if (!LuaUtil::run_script(L, (mod.root / "init.lua").c_str())) {
                     throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: unexpected error when loading mod");
                 }
@@ -425,20 +441,21 @@ namespace Terrarium {
         lua_setfield(L, -2, "position");
     }
 
-    void LuaModdingInterface::pushUIEvent(UIEvent &ui_event) {
+    void LuaModdingInterface::pushModCmdEvent(ModCmdEvent &cmd_event) {
         lua_newtable(L);
 
-        lua_pushstring(L, ui_event.form.c_str());
-        lua_setfield(L, -2, "form_name");
+        lua_pushstring(L, cmd_event.name.c_str());
+        lua_setfield(L, -2, "name");
 
-        lua_newtable(L);
-        for (auto &field: ui_event.fields) {
-            lua_pushstring(L, field.second.c_str());
-            lua_setfield(L, -2, field.first.c_str());
+        size_t argv = cmd_event.args.size();
+        lua_createtable(L, argv, 0);
+        for (size_t i = 1; i <= argv; ++i) {
+            lua_pushstring(L, cmd_event.args[i-1].c_str());
+            lua_seti(L, -2, i);
         }
-        lua_setfield(L, -2, "fields");
+        lua_setfield(L, -2, "args");
 
-        LuaPlayerAPI::push_player(L, ui_event.user);
+        LuaPlayerAPI::push_player(L, cmd_event.user);
         lua_setfield(L, -2, "user");
     }
 

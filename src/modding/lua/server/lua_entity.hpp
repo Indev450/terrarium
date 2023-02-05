@@ -30,9 +30,9 @@
 #include <lua.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include "../../entity/entity.hpp"
-#include "../../entity/entity_manager.hpp"
-#include "../../entity/entity_prefab.hpp"
+#include "../../../entity/entity.hpp"
+#include "../../../entity/entity_manager.hpp"
+#include "../../../entity/entity_prefab.hpp"
 
 namespace Terrarium {
 

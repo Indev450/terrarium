@@ -23,35 +23,75 @@
 #ifndef UTIL_SCREEN_TRANSFORMABLE_HPP
 #define UTIL_SCREEN_TRANSFORMABLE_HPP
 
+#include <iostream>
+
 #include <SFML/Graphics.hpp>
 
 class ScreenTransformable: sf::Transformable {
-    // Relative position. Positive coords mean offset from top left corner,
-    // negative - offset from bottom right corner
+public:
+    enum Origin {
+        TopLeft,
+        ScreenCenter,
+    };
+
+private:
     sf::Vector2f position;
+
+    // This is probably bad, but it works
+    sf::Vector2f screen_size;
+
+    Origin origin = TopLeft;
 
 public:
     void setScreenSize(const sf::Vector2f &size) {
-        sf::Vector2f new_position = position;
+        screen_size = size;
 
-        if (position.x < 0) {
-            new_position.x += size.x;
+        updatePosition();
+    }
+
+    void setOriginType(Origin new_origin) {
+        origin = new_origin;
+
+        updatePosition();
+    }
+
+    void updatePosition() {
+        switch (origin) {
+            case TopLeft:
+            {
+                sf::Vector2f new_position = position;
+
+                if (position.x < 0) {
+                    new_position.x += screen_size.x;
+                }
+
+                if (position.y < 0) {
+                    new_position.y += screen_size.y;
+                }
+
+                sf::Transformable::setPosition(new_position);
+            }
+            break;
+
+            case ScreenCenter:
+                sf::Transformable::setPosition(
+                    screen_size.x / 2 + position.x,
+                    screen_size.y / 2 + position.y);
+            break;
         }
-
-        if (position.y < 0) {
-            new_position.y += size.y;
-        }
-
-        sf::Transformable::setPosition(new_position);
     }
 
     void setPosition(const sf::Vector2f &position) {
         this->position = position;
+
+        updatePosition();
     }
 
     void setPosition(float x, float y) {
         position.x = x;
         position.y = y;
+
+        updatePosition();
     }
 
     const sf::Vector2f &getPosition() {

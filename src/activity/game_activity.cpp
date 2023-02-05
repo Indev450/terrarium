@@ -85,29 +85,13 @@ namespace Terrarium {
         while (!game->events.empty()) {
             Event &event = game->events.front();
 
-            if (event.type == Event::UISubmit) {
-                // TODO - Maybe change those form and field names into integers and
-                // do switch instead of if-else if-... statements?
-                if (event.ui->form == "pause") {
-                    for (auto &field: event.ui->fields) {
-                        if (field.first == "continue" && !field.second.empty()) {
-                            game->hud.setVisible("pause", false);
-                        } else if (field.first == "exit" && !field.second.empty()) {
-                            window.close();
-                        }
-                    }
-
-                    game->events.pop();
-                    continue;
-                }
-            }
-
             game->modding_interface->handleEvent(event);
 
             game->events.pop();
         }
 
         game->modding_interface->update(dtime);
+        game->client_modding_interface->update(dtime);
 
         game->sfx.update(*game, dtime);
 

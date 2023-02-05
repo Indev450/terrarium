@@ -24,8 +24,11 @@
 
 namespace Terrarium {
 
-    RectButton::RectButton(Gfx &gfx, const sf::Vector2f &size, const std::string &text_string, unsigned int text_size):
-        Button(size), shape(size), text(text_string, gfx.font, text_size)
+    RectButton::RectButton(Gfx &gfx, const sf::Vector2f &size,
+                           std::function<void(GameState&)> on_click,
+                           const std::string &text_string,
+                           unsigned int text_size):
+        Button(size, on_click), shape(size), text(text_string, gfx.font, text_size)
     { resetTextPosition(); }
 
     void RectButton::setTextString(const std::string &text_string) {
