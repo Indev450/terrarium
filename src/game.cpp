@@ -109,6 +109,7 @@ namespace Terrarium {
 
     void GameState::save() {
         saves.save(*this, save_name);
+        modding_interface->save(saves.getSavePath(save_name));
     }
 
 }

@@ -24,9 +24,12 @@
 #define MODDING_INTERFACE_HPP
 
 #include <memory>
+#include <filesystem>
 
 #include "../player/player.hpp"
 #include "../mapgen/mapgen_base.hpp"
+
+namespace fs = std::filesystem;
 
 namespace Terrarium {
 
@@ -46,6 +49,8 @@ namespace Terrarium {
         virtual void initMapgen(MapgenBase &mapgen) {};
         virtual void onPlayerJoin(std::shared_ptr<Player> player) {};
         virtual void onMapgenFinish() {};
+        virtual void load(const fs::path &save_dir_path) {};
+        virtual void save(const fs::path &save_dir_path) {};
     };
 
 } // namespace Terrarium

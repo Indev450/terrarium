@@ -1,3 +1,39 @@
+default_player_saver = {
+    load = function(self, save_dir_path)
+        local file = io.open(save_dir_path.."/".."default.save")
+
+        if not file then return end
+
+        for line in file:lines() do
+            local cmd_start, cmd_end = line:find("[^%s]+")
+
+            if cmd_start then
+                local cmd = line:sub(cmd_start, cmd_end)
+
+                if cmd == "gave_init_stuff" then
+                    local name = line:sub(line:find(".+", cmd_end+2))
+
+                    self.gave_init_stuff[name] = true
+                end
+            end
+        end
+
+        file:close()
+    end,
+
+    save = function(self, save_dir_path)
+        local file = io.open(save_dir_path.."/".."default.save", "w")
+
+        for name, _ in pairs(self.gave_init_stuff) do
+            file:write("gave_init_stuff "..name.."\n")
+        end
+
+        file:close()
+    end,
+
+    gave_init_stuff = {},
+}
+
 terrarium.override_player({
     size = {
         width = 1.5,
@@ -57,12 +93,17 @@ terrarium.override_player({
     },
 })
 
-
 terrarium.register_on_player_join(function(player)
-    -- TODO - add easier way to add items to player inventory
-    player.ref:get_player_inventory():get(0):set("default:copper_pickaxe", 1)
-    player.ref:get_player_inventory():get(1):set("default:copper_axe", 1)
-    player.ref:get_player_inventory():get(2):set("default:chest", 5)
+    -- player:get_player_name()
+    local name = "singleplayer"
+
+    if not default_player_saver.gave_init_stuff[name] then
+        default_player_saver.gave_init_stuff[name] = true
+
+        player.ref:get_player_inventory():add_item(ItemStack("default:copper_pickaxe", 1))
+        player.ref:get_player_inventory():add_item(ItemStack("default:copper_axe", 1))
+        player.ref:get_player_inventory():add_item(ItemStack("default:chest", 5))
+    end
 
     player.team = 0
 
@@ -179,3 +220,5 @@ terrarium.register_on_player_update(function(player, dtime)
         player.ref:set_animation("jump")
     end
 end)
+
+terrarium.register_saver(default_player_saver)

@@ -19,6 +19,7 @@ dofile("wrappers/entity.lua")
 dofile("wrappers/player.lua")
 dofile("wrappers/item_entity.lua")
 dofile("wrappers/cmd.lua")
+dofile("wrappers/save.lua")
 
 dofile("wrappers/mapgen.lua")
 dofile("wrappers/crafting.lua")

@@ -236,6 +236,42 @@ namespace Terrarium {
         lua_pop(L, 1);
     }
 
+    void LuaModdingInterface::load(const fs::path &save_dir_path) {
+        lua_getglobal(L, "core");
+
+        lua_getfield(L, -1, "_load");
+
+        if (lua_isfunction(L, -1)) {
+            lua_pushstring(L, save_dir_path.c_str());
+
+            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
+                LuaUtil::error(L, "core._load() generated a lua error");
+            }
+        } else {
+            lua_pop(L, 1);
+        }
+
+        lua_pop(L, 1);
+    }
+
+    void LuaModdingInterface::save(const fs::path &save_dir_path) {
+        lua_getglobal(L, "core");
+
+        lua_getfield(L, -1, "_save");
+
+        if (lua_isfunction(L, -1)) {
+            lua_pushstring(L, save_dir_path.c_str());
+
+            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
+                LuaUtil::error(L, "core._save() generated a lua error");
+            }
+        } else {
+            lua_pop(L, 1);
+        }
+
+        lua_pop(L, 1);
+    }
+
     void LuaModdingInterface::loadMods(const fs::path &path) {
         const fs::path working_dir = fs::current_path();
 
