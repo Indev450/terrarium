@@ -108,6 +108,23 @@ namespace Terrarium {
         bars.erase(name);
     }
 
+    void Hud::hover(GameState &game, const sf::Vector2f &position) {
+        for (auto it = elements.begin(); it != elements.end(); ++it) {
+            if (!it->second->visible) {
+                continue;
+            }
+
+            auto hover_tip = it->second->hover(game, position);
+
+            if (hover_tip) {
+                tip = hover_tip;
+                return;
+            }
+        }
+
+        tip = std::nullopt;
+    }
+
     bool Hud::click(GameState &game, const sf::Vector2f &position) {
         for (auto it = elements.begin(); it != elements.end(); ++it) {
             if (!it->second->visible) {

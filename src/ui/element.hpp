@@ -1,6 +1,9 @@
 #ifndef UI_ELEMENT_HPP
 #define UI_ELEMENT_HPP
 
+#include <string>
+#include <optional>
+
 #include <SFML/Graphics.hpp>
 
 #include "../utils/screen_transformable.hpp"
@@ -12,6 +15,8 @@ namespace Terrarium {
     class UIElement: public ScreenTransformable {
     public:
         bool visible = true;
+
+        virtual std::optional<std::string> hover(GameState &game, const sf::Vector2f &position) { return std::nullopt; }
 
         // This function should return, was the click handled or not
         virtual bool click(GameState &game, const sf::Vector2f &position) = 0;

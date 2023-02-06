@@ -32,6 +32,7 @@ namespace Terrarium {
         game(_game),
         world_renderer(std::make_unique<WorldRenderer>(am.getWindow().getSize() + sf::Vector2u(Tile::SIZE, Tile::SIZE))),
         item_cell_renderer(game->gfx, sf::Color::White, sf::Color::Transparent, sf::Color::Transparent),
+        tip_text("", game->gfx.font, 16),
         def_view()
     {
         game->modding_interface->onPlayerJoin(game->player);
@@ -42,6 +43,10 @@ namespace Terrarium {
 
         game->camera.width = win_size.x;
         game->camera.height = win_size.y;
+
+        tip_background.setFillColor(sf::Color(64, 64, 64, 127));
+        tip_background.setOutlineColor(sf::Color(127, 127, 127, 127));
+        tip_background.setOutlineThickness(4);
     }
 
     void GameActivity::update(ActivityManager &am, float dtime) {
@@ -82,6 +87,19 @@ namespace Terrarium {
 
         item_cell_renderer.setPosition(sf::Vector2f(mouse_pos_pixels) - sf::Vector2f(16, 16));
 
+        if (game->hud.tip) {
+            tip_text.setString(*(game->hud.tip));
+            tip_text.setPosition(sf::Vector2f(mouse_pos_pixels)
+                                 + sf::Vector2f(10, 10) // Offset from cursor
+                                 + sf::Vector2f(10, 5)); // Offset from background
+            tip_background.setPosition(sf::Vector2f(mouse_pos_pixels)
+                                       + sf::Vector2f(10, 10)); // Offset from cursor
+
+            sf::FloatRect text_bounds = tip_text.getGlobalBounds();
+
+            tip_background.setSize(sf::Vector2f(text_bounds.width, text_bounds.height) + sf::Vector2f(20, 20));
+        }
+
         while (!game->events.empty()) {
             Event &event = game->events.front();
 
@@ -97,6 +115,8 @@ namespace Terrarium {
 
         world_renderer->updatePosition(game->camera);
         world_renderer->update(*game);
+
+        game->hud.hover(*game, sf::Vector2f(mouse_pos_pixels));
     }
 
     void GameActivity::render(sf::RenderTarget &target) {
@@ -151,6 +171,11 @@ namespace Terrarium {
         if (!game->player->hold_item_stack->empty()) {
             item_cell_renderer.render(
                 target, *game->player->hold_item_stack, sf::Transform::Identity, ItemCellRendererSettings::Default);
+        }
+
+        if (game->hud.tip) {
+            target.draw(tip_background);
+            target.draw(tip_text);
         }
     };
 

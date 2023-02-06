@@ -26,6 +26,7 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include <optional>
 
 #include <SFML/Graphics.hpp>
 
@@ -41,6 +42,9 @@ namespace Terrarium {
         std::unordered_map<std::string, std::unique_ptr<Bar>> bars;
 
         sf::Vector2f screen_size;
+
+    public:
+        std::optional<std::string> tip;
 
     public:
         // Has to do custom logic when screen size changed so thats a setter
@@ -64,6 +68,8 @@ namespace Terrarium {
         Bar *getBar(const std::string &name);
 
         void delBar(const std::string &name);
+
+        void hover(GameState &game, const sf::Vector2f &position);
 
         bool click(GameState &game, const sf::Vector2f &position);
 

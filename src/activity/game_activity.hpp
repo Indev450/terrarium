@@ -39,6 +39,9 @@ namespace Terrarium {
 
         ItemCellRenderer item_cell_renderer;
 
+        sf::RectangleShape tip_background;
+        sf::Text tip_text;
+
         float zoom = 0.5;
 
         const float ZOOM_MIN = 0.25;

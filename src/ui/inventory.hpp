@@ -49,6 +49,8 @@ namespace Terrarium {
 
         InventoryUI(const Gfx &gfx, unsigned int _width, unsigned int _height);
 
+        std::optional<std::string> hover(GameState &game, const sf::Vector2f &position) override;
+
         bool click(GameState &game, const sf::Vector2f &position) override;
 
         void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) override;
