@@ -273,6 +273,8 @@ namespace Terrarium {
                             game->hud.setVisible("inventory", false);
                             game->hud.setVisible("craft", false);
                             game->hud.setVisible("opened_inventory", false);
+
+                            game->player->crafting_category = game->crafts.default_category;
                         } else {
                             game->hud.setVisible("pause", !game->hud.isVisible("pause"));
                         }

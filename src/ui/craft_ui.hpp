@@ -39,6 +39,7 @@ namespace Terrarium {
         static constexpr float RECIPE_GAP = 4;
 
         ItemCellRenderer item_cell_renderer;
+        sf::ConvexShape arrow;
 
         unsigned int current_scroll = 0;
 

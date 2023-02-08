@@ -27,8 +27,17 @@
 namespace Terrarium {
 
     CraftUI::CraftUI(const Gfx &gfx):
-        item_cell_renderer(gfx, sf::Color::White, sf::Color(196, 196, 196, 127), sf::Color(127, 127, 127))
-    {}
+        item_cell_renderer(gfx, sf::Color::White, sf::Color(196, 196, 196, 127), sf::Color(127, 127, 127)),
+        arrow(3)
+    {
+        arrow.setPoint(0, sf::Vector2f(0, 0));
+        arrow.setPoint(1, sf::Vector2f(8, 8));
+        arrow.setPoint(2, sf::Vector2f(16, 0));
+
+        arrow.setFillColor(sf::Color(196, 196, 196, 127));
+        arrow.setOutlineColor(sf::Color(127, 127, 127));
+        arrow.setOutlineThickness(2);
+    }
 
     bool CraftUI::click(GameState &game, const sf::Vector2f &position) {
         if (!game.player->crafting_category) {
@@ -85,7 +94,7 @@ namespace Terrarium {
             return true;
         }
 
-        if (delta > 0) {
+        if (delta < 0) {
             current_scroll = std::min<unsigned int>(current_scroll+1, game.crafts.getRecipes(category).size() - SHOW_RECIPES);
         } else {
             if (current_scroll != 0) {
@@ -108,6 +117,22 @@ namespace Terrarium {
         std::vector<std::unique_ptr<Recipe>> &recipes = game.crafts.getRecipes(category);
 
         ItemCellRendererSettings settings;
+
+        if (current_scroll != 0) {
+            sf::Transform arrow_transform = combined_transform;
+            arrow_transform.translate(28, -4);
+            arrow_transform.rotate(180);
+
+            target.draw(arrow, arrow_transform);
+        }
+
+        size_t amount_recipes = game.crafts.getRecipes(category).size();
+        if (amount_recipes > SHOW_RECIPES && current_scroll != amount_recipes - SHOW_RECIPES) {
+            sf::Transform arrow_transform = combined_transform;
+            arrow_transform.translate(12, (SHOW_RECIPES+1)*32 + 4);
+
+            target.draw(arrow, arrow_transform);
+        }
 
         for (unsigned int i = 0; i < SHOW_RECIPES; ++i) {
             unsigned int recipe_index = current_scroll + i;
