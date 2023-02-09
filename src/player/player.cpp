@@ -33,12 +33,14 @@ namespace Terrarium {
     const unsigned int Player::INVENTORY_ROWS;
 
     void Player::update(GameState &game, float dtime) {
+        bool was_on_ground = collision_info.blockd;
+
         Entity::update(game, dtime);
 
-        // Stick to ground so 1-block stairs going down are not thet annoying
+        // Stick to ground so 1-block stairs going down are not that annoying
         // when you trying to jump
         if (physics.enable_collision) {
-            if (!collision_info.blockd && speed.y > 0) {
+            if (!collision_info.blockd && was_on_ground && speed.y > 0) {
                 hitbox.top += 1;
 
                 if (!isCollide(game)) {
