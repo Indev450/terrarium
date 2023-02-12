@@ -27,11 +27,13 @@ end
 
 -- Kind of "copy contructor" for item stack
 local function itemstack_copy(istack)
-    local istack = core._new_item_stack()
+    local new_istack = core._new_item_stack()
 
-    istack:set(istack:get_item_name(), istack:get_item_count())
+    if not istack:empty() then
+        new_istack:set(istack:get_item_name(), istack:get_item_count())
+    end
 
-    return istack
+    return new_istack
 end
 
 -- And this function combines all possible item stack "initializers"
