@@ -1,4 +1,6 @@
 terrarium.register_block("default:stone", {
+    description = "Stone",
+
     image = "stone.png",
 
     slippery = 0.2,
@@ -11,6 +13,8 @@ terrarium.register_block("default:stone", {
 })
 
 terrarium.register_block("default:obsidian", {
+    description = "Obsidian",
+
     image = "obsidian.png",
 
     slippery = 0.2,
@@ -23,6 +27,8 @@ terrarium.register_block("default:obsidian", {
 })
 
 terrarium.register_block("default:copper_ore", {
+    description = "Copper ore",
+
     image = "copper.png",
 
     slippery = 0.7,
@@ -44,6 +50,8 @@ terrarium.register_block("default:copper_ore", {
 })
 
 terrarium.register_block("default:iron_ore", {
+    description = "Iron ore",
+
     image = "iron.png",
 
     slippery = 0.2,
@@ -65,6 +73,8 @@ terrarium.register_block("default:iron_ore", {
 })
 
 terrarium.register_block("default:gold_ore", {
+    description = "Gold ore",
+
     image = "gold.png",
 
     slippery = 0.2,
@@ -86,6 +96,8 @@ terrarium.register_block("default:gold_ore", {
 })
 
 terrarium.register_block("default:dirt", {
+    description = "Dirt",
+
     image = "dirt.png",
 
     slippery = 0.8,
@@ -110,6 +122,8 @@ terrarium.register_block("default:dirt", {
 })
 
 terrarium.register_block("default:grass", {
+    description = "Grassy dirt block",
+
     image = "grass_dirt.png",
     draw_type = "Autotile",
     inventory_image = "grass_block.png",
@@ -138,6 +152,8 @@ terrarium.register_block("default:grass", {
 })
 
 terrarium.register_block("default:overgrowth_grass", {
+    description = "Overgrowth grassy dirt block",
+
     image = "grass_block.png",
 
     slippery = 0.4,
@@ -162,6 +178,8 @@ terrarium.register_block("default:overgrowth_grass", {
 })
 
 terrarium.register_block("default:grass_decor", {
+    description = "Grass",
+
     image = "grass.png",
 
     autotile_neighbour = false,
@@ -177,6 +195,8 @@ terrarium.register_block("default:grass_decor", {
 })
 
 terrarium.register_block("default:cactus", {
+    description = "Cactus",
+
     image = "cactus.png",
 
     autotile_neighbour = false,
@@ -200,6 +220,8 @@ terrarium.register_block("default:cactus", {
 })
 
 terrarium.register_block("default:wood", {
+    description = "Wood",
+
     image = "wood_block.png",
 
     is_solid = true,
@@ -225,6 +247,8 @@ terrarium.register_block("default:wood", {
 })
 
 terrarium.register_block("default:sand", {
+    description = "Sand",
+
     image = "sand.png",
 
     slippery = 0.4,
@@ -249,6 +273,8 @@ terrarium.register_block("default:sand", {
 })
 
 terrarium.register_block("default:glass", {
+    description = "Glass",
+
     image = "glass.png",
 
     slippery = 0.7,
@@ -261,6 +287,8 @@ terrarium.register_block("default:glass", {
 })
 
 terrarium.register_block("default:stone_bricks", {
+    description = "Stone bricks",
+
     image = "stone_bricks.png",
 
     slippery = 0.2,
@@ -273,6 +301,8 @@ terrarium.register_block("default:stone_bricks", {
 })
 
 terrarium.register_block("default:chest", {
+    description = "Chest",
+
     image = "chest.png",
 
     autotile_neighbour = false,
@@ -319,6 +349,8 @@ terrarium.register_block("default:chest", {
 })
 
 terrarium.register_block("default:workbench", {
+    description = "Workbench",
+
     image = "workbench.png",
 
     autotile_neighbour = false,
@@ -346,6 +378,8 @@ terrarium.register_block("default:workbench", {
 })
 
 terrarium.register_block("default:furnace", {
+    description = "Furnace",
+
     image = "furnace.png",
 
     autotile_neighbour = false,
@@ -361,6 +395,8 @@ terrarium.register_block("default:furnace", {
 })
 
 terrarium.register_block("default:anvil", {
+    description = "Anvil",
+
     image = "anvil.png",
 
     autotile_neighbour = false,
@@ -388,6 +424,8 @@ terrarium.register_block("default:anvil", {
 })
 
 terrarium.register_block("default:vine", {
+    description = "Vine",
+
     image = "vine.png",
 
     autotile_neighbour = false,
