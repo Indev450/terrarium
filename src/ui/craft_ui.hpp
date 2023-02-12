@@ -41,7 +41,7 @@ namespace Terrarium {
         ItemCellRenderer item_cell_renderer;
         sf::ConvexShape arrow;
 
-        unsigned int current_scroll = 0;
+        size_t current_scroll = 0;
 
     public:
         CraftUI(const Gfx &gfx);

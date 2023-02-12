@@ -116,6 +116,13 @@ namespace Terrarium {
 
         std::vector<std::unique_ptr<Recipe>> &recipes = game.crafts.getRecipes(category);
 
+        // In case previously opened crafting category ui had more slots to
+        // scroll than current. Not the best solution, maybe i'll change it, but
+        // for now i'll do this
+        //
+        // Stupid integer convertions :v
+        current_scroll = std::max(0, std::min(int(current_scroll), int(recipes.size() - SHOW_RECIPES)));
+
         ItemCellRendererSettings settings;
 
         if (current_scroll != 0) {
