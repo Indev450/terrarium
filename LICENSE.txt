@@ -1,0 +1,92 @@
+
+License of Terrarium textures, sounds, etc
+------------------------------------------
+
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Authors of media files
+----------------------
+
+Tired Bun (@untsuki@udongein.xyz)
+    assets/icons/terrarium.32.png
+    assets/icons/terrarium.512.png
+    assets/icons/terrarium.svg
+    assets/icons/terrarium.min.svg
+
+Bektop (@Bektop@mastodon.ml)
+    mods/default/textures/{
+        anvil.png
+        cactus.png
+        chest.png
+        copper_axe.png
+        copper_ingot.png
+        copper_ore.png
+        copper_pickaxe.png
+        copper.png
+        dirt.png
+        furnace.png
+        glass.png
+        gold_axe.png
+        gold_ingot.png
+        gold_ore.png
+        gold_pickaxe.png
+        gold.png
+        grass_block.png
+        grass_dirt.png
+        grass.png
+        iron_axe.png
+        iron_ingot.png
+        iron_ore.png
+        iron_pickaxe.png
+        iron.png
+        player.png
+        sand.png
+        sapling.png
+        stone_bricks.png
+        stone.png
+        tree_base.png
+        tree_branch_left.png
+        tree_branch_right.png
+        tree_trunk_branch_left.png
+        tree_trunk_branch_right.png
+        tree_trunk.png
+        tree_trunk_top.png
+        vine.png
+        wood_block.png
+        wood.png
+        workbench.png
+    }
+
+Nicolargilla (@Nicolargilla@mastodon.ml)
+    mods/slime/textures/slime.png
+    mods/slime/sounds/slime_jump.wav
+    mods/slime/sounds/slime_land.wav
+    mods/default/textures/obsidian.png
+    mods/default/textures/player.png (animation)
+    mods/default/textures/grass_dirt.png (autotile)
+
+Indev (@indev@udongein.xyz)
+    mods/default/textures/{
+        copper_breathplate.png
+        copper_helmet.png
+        copper_leggins.png
+        copper_sword.png
+        copper_sword_swing.png
+        equipment_menu_button.png
+        equipment_menu.png
+        gold_breathplate.png
+        gold_helmet.png
+        gold_leggins.png
+        gold_sword.png
+        gold_sword_swing.png
+        iron_breathplate.png
+        iron_helmet.png
+        iron_leggins.png
+        iron_sword.png
+        iron_sword_swing.png
+    }
+    mods/default/sounds/dig_metal.wav
+    mods/default/sounds/dig_soil.wav
+    mods/default/sounds/dig_wood.wav
+    mods/slime/textures/slime_heart.png

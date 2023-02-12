@@ -65,6 +65,15 @@ int main(int argc, char **argv)
     auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 640), TITLE);
     window->setVerticalSyncEnabled(true);
 
+    sf::Image icon;
+
+    if (!icon.loadFromFile("assets/icons/terrarium.32.png")) {
+        std::cerr<<"Icon not found"<<std::endl;
+    } else {
+        sf::Vector2u size = icon.getSize();
+        window->setIcon(size.x, size.y, icon.getPixelsPtr());
+    }
+
     Terrarium::ActivityManager am(std::move(window));
 
     // BEGIN TEST CODE
