@@ -40,12 +40,28 @@ namespace Terrarium {
         sf::Sprite sprite;
         bool mirror = false;
 
+    private:
+        void updateFrame() {
+            if (current != nullptr) {
+                sf::IntRect rect = current->getRect();
+
+                if (mirror) {
+                    rect.left += rect.width;
+                    rect.width *= -1;
+                }
+
+                sprite.setTextureRect(rect);
+            }
+        }
+
     public:
         sf::Vector2f draw_size;
 
     public:
         inline void setTexture(const sf::Texture &texture) {
             sprite.setTexture(texture, true);
+
+            updateFrame();
         }
 
         inline const std::string &get() {
@@ -54,6 +70,8 @@ namespace Terrarium {
 
         inline void setMirror(bool mirror) {
             this->mirror = mirror;
+
+            updateFrame();
         }
 
         void add(const std::string &name, const Animation &anim) {
@@ -75,6 +93,8 @@ namespace Terrarium {
                     current->timer = 0;
                     current->ended = false;
                 }
+
+                updateFrame();
             } else {
                 current = nullptr;
             }
@@ -91,14 +111,7 @@ namespace Terrarium {
                         return;
                 }
 
-                sf::IntRect rect = current->getRect();
-
-                if (mirror) {
-                    rect.left += rect.width;
-                    rect.width *= -1;
-                }
-
-                sprite.setTextureRect(rect);
+                updateFrame();
             }
         }
 

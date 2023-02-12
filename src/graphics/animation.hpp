@@ -56,7 +56,7 @@ namespace Terrarium {
             }
         }
 
-        inline sf::IntRect &getRect() {
+        inline const sf::IntRect &getRect() const {
             assert(frames.size() != 0);
 
             return frames[current_frame];
