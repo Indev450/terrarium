@@ -71,6 +71,7 @@ terrarium.register_recipe("furnace", {
 
 terrarium.add_crafting_category("anvil")
 
+-- Copper gear
 terrarium.register_recipe("anvil", {
     requirements = {
         "default:copper_ingot 16", "default:wood 8",
@@ -89,6 +90,39 @@ terrarium.register_recipe("anvil", {
 
 terrarium.register_recipe("anvil", {
     requirements = {
+        "default:copper_ingot 10", "default:wood 4",
+    },
+
+    result = "default:copper_sword",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:copper_ingot 12",
+    },
+
+    result = "default:copper_helmet",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:copper_ingot 16",
+    },
+
+    result = "default:copper_breathplate",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:copper_ingot 12",
+    },
+
+    result = "default:copper_leggins",
+})
+
+-- Iron gear
+terrarium.register_recipe("anvil", {
+    requirements = {
         "default:iron_ingot 16", "default:wood 8",
     },
 
@@ -105,6 +139,39 @@ terrarium.register_recipe("anvil", {
 
 terrarium.register_recipe("anvil", {
     requirements = {
+        "default:iron_ingot 10", "default:wood 4",
+    },
+
+    result = "default:iron_sword",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:iron_ingot 12",
+    },
+
+    result = "default:iron_helmet",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:iron_ingot 16",
+    },
+
+    result = "default:iron_breathplate",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:iron_ingot 12",
+    },
+
+    result = "default:iron_leggins",
+})
+
+-- Gold gear
+terrarium.register_recipe("anvil", {
+    requirements = {
         "default:gold_ingot 16", "default:wood 8",
     },
 
@@ -119,3 +186,34 @@ terrarium.register_recipe("anvil", {
     result = "default:gold_axe",
 })
 
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:gold_ingot 10", "default:wood 4",
+    },
+
+    result = "default:gold_sword",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:gold_ingot 12",
+    },
+
+    result = "default:gold_helmet",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:gold_ingot 16",
+    },
+
+    result = "default:gold_breathplate",
+})
+
+terrarium.register_recipe("anvil", {
+    requirements = {
+        "default:gold_ingot 12",
+    },
+
+    result = "default:gold_leggins",
+})

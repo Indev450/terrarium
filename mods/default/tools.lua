@@ -63,4 +63,3 @@ terrarium.register_tool("default:gold_axe",  {
 
     uses_per_second = 8,
 })
-
