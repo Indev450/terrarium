@@ -68,6 +68,10 @@ namespace Terrarium {
 
         auto clicked_item = inventory->get(clicked_index);
 
+        if (!clicked_item) {
+            return true;
+        }
+
         if (game.player->hold_item_stack->canMerge(*clicked_item) &&
             !game.player->hold_item_stack->empty() &&
             !clicked_item->empty()) {
