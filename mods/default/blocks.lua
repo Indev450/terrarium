@@ -184,6 +184,7 @@ terrarium.register_block("default:grass_decor", {
 
     autotile_neighbour = false,
     is_solid = false,
+    replacable = true,
 
     drop = "",
 

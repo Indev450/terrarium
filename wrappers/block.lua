@@ -37,6 +37,7 @@ local block_defaults = {
 
     slippery = 0.1,
     is_solid = true,
+    replacable = false,
 
     groups = {},
 
@@ -224,8 +225,17 @@ function terrarium._place(x, y, block_name, user, nosound, fg)
 
     local old_id = _get(x, y)
 
-    -- Block at that position is not air, don't place block here
-    if old_id ~= 0 then return false end
+    local old_name = terrarium.block_names[old_id] or "unknown"
+
+    local old_def = terrarium.registered_blocks[old_name]
+
+    -- Block at that position is not replacable, don't place block here
+    if old_def and not old_def.replacable then
+        return false
+    elseif old_def then
+        -- There is block, but it is replacable so we need to dig it first
+        terrarium._dig(x, y, user, nosound, fg)
+    end
 
     -- Change that block
     _set(x, y, terrarium.get_block_id(block_name))
