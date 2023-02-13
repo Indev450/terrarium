@@ -150,6 +150,10 @@ terrarium.register_on_player_join(function(player)
     player.max_hp = 100
     player.hp = player.max_hp
 
+    -- HP/second
+    player.hp_regeneration = 0.2
+    player.hp_regeneration_timer = timer.new(1, true)
+
     -- Invincibility timer. 0.5 seconds of invincibility when spawn
     player.inv_timer = timer.new(0.5)
 
@@ -208,6 +212,10 @@ terrarium.register_on_player_join(function(player)
         if self.hp > max_hp then
             self.hp = max_hp
         end
+    end
+
+    player.heal = function(self, hp)
+        self.hp = math.min(self.max_hp, self.hp + hp)
     end
 
     player.hurt = function(self, damage, source, knockback, inv_time)
@@ -305,6 +313,11 @@ terrarium.register_on_player_update(function(player, dtime)
 
     if player.hp <= 0 then
         player.ref:set_player_controlled(false)
+        return
+    end
+
+    if player.hp_regeneration_timer:tick(dtime) then
+        player:heal(player.hp_regeneration)
     end
 end)
 
