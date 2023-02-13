@@ -63,7 +63,7 @@ local button = terraclient.add_hud_item("default:open_equipment_menu", {
     width = 45,
     height = 45,
 
-    position = { x = -10 - 45, y = 100 },
+    position = { x = -10 - 45, y = 110 },
     default_visible = true,
 
     click = function(self)

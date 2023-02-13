@@ -175,6 +175,33 @@ terrarium.register_on_player_join(function(player)
         max_value = player.max_hp,
     })
 
+    player.max_energy = 40
+    player.energy = player.max_energy
+
+    -- It is in units/second too, but it works different way - it will start
+    -- regenerate only if player haven't used any energy for short period of
+    -- time
+    player.energy_regeneration = 10
+    player.energy_regeneration_timer = timer.new(1.0)
+
+    player:add_bar("energy", {
+        geometry = {
+            x = -210,
+            y = 60,
+            width = 200,
+            height = 40,
+        },
+
+        text_style = "Division",
+        text = "EP: ",
+        text_size = 24,
+        text_color = color.new(255, 255, 255),
+
+        background_color = color.new(0, 0, 0),
+        bar_color = color.new(96, 16, 142),
+        max_value = player.max_energy,
+    })
+
     local function send_stats()
         local protection, resists, powers, dmg_modifier = damagelib.equipment.get_stats(player.equipment)
 
@@ -249,6 +276,29 @@ terrarium.register_on_player_join(function(player)
         end
     end
 
+    player.use_energy = function(self, amount)
+        if amount > self.energy then return false end
+
+        self.energy = self.energy - amount
+
+        self.energy_regeneration_timer:restart()
+
+        return true
+    end
+
+    player.restore_energy = function(self, amount)
+        self.energy = math.min(self.max_energy, self.energy + amount)
+    end
+
+    player.set_max_energy = function(self, max_energy)
+        self:set_bar_max_value("energy", max_energy)
+        self.max_energy = max_energy
+
+        if self.energy > max_energy then
+            self.energy = max_energy
+        end
+    end
+
     player.equip = function(self, slot, item_stack)
         local item_def = terrarium.registered_items[item_stack:get_item_name()]
 
@@ -309,11 +359,17 @@ end)
 
 terrarium.register_on_player_update(function(player, dtime)
     player:set_bar_value("hp", math.max(0, player.hp))
+    player:set_bar_value("energy", math.max(0, player.energy))
     player.inv_timer:tick(dtime)
+    player.energy_regeneration_timer:tick(dtime)
 
     if player.hp <= 0 then
         player.ref:set_player_controlled(false)
         return
+    end
+
+    if player.energy_regeneration_timer:ready() then
+        player:restore_energy(player.energy_regeneration * dtime)
     end
 
     if player.hp_regeneration_timer:tick(dtime) then
