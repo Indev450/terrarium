@@ -341,6 +341,8 @@ terrarium.register_block("default:chest", {
                 user_inventory:add_item(inventory:get(i))
             end
 
+            inventory:resize(0)
+
             return true
         end
 
