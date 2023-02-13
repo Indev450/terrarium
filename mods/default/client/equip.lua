@@ -3,7 +3,7 @@ local menu_sprite = terraclient.sprite("equipment_menu.png")
 local menu_button = terraclient.sprite("equipment_menu_button.png")
 
 local text = terraclient.text("", 16)
-text:set_position({ x = 160, y = 60 })
+text:set_position({ x = 264, y = 16 })
 
 -- TODO - add frame:get_visible or frame:toggle_visible
 local menu_visible = false
@@ -19,7 +19,7 @@ local function clicked(button, position)
 end
 
 local menu = terraclient.add_hud_item("default:equipment_menu", {
-    width = 256,
+    width = 448,
     height = 256,
 
     position = { x = -128, y = -128 },

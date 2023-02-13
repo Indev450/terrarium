@@ -54,6 +54,24 @@ function damagelib.equipment.get_protection(gear)
     return total
 end
 
+function damagelib.equipment.get_damage_modifier(gear)
+    local total = 1
+
+    if not gear then return total end
+
+    for _, item in pairs(gear) do
+        local accessory = item
+
+        if type(item) == "userdata" then
+            accessory = terrarium.registered_items[item:get_item_name()] or {}
+        end
+
+        total = total * (accessory.damage_modifier or 1)
+    end
+
+    return total
+end
+
 function damagelib.equipment.get_stats(gear)
     local protection = damagelib.equipment.get_protection(gear)
 
@@ -102,5 +120,7 @@ function damagelib.equipment.get_stats(gear)
         powers = nil
     end
 
-    return protection, resists, powers
+    local modifier = damagelib.equipment.get_damage_modifier(damager_gear)
+
+    return protection, resists, powers, modifier
 end

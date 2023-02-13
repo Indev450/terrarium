@@ -172,26 +172,30 @@ terrarium.register_on_player_join(function(player)
     })
 
     local function send_stats()
-        local protection, resists, powers = damagelib.equipment.get_stats(player.equipment)
+        local protection, resists, powers, dmg_modifier = damagelib.equipment.get_stats(player.equipment)
 
         local buff = {}
 
         table.insert(buff, "Protection: "..protection)
 
         if resists then
-            table.insert(buff, "Elements:")
+            table.insert(buff, "Elemental armor bonuses:")
 
             for name, value in pairs(resists) do
-                table.insert(buff, name..": "..value)
+                table.insert(buff, name..": x"..value)
             end
         end
 
         if powers then
-            table.insert(buff, "Damage modifiers:")
+            table.insert(buff, "Elemental attack bonuses:")
 
             for name, value in pairs(powers) do
-                table.insert(buff, name..": "..value)
+                table.insert(buff, name..": x"..value)
             end
+        end
+
+        if dmg_modifier ~= 1 then
+            table.insert(buff, "Damage modifier: x"..dmg_modifier)
         end
 
         terrarium.send_cmd(player, "default:stats", table.concat(buff, "\n"))
