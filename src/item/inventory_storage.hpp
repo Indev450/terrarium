@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef InventoryStorage_HPP
-#define InventoryStorage_HPP
+#ifndef INVENTORY_STORAGE_HPP
+#define INVENTORY_STORAGE_HPP
 
 #include <memory>
 #include <unordered_map>

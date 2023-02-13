@@ -5,9 +5,6 @@ local menu_button = terraclient.sprite("equipment_menu_button.png")
 local text = terraclient.text("", 16)
 text:set_position({ x = 264, y = 16 })
 
--- TODO - add frame:get_visible or frame:toggle_visible
-local menu_visible = false
-
 local function clicked(button, position)
     if position.x < button.x or position.x > button.x + button.width
         or position.y < button.y or position.y > button.y + button.height then
@@ -22,9 +19,11 @@ local menu = terraclient.add_hud_item("default:equipment_menu", {
     width = 448,
     height = 256,
 
+    focus = true,
+
     position = { x = -128, y = -128 },
     origin = "ScreenCenter",
-    default_visible = menu_visible,
+    default_visible = false,
 
     slots = {
         { x = 24,  y = 24,  width = 32, height = 32, name = "battle"      },
@@ -68,8 +67,7 @@ local button = terraclient.add_hud_item("default:open_equipment_menu", {
     default_visible = true,
 
     click = function(self)
-        menu:set_visible(not menu_visible)
-        menu_visible = not menu_visible
+        menu:toggle_visible()
 
         return true
     end,

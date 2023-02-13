@@ -258,8 +258,8 @@ namespace Terrarium {
                         }
 
                         game->hud.setVisible("inventory", !game->hud.isVisible("inventory"));
-                        game->hud.setVisible("craft", !game->hud.isVisible("craft"));
-                        game->hud.setVisible("opened_inventory", false);
+                        game->hud.setVisible("craft", !game->hud.isVisible("craft"), false);
+                        game->hud.setVisible("opened_inventory", false, false);
                     }
                     break;
 
@@ -269,10 +269,16 @@ namespace Terrarium {
 
                     case sf::Keyboard::Escape:
                     {
-                        if (game->hud.isVisible("inventory")) {
-                            game->hud.setVisible("inventory", false);
-                            game->hud.setVisible("craft", false);
-                            game->hud.setVisible("opened_inventory", false);
+                        // This is so stupid but i can't figure out another way
+                        // to make opened_inventory work properly :(
+                        bool inventory_was_shown = game->hud.isVisible("inventory");
+
+                        if (game->hud.hideFocused()) {
+                            game->hud.setVisible("craft", game->hud.isVisible("inventory"), false);
+
+                            if (inventory_was_shown && !game->hud.isVisible("inventory")) {
+                                game->hud.setVisible("opened_inventory", false, false);
+                            }
 
                             game->player->crafting_category = game->crafts.default_category;
                         } else {

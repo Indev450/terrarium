@@ -41,12 +41,16 @@ namespace Terrarium {
         return screen_size;
     }
 
-    void Hud::addElement(const std::string &name, std::unique_ptr<UIElement> element) {
+    void Hud::addElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus) {
         element->setScreenSize(screen_size);
         elements[name] = std::move(element);
+
+        if (elements[name]->visible && focus) {
+            focused_elements.push_back(name);
+        }
     }
 
-    void Hud::replaceElement(const std::string &name, std::unique_ptr<UIElement> element) {
+    void Hud::replaceElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus) {
         auto pair = elements.find(name);
 
         if (pair != elements.end()) {
@@ -54,14 +58,22 @@ namespace Terrarium {
             element->visible = pair->second->visible;
         }
 
-        addElement(name, std::move(element));
+        addElement(name, std::move(element), focus);
     }
 
-    void Hud::setVisible(const std::string &name, bool visible) {
+    void Hud::setVisible(const std::string &name, bool visible, bool focus) {
         auto pair = elements.find(name);
 
         if (pair != elements.end()) {
             pair->second->visible = visible;
+        }
+
+        if (visible && focus) {
+            if (std::find(focused_elements.begin(), focused_elements.end(), name) == focused_elements.end()) {
+                focused_elements.push_back(name);
+            }
+        } else if (!visible) {
+            focused_elements.remove(name);
         }
     }
 
@@ -73,6 +85,22 @@ namespace Terrarium {
         }
 
         return false;
+    }
+
+    bool Hud::hideFocused() {
+        if (focused_elements.empty()) {
+            return false;
+        }
+
+        auto pair = elements.find(focused_elements.back());
+
+        if (pair != elements.end()) {
+            pair->second->visible = false;
+        }
+
+        focused_elements.pop_back();
+
+        return true;
     }
 
     UIElement *Hud::getElement(const std::string &name) {
@@ -160,12 +188,26 @@ namespace Terrarium {
             it->second->render(target);
         }
 
+        std::string *focused = nullptr;
+
+        if (!focused_elements.empty()) {
+            focused = &focused_elements.back();
+        }
+
         for (auto it = elements.begin(); it != elements.end(); ++it) {
-            if (!it->second->visible) {
+            if (!it->second->visible || (focused && it->first == *focused)) {
                 continue;
             }
 
             it->second->render(target, game, transform);
+        }
+
+        if (focused) {
+            auto pair = elements.find(*focused);
+
+            if (pair != elements.end() && pair->second->visible) {
+                pair->second->render(target, game, transform);
+            }
         }
     }
 

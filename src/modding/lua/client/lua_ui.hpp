@@ -36,8 +36,11 @@ namespace Terrarium {
         // RenderTarget *core._frame_new(string id, unsigned width, unsigned height)
         int frame_new(lua_State *L);
 
-        // void core._set_hud_item_visible(string id, bool visible)
+        // void core._set_hud_item_visible(string id, bool visible[, bool focus])
         int set_hud_item_visible(lua_State *L);
+
+        // bool core._is_hud_item_visible(string id)
+        int is_hud_item_visible(lua_State *L);
 
         // void core._set_hud_item_position(string id, Vector2f position)
         int set_hud_item_position(lua_State *L);

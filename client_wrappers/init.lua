@@ -21,6 +21,8 @@ function terraclient.add_hud_item(name, def)
     def.width = def.width or 100
     def.height = def.height or 50
 
+    local focus = def.focus ~= nil and def.focus or false
+
     def.draw = function(self, drawable)
         core._draw(self._rtexture, drawable)
     end
@@ -30,7 +32,15 @@ function terraclient.add_hud_item(name, def)
     end
 
     def.set_visible = function(self, visible)
-        core._set_hud_item_visible(name, visible)
+        core._set_hud_item_visible(name, visible, focus)
+    end
+
+    def.is_visible = function(self)
+        return core._is_hud_item_visible(name)
+    end
+
+    def.toggle_visible = function(self)
+        self:set_visible(not self:is_visible())
     end
 
     def.set_position = function(self, position)

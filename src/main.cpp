@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 
     hotbar_renderer->setPosition(32, 32);
 
-    game->hud.addElement("hotbar", std::move(hotbar_renderer));
+    game->hud.addElement("hotbar", std::move(hotbar_renderer), false);
 
     ////////////////////////////////////////////////////////////////////
     auto inventory_ui = std::make_unique<Terrarium::InventoryUI>(

@@ -139,11 +139,11 @@ namespace Terrarium {
                 return luaL_error(L, e.what());
             }
 
-            lua_interface->game->hud.replaceElement("opened_inventory", std::move(inventory_ui));
+            lua_interface->game->hud.replaceElement("opened_inventory", std::move(inventory_ui), false);
 
-            lua_interface->game->hud.setVisible("craft", true);
+            lua_interface->game->hud.setVisible("craft", true, false);
             lua_interface->game->hud.setVisible("inventory", true);
-            lua_interface->game->hud.setVisible("opened_inventory", true);
+            lua_interface->game->hud.setVisible("opened_inventory", true, false);
 
             return 0;
         }

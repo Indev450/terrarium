@@ -33,6 +33,7 @@ namespace Terrarium {
         void init(LuaClientModdingInterface &lua_interface) {
             lua_interface.registerFunction("_frame_new", frame_new);
             lua_interface.registerFunction("_set_hud_item_visible", set_hud_item_visible);
+            lua_interface.registerFunction("_is_hud_item_visible", is_hud_item_visible);
             lua_interface.registerFunction("_set_hud_item_position", set_hud_item_position);
             lua_interface.registerFunction("_set_hud_item_origin", set_hud_item_origin);
         }
@@ -51,7 +52,7 @@ namespace Terrarium {
 
             lua_pushlightuserdata(L, &frame->rtexture);
 
-            hud.addElement(id, std::move(frame));
+            hud.addElement(id, std::move(frame), false);
 
             return 1;
         }
@@ -61,9 +62,25 @@ namespace Terrarium {
 
             Hud &hud = lua_interface->game->hud;
 
-            hud.setVisible(luaL_checkstring(L, 1), LuaUtil::checkboolean(L, 2));
+            bool focus = true;
+
+            if (lua_gettop(L) > 2) {
+                focus = LuaUtil::checkboolean(L, 3);
+            }
+
+            hud.setVisible(luaL_checkstring(L, 1), LuaUtil::checkboolean(L, 2), focus);
 
             return 0;
+        }
+
+        int is_hud_item_visible(lua_State *L) {
+            LuaClientModdingInterface *lua_interface = reinterpret_cast<LuaClientModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            Hud &hud = lua_interface->game->hud;
+
+            lua_pushboolean(L, hud.isVisible(luaL_checkstring(L, 1)));
+
+            return 1;
         }
 
         int set_hud_item_position(lua_State *L) {
