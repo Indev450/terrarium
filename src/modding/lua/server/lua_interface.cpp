@@ -242,7 +242,7 @@ namespace Terrarium {
         lua_getfield(L, -1, "_load");
 
         if (lua_isfunction(L, -1)) {
-            lua_pushstring(L, save_dir_path.c_str());
+            lua_pushstring(L, save_dir_path.string().c_str());
 
             if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
                 LuaUtil::error(L, "core._load() generated a lua error");
@@ -260,7 +260,7 @@ namespace Terrarium {
         lua_getfield(L, -1, "_save");
 
         if (lua_isfunction(L, -1)) {
-            lua_pushstring(L, save_dir_path.c_str());
+            lua_pushstring(L, save_dir_path.string().c_str());
 
             if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
                 LuaUtil::error(L, "core._save() generated a lua error");
@@ -283,7 +283,7 @@ namespace Terrarium {
 
         if (!fs::is_directory(mods_path, ec)) {
             std::string msg = "Terrarium::LuaModdingInterface::loadMods: cannot open ";
-            msg += mods_path.c_str();
+            msg += mods_path.string();
             msg += ": ";
             msg += ec.message();
             throw std::runtime_error(msg);
@@ -396,7 +396,7 @@ namespace Terrarium {
                     game->gfx.textures.addSearchPath(textures_dir);
 
                     for (const auto &texture_path: fs::directory_iterator(textures_dir)) {
-                        game->gfx.textures.load(texture_path.path().filename());
+                        game->gfx.textures.load(texture_path.path().filename().string());
                     }
                 }
 
@@ -407,7 +407,7 @@ namespace Terrarium {
                     game->sfx.sounds.addSearchPath(sounds_dir);
 
                     for (const auto &sound_path: fs::directory_iterator(sounds_dir)) {
-                        game->sfx.sounds.load(sound_path.path().filename());
+                        game->sfx.sounds.load(sound_path.path().filename().string());
                     }
                 }
 
@@ -418,7 +418,7 @@ namespace Terrarium {
                     game->sfx.music.addSearchPath(music_dir);
 
                     for (const auto &music_path: fs::directory_iterator(music_dir)) {
-                        game->sfx.music.open(music_path.path().filename());
+                        game->sfx.music.open(music_path.path().filename().string());
                     }
                 }
 
@@ -436,7 +436,7 @@ namespace Terrarium {
                     game->client_modding_interface->loadScript("init.lua");
                 }
 
-                if (!LuaUtil::run_script(L, (mod.root / "init.lua").c_str())) {
+                if (!LuaUtil::run_script(L, (mod.root / "init.lua").string().c_str())) {
                     throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: unexpected error when loading mod");
                 }
             } catch (const fs::filesystem_error &e) {

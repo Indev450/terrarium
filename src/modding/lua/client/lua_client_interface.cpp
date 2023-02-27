@@ -71,7 +71,7 @@ namespace Terrarium {
     }
 
     void LuaClientModdingInterface::loadScript(const fs::path &path) {
-        if (!LuaUtil::run_script(L, path.c_str())) {
+        if (!LuaUtil::run_script(L, path.string().c_str())) {
             throw std::runtime_error("LuaClientModdingInterface::loadMod: unexpected error when loading client mod");
         }
     }

@@ -78,7 +78,7 @@ namespace Terrarium {
                 return false;
             }
 
-            if (!resources[name].openFromFile(*it / name)) {
+            if (!resources[name].openFromFile((*it / name).string())) {
                 // File exists, but failed to load
 
                 resources.erase(name);
@@ -109,7 +109,7 @@ namespace Terrarium {
                 return false;
             }
 
-            if (!resources[name].loadFromFile(*it / name)) {
+            if (!resources[name].loadFromFile((*it / name).string())) {
                 // File exists, but failed to load
 
                 resources.erase(name);

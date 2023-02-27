@@ -28,9 +28,9 @@
 namespace Terrarium {
 
     LuaModConfig load_config(lua_State *L, const fs::path &root) {
-        if (!LuaUtil::run_script(L, (root / "config.lua").c_str())) {
+        if (!LuaUtil::run_script(L, (root / "config.lua").string().c_str())) {
             std::string error_msg = "Failed to load config at ";
-            error_msg += root / "config.lua";
+            error_msg += (root / "config.lua").string();
 
             throw std::runtime_error(error_msg);
         }
@@ -43,7 +43,7 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             std::string error_msg = "'config' global expected to be a table in ";
-            error_msg += root / "config.lua";
+            error_msg += (root / "config.lua").string().c_str();
 
             throw std::runtime_error(error_msg);
         }
