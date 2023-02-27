@@ -23,6 +23,8 @@
 #ifndef TILE_HPP
 #define TILE_HPP
 
+#include <SFML/System/Vector2.hpp>
+
 #include "block_def.hpp"
 
 namespace Terrarium {
@@ -32,6 +34,8 @@ namespace Terrarium {
 
         blockid fg;
         blockid bg;
+
+        sf::Vector2<uint8_t> multiblock_origin;
     };
 
 }

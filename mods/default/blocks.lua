@@ -12,6 +12,20 @@ terrarium.register_block("default:stone", {
     },
 })
 
+terrarium.register_block("default:ice", {
+    description = "Ice block",
+
+    image = "ice.png",
+
+    slippery = 0.85,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+})
+
 terrarium.register_block("default:obsidian", {
     description = "Obsidian",
 
@@ -131,6 +145,32 @@ terrarium.register_block("default:grass", {
     drop = "default:dirt",
 
     slippery = 0.4,
+
+    is_solid = true,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_soil.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_soil.wav",
+        volume = 1.0,
+        pitch = 1.4,
+    },
+})
+
+terrarium.register_block("default:snow", {
+    description = "Snow block",
+
+    image = "snow.png",
+
+    slippery = 0.6,
 
     is_solid = true,
 
@@ -309,6 +349,8 @@ terrarium.register_block("default:chest", {
     autotile_neighbour = false,
     is_solid = false,
 
+    multiblock_size = { x = 2, y = 2 },
+
     groups = {
         ["ground"] = 1,
     },
@@ -326,16 +368,22 @@ terrarium.register_block("default:chest", {
     },
 
     on_place = function(position, user)
-        terrarium.get_block_inventory(position.x, position.y):resize(8*4)
+        local origin = terrarium.get_multiblock_origin(position.x, position.y)
+
+        terrarium.get_block_inventory(origin.x, origin.y):resize(8*4)
     end,
 
     on_interact = function(position, user)
-        user:open_inventory_ui(terrarium.get_block_inventory(position.x, position.y), 8, 4)
+        local origin = terrarium.get_multiblock_origin(position.x, position.y)
+
+        user:open_inventory_ui(terrarium.get_block_inventory(origin.x, origin.y), 8, 4)
     end,
 
     on_destroy = function(position, user)
+        local origin = terrarium.get_multiblock_origin(position.x, position.y)
+
         if user ~= nil and user.ref.is_player then
-            local inventory = terrarium.get_block_inventory(position.x, position.y)
+            local inventory = terrarium.get_block_inventory(origin.x, origin.y)
             local user_inventory = user.ref:get_player_inventory()
 
             for i = 0, (8*4 - 1) do
@@ -358,6 +406,8 @@ terrarium.register_block("default:workbench", {
 
     autotile_neighbour = false,
     is_solid = false,
+
+    multiblock_size = { x = 2, y = 1 },
 
     groups = {
         ["ground"] = 1,
@@ -388,6 +438,8 @@ terrarium.register_block("default:furnace", {
     autotile_neighbour = false,
     is_solid = false,
 
+    multiblock_size = { x = 2, y = 2 },
+
     groups = {
         ["ground"] = 1,
     },
@@ -404,6 +456,8 @@ terrarium.register_block("default:anvil", {
 
     autotile_neighbour = false,
     is_solid = false,
+
+    multiblock_size = { x = 2, y = 1 },
 
     groups = {
         ["ground"] = 1,

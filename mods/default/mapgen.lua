@@ -326,6 +326,57 @@ terrarium.register_biome("default:desert", {
     }
 })
 
+terrarium.register_biome("default:frozen_surface", {
+    heat_max = 0.4,
+
+    top = {
+        block = "default:snow",
+        wall = "default:snow",
+    },
+
+    filler = {
+        block = "default:snow",
+        wall = "default:snow",
+    },
+
+    filler_depth = 4,
+
+    stone = {
+        block = "default:ice",
+        wall = "default:ice",
+    },
+
+    max_depth = 0.2,
+
+    priority = 2,
+})
+
+terrarium.register_biome("default:frozen_caves", {
+    heat_max = 0.4,
+
+    top = {
+        block = "default:ice",
+        wall = "default:ice",
+    },
+
+    filler = {
+        block = "default:ice",
+        wall = "default:ice",
+    },
+
+    filler_depth = 1,
+
+    stone = {
+        block = "default:ice",
+        wall = "default:ice",
+    },
+
+    min_depth = 0.2,
+    max_depth = 0.6,
+
+    priority = 2,
+})
+
 terrarium.register_ore({
     cluster_tiles = 12,
 

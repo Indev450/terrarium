@@ -29,6 +29,8 @@
 #include <iostream>
 #include <vector>
 
+#include <SFML/System/Vector2.hpp>
+
 #include "../tile/tile.hpp"
 #include "../item/inventory.hpp"
 #include "../utils/vector2i_hash.hpp"
@@ -87,6 +89,16 @@ namespace Terrarium {
             return tiles[y*width + x].fg;
         }
 
+        inline sf::Vector2i getMultiblockOrigin(int x, int y) const {
+            const Tile *tile = getTile(x, y);
+
+            if (tile == nullptr) {
+                return sf::Vector2i(x, y);
+            }
+
+            return sf::Vector2i(x - int(tile->multiblock_origin.x), y - int(tile->multiblock_origin.y));
+        }
+
         inline blockid getWall(int x, int y) const {
             if (!isInRange(x, y)) {
                 return 0;
@@ -108,6 +120,31 @@ namespace Terrarium {
                 updated_blocks.emplace(x+1, y);
                 updated_blocks.emplace(x, y-1);
                 updated_blocks.emplace(x, y+1);
+            }
+        }
+
+        inline void setMultiblockOffset(int x, int y, uint8_t xoff, uint8_t yoff) {
+            if (!isInRange(x, y)) {
+                return;
+            }
+
+            tiles[y*width + x].multiblock_origin = sf::Vector2<uint8_t>(xoff, yoff);
+
+            if (save_updated_blocks) {
+                updated_blocks.emplace(x, y);
+            }
+        }
+
+        inline void setMultiblock(int x, int y, uint8_t width, uint8_t height, blockid block) {
+            if (!(isInRange(x, y) && isInRange(x+width, x+height))) {
+                return;
+            }
+
+            for (uint8_t xoff = 0; xoff < width; ++xoff) {
+                for (uint8_t yoff = 0; yoff < height; ++yoff) {
+                    setBlock(x+xoff, y+yoff, block);
+                    setMultiblockOffset(x+xoff, y+yoff, xoff, yoff);
+                }
             }
         }
 

@@ -69,6 +69,7 @@ namespace Terrarium {
             None,
             Image,
             Autotile,
+            Multiblock,
         } draw_type = Image;
 
         bool autotile_neighbour = true;

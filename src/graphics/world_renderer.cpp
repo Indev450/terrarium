@@ -170,6 +170,13 @@ namespace Terrarium {
                     }
 
                     def.sprite.setTextureRect(block_autotile_rects[idx]);
+                } else if (def.draw_type == BlockDef::DrawType::Multiblock) {
+                    def.sprite.setTextureRect(sf::IntRect(
+                        tile.multiblock_origin.x*Tile::SIZE,
+                        tile.multiblock_origin.y*Tile::SIZE,
+                        Tile::SIZE,
+                        Tile::SIZE
+                    ));
                 }
 
                 def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);

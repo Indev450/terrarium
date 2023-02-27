@@ -52,7 +52,7 @@
 
 namespace Terrarium {
 
-    const uint32_t WORLD_SAVE_VERSION = 2;
+    const uint32_t WORLD_SAVE_VERSION = 3;
     const uint32_t INVENTORIES_SAVE_VERSION = 1;
     const uint32_t PLAYER_SAVE_VERSION = 1;
 

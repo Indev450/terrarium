@@ -37,8 +37,11 @@ namespace Terrarium {
             lua_interface.registerFunction("_get_tile", get_tile);
             lua_interface.registerFunction("_get_block", get_block);
             lua_interface.registerFunction("_get_wall", get_wall);
+            lua_interface.registerFunction("_get_multiblock_origin", get_multiblock_origin);
             lua_interface.registerFunction("_set_block", set_block);
             lua_interface.registerFunction("_set_wall", set_wall);
+            lua_interface.registerFunction("_set_multiblock_offset", set_multiblock_offset);
+            lua_interface.registerFunction("_set_multiblock", set_multiblock);
             lua_interface.registerFunction("_get_block_inventory", get_block_inventory);
         }
 
@@ -64,12 +67,15 @@ namespace Terrarium {
                 "None",
                 "Image",
                 "Autotile",
+                "Multiblock",
+                nullptr,
             };
 
             static const BlockDef::DrawType draw_type_values[] = {
                 BlockDef::DrawType::None,
                 BlockDef::DrawType::Image,
                 BlockDef::DrawType::Autotile,
+                BlockDef::DrawType::Multiblock,
             };
 
             block_def->draw_type = draw_type_values[luaL_checkoption(L, -1, "None", draw_type_names)];
@@ -151,6 +157,17 @@ namespace Terrarium {
             return 1;
         }
 
+        int get_multiblock_origin(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            int x = luaL_checkinteger(L, 1);
+            int y = luaL_checkinteger(L, 2);
+
+            LuaUtil::push_vector2i(L, lua_interface->game->world.getMultiblockOrigin(x, y));
+
+            return 1;
+        }
+
         int set_block(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
@@ -173,6 +190,33 @@ namespace Terrarium {
             blockid block_id = LuaUtil::checkinteger_ranged<blockid>(L, 3);
 
             lua_interface->game->world.setWall(x, y, block_id);
+
+            return 0;
+        }
+
+        int set_multiblock_offset(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            int x = luaL_checkinteger(L, 1);
+            int y = luaL_checkinteger(L, 2);
+            uint8_t xoff = LuaUtil::checkinteger_ranged<uint8_t>(L, 3);
+            uint8_t yoff = LuaUtil::checkinteger_ranged<uint8_t>(L, 4);
+
+            lua_interface->game->world.setMultiblockOffset(x, y, xoff, yoff);
+
+            return 0;
+        }
+
+        int set_multiblock(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            int x = luaL_checkinteger(L, 1);
+            int y = luaL_checkinteger(L, 2);
+            uint8_t width = LuaUtil::checkinteger_ranged<uint8_t>(L, 3);
+            uint8_t height = LuaUtil::checkinteger_ranged<uint8_t>(L, 4);
+            blockid block_id = LuaUtil::checkinteger_ranged<blockid>(L, 5);
+
+            lua_interface->game->world.setMultiblock(x, y, width, height, block_id);
 
             return 0;
         }

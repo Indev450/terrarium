@@ -44,6 +44,9 @@ namespace Terrarium {
         // int core._get_block(int x, int y)
         int get_block(lua_State *L);
 
+        // Vector2i core._get_multiblock_origin(int x, int y)
+        int get_multiblock_origin(lua_State *L);
+
         // int core._get_wall(int x, int y)
         int get_wall(lua_State *L);
 
@@ -52,6 +55,12 @@ namespace Terrarium {
 
         // void core._set_wall(int x, int y, int block_id)
         int set_wall(lua_State *L);
+
+        // void core._set_multiblock_offset(int x, int y, unsigned xoff, unsigned yoff)
+        int set_multiblock_offset(lua_State *L);
+
+        // void core._set_multiblock(int x, int y, int width, int height, int block_id)
+        int set_multiblock(lua_State *L);
 
         // InventoryRef core._get_block_inventory(int x, int y)
         int get_block_inventory(lua_State *L);
