@@ -79,6 +79,9 @@ namespace Terrarium {
         float slippery = 0;
 
         bool is_interactive = false;
+
+        uint8_t light = 0;
+        bool blocks_light = true;
     };
 
 } // namespace Terrarium

@@ -9,6 +9,14 @@ terrarium.register_recipe("empty_hands", {
     result = "default:workbench",
 })
 
+terrarium.register_recipe("empty_hands", {
+    requirements = {
+        "default:wood 2",
+    },
+
+    result = "default:torch",
+})
+
 terrarium.add_crafting_category("workbench")
 
 terrarium.register_recipe("workbench", {

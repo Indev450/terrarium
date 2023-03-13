@@ -322,6 +322,8 @@ terrarium.register_block("default:glass", {
 
     is_solid = true,
 
+    blocks_light = false,
+
     groups = {
         ["ground"] = 1,
     },
@@ -493,6 +495,21 @@ terrarium.register_block("default:vine", {
     },
 
     on_neighbour_destroy = terrarium.connected_to_blocks({"up"}),
+})
+
+terrarium.register_block("default:torch", {
+    description = "Torch",
+
+    image = "torch.png",
+
+    autotile_neighbour = false,
+    is_solid = false,
+
+    light = 250,
+
+    groups = {
+        ["ground"] = 1,
+    },
 })
 
 terrarium.register_block_alias("default:stone", "mapgen:filler_block")

@@ -104,6 +104,14 @@ namespace Terrarium {
             block_def->is_interactive = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
 
+            lua_getfield(L, 2, "blocks_light");
+            block_def->blocks_light = LuaUtil::checkboolean(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, 2, "light");
+            block_def->light = LuaUtil::checkinteger_ranged<uint8_t>(L, -1);
+            lua_pop(L, 1);
+
             lua_pushinteger(L, lua_interface->game->block_defs.add(block_def));
 
             return 1;

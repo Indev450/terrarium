@@ -29,6 +29,7 @@
 #include "activity.hpp"
 #include "../game.hpp"
 #include "../graphics/world_renderer.hpp"
+#include "../graphics/light.hpp"
 #include "../ui/item_cell.hpp"
 
 namespace Terrarium {
@@ -36,6 +37,7 @@ namespace Terrarium {
     class GameActivity: public Activity {
         std::shared_ptr<GameState> game;
         std::unique_ptr<WorldRenderer> world_renderer;
+        LightCalculator light_calc;
 
         ItemCellRenderer item_cell_renderer;
 
@@ -48,6 +50,12 @@ namespace Terrarium {
         const float ZOOM_MAX = 1.0;
 
         sf::View def_view;
+
+        // Light changes slowly, like sky color. However, we don't want to
+        // update light every frame, which is expensive, so instead we'll change
+        // it every time change becomes higher than step
+        uint8_t light_new = 255;
+        int light_change_step = 8;
 
     public:
         GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name);

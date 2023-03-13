@@ -56,6 +56,12 @@ namespace Terrarium {
     const uint32_t INVENTORIES_SAVE_VERSION = 1;
     const uint32_t PLAYER_SAVE_VERSION = 1;
 
+    struct DayNightCycleEntry {
+        sf::Color sky_color;
+        float length;
+        uint8_t light;
+    };
+
     struct GameState {
         World world;
         EntityManager entity_mgr;
@@ -67,9 +73,10 @@ namespace Terrarium {
         SavesManager saves;
         std::string save_name;
 
-        std::vector<std::pair<sf::Color, float>> day_night_cycle;
+        std::vector<DayNightCycleEntry> day_night_cycle;
         float time = 0;
         float day_length = 60*12;
+        uint8_t natural_light = 255;
 
         // TODO - maybe move this into Player class?
         WorldInteractHelper world_interact;

@@ -26,11 +26,14 @@
 #include "game_activity.hpp"
 #include "activity_manager.hpp"
 
+#include "../utils/math.hpp"
+
 namespace Terrarium {
 
     GameActivity::GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name):
         game(_game),
         world_renderer(std::make_unique<WorldRenderer>(am.getWindow().getSize() + sf::Vector2u(Tile::SIZE, Tile::SIZE))),
+        light_calc(game->camera.width, game->camera.height),
         item_cell_renderer(game->gfx, sf::Color::White, sf::Color::Transparent, sf::Color::Transparent),
         tip_text("", game->gfx.font, 16),
         def_view()
@@ -113,8 +116,20 @@ namespace Terrarium {
 
         game->sfx.update(*game, dtime);
 
+        bool force_light_update = game->world.isUpdated();
+
+        if (abs(int(game->natural_light) - int(light_new)) > light_change_step) {
+            force_light_update = true;
+            game->natural_light = light_new;
+        }
+
         world_renderer->updatePosition(game->camera);
         world_renderer->update(*game);
+
+        if (light_calc.updatePosition(game->camera) || force_light_update) {
+            light_calc.updateLightInput(game);
+        }
+        light_calc.update(force_light_update);
 
         game->hud.hover(*game, sf::Vector2f(mouse_pos_pixels));
     }
@@ -133,20 +148,24 @@ namespace Terrarium {
             float timestamp = 0;
 
             for (unsigned i = 0; i < phases; ++i) {
-                timestamp += game->day_night_cycle[i].second;
+                timestamp += game->day_night_cycle[i].length;
 
                 if (daytime < timestamp || i == phases - 1) {
-                    sf::Color prev = game->day_night_cycle[i].first;
+                    sf::Color prev = game->day_night_cycle[i].sky_color;
+                    uint8_t light_prev = game->day_night_cycle[i].light;
 
-                    float interpolation = 1 - (timestamp - daytime) / game->day_night_cycle[i].second;
+                    float interpolation = 1 - (timestamp - daytime) / game->day_night_cycle[i].length;
 
                     i = (i + 1 == phases) ? 0 : (i + 1);
 
-                    sf::Color next = game->day_night_cycle[i].first;
+                    sf::Color next = game->day_night_cycle[i].sky_color;
+                    uint8_t light_next = game->day_night_cycle[i].light;
 
                     sky_color.r = float(prev.r) + (float(next.r) - float(prev.r)) * interpolation;
                     sky_color.g = float(prev.g) + (float(next.g) - float(prev.g)) * interpolation;
                     sky_color.b = float(prev.b) + (float(next.b) - float(prev.b)) * interpolation;
+
+                    light_new = float(light_prev) + (float(light_next) - float(light_prev)) * interpolation;
 
                     //std::cout<<daytime<<" "<<timestamp<<std::endl;
                     //std::cout<<interpolation<<" "<<int(sky_color.r)<<" "<<int(sky_color.g)<<" "<<int(sky_color.b)<<std::endl;
@@ -162,6 +181,8 @@ namespace Terrarium {
         game->world_interact.highlightInteractive(*game, target);
 
         game->entity_mgr.draw(*game, target);
+
+        target.draw(light_calc);
 
         view = def_view;
         target.setView(view);
@@ -196,6 +217,8 @@ namespace Terrarium {
 
                 game->camera.width = new_size.x;
                 game->camera.height = new_size.y;
+
+                light_calc.resize(new_size.x, new_size.y);
 
                 // FIXME - recreating world renderer each time screen size changed
                 // is temporary solution. I probably just need to fix

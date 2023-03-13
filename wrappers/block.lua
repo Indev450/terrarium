@@ -52,6 +52,10 @@ local block_defaults = {
 
     slippery = 0.1,
     is_solid = true,
+
+    blocks_light = nil,
+    light = 0,
+
     replacable = false,
 
     groups = {},
@@ -84,6 +88,10 @@ function terrarium.register_block(name, def)
 
     apply_defaults(def, block_defaults)
     def.is_interactive = def.on_interact ~= nil
+
+    if def.blocks_light == nil then
+        def.blocks_light = def.is_solid
+    end
 
     -- If you need block that drops nothing, use "" as drops
     def.drop = def.drop or name
