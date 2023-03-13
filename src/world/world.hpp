@@ -136,14 +136,14 @@ namespace Terrarium {
         }
 
         inline void setMultiblock(int x, int y, uint8_t width, uint8_t height, blockid block) {
-            if (!(isInRange(x, y) && isInRange(x+width, x+height))) {
+            if (!(isInRange(x, y) && isInRange(x+width-1, y+height-1))) {
                 return;
             }
 
             for (uint8_t xoff = 0; xoff < width; ++xoff) {
                 for (uint8_t yoff = 0; yoff < height; ++yoff) {
-                    setBlock(x+xoff, y+yoff, block);
-                    setMultiblockOffset(x+xoff, y+yoff, xoff, yoff);
+                    setBlock(x+int(xoff), y+int(yoff), block);
+                    setMultiblockOffset(x+int(xoff), y+int(yoff), xoff, yoff);
                 }
             }
         }
