@@ -110,14 +110,10 @@ namespace Terrarium {
                 GameState &game,
                 int x, int y, int world_x, int world_y,
                 const Tile &tile) {
-        bool draw_anything = false;
-
         if (tile.bg) {
             BlockDef &def = game.block_defs.getOrUnknown(tile.bg);
 
             if (def.draw_type != BlockDef::DrawType::None) {
-                draw_anything = true;
-
                 if (def.draw_type == BlockDef::DrawType::Autotile) {
                     unsigned idx = 0;
 
@@ -147,14 +143,15 @@ namespace Terrarium {
 
                 target.draw(def.sprite);
             }
+        } else {
+            air_block.setPosition(x*Tile::SIZE, y*Tile::SIZE);
+            target.draw(air_block, sf::BlendNone);
         }
 
         if (tile.fg) {
             BlockDef &def = game.block_defs.getOrUnknown(tile.fg);
 
             if (def.draw_type != BlockDef::DrawType::None) {
-                draw_anything = true;
-
                 if (def.draw_type == BlockDef::DrawType::Autotile) {
                     unsigned idx = 0;
 
@@ -191,12 +188,6 @@ namespace Terrarium {
 
                 target.draw(def.sprite);
             }
-        }
-
-        if (!draw_anything) {
-            air_block.setPosition(x*Tile::SIZE, y*Tile::SIZE);
-
-            target.draw(air_block, sf::BlendNone);
         }
     }
 
