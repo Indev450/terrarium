@@ -41,6 +41,9 @@ namespace Terrarium {
 
         ItemCellRenderer item_cell_renderer;
 
+        DebugOverlay debug_overlay;
+        bool show_debug = false;
+
         sf::RectangleShape tip_background;
         sf::Text tip_text;
 

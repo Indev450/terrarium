@@ -56,7 +56,7 @@ namespace Terrarium {
         vertices.create(width*height*3*2);
     }
 
-    void LightCalculator::update(bool force) {
+    void LightCalculator::update(DebugInfo &debug_info, bool force) {
         if (!(needs_update || force)) {
             return;
         }
@@ -68,9 +68,7 @@ namespace Terrarium {
 
         auto end = std::chrono::steady_clock::now();
 
-        std::cout<<"Light calculation took "<<std::chrono::duration<double, std::milli>(end-start).count()<<" ms"<<std::endl;
-
-        start = std::chrono::steady_clock::now();
+        debug_info.light_calc_time = std::chrono::duration<double, std::milli>(end-start).count();
 
         // Then we add vertices to vertex array
         std::vector<sf::Vertex> arr;
@@ -88,8 +86,6 @@ namespace Terrarium {
 
         // And then update vertex buffer with that information
         vertices.update(arr.data(), arr.size(), 0);
-
-        end = std::chrono::steady_clock::now();
 
         needs_update = false;
     }

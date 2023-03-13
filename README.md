@@ -15,6 +15,7 @@ Controls
 | e                   | Interact with world                                |
 | escape              | Open pause menu (WIP)                              |
 | =, -                | Zoom in/out                                        |
+| o                   | Toggle debug info                                  |
 
 Dependencies
 ------------

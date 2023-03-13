@@ -44,6 +44,7 @@
 #include "event/event.hpp"
 #include "ui/hud.hpp"
 #include "graphics/gfx.hpp"
+#include "graphics/debug_overlay.hpp"
 #include "sounds/sfx.hpp"
 #include "utils/binary_io.hpp"
 #include "utils/saves.hpp"
@@ -87,6 +88,8 @@ namespace Terrarium {
 
         Gfx gfx;
         Sfx sfx;
+
+        DebugInfo debug_info;
 
         Hud hud;
 

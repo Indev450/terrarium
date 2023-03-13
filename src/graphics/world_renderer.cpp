@@ -21,6 +21,7 @@
  */
 
 #include <cmath>
+#include <chrono>
 
 #include <SFML/Graphics/RenderStates.hpp>
 
@@ -33,6 +34,8 @@ namespace Terrarium {
         if (!needs_update && !game.world.isUpdated()) {
             return;
         }
+
+        auto start = std::chrono::steady_clock::now();
 
         // First is current render target. Second is what have been drawn previously
         sf::RenderTexture *first = &rtexture;
@@ -96,6 +99,10 @@ namespace Terrarium {
         swap = !swap;
 
         needs_update = false;
+
+        auto end = std::chrono::steady_clock::now();
+
+        game.debug_info.world_redraw_time = std::chrono::duration<double, std::milli>(end-start).count();
     }
 
     inline void WorldRenderer::renderTile(

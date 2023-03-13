@@ -89,11 +89,11 @@ int main(int argc, char **argv)
     game->day_length = 60*16;
 
     game->day_night_cycle = {
-        { sf::Color(30, 20, 80),   60.0*4, 200 },
+        { sf::Color(30, 20, 80),   60.0*1, 200 },
         { sf::Color(70, 100, 220), 60.0*8, 255 },
         { sf::Color(50, 80, 200),  60.0*2, 200 },
-        { sf::Color(130, 80, 180), 60.0,   100 },
-        { sf::Color(20, 10, 70),   60.0,   40  },
+        { sf::Color(130, 80, 180), 60.0*1,   100 },
+        { sf::Color(20, 10, 70),   60.0*4,   40  },
     };
 
     game->hud.setScreenSize(sf::Vector2f(800, 640));

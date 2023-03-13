@@ -99,7 +99,7 @@ namespace Terrarium {
 
         void resize(int width, int height);
 
-        void update(bool force = false);
+        void update(DebugInfo &debug_info, bool force = false);
 
         bool updatePosition(const sf::FloatRect &camera);
 
@@ -110,7 +110,7 @@ namespace Terrarium {
 
         void lightSource(int x, int y, uint8_t intensity, int ox = 0, int oy = 0, bool recursion = false);
 
-        void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+        void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     };
 
 }

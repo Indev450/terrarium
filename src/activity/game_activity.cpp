@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <chrono>
 
 #include "game_activity.hpp"
 #include "activity_manager.hpp"
@@ -35,6 +36,7 @@ namespace Terrarium {
         world_renderer(std::make_unique<WorldRenderer>(am.getWindow().getSize() + sf::Vector2u(Tile::SIZE, Tile::SIZE))),
         light_calc(game->camera.width, game->camera.height),
         item_cell_renderer(game->gfx, sf::Color::White, sf::Color::Transparent, sf::Color::Transparent),
+        debug_overlay(game->gfx.font),
         tip_text("", game->gfx.font, 16),
         def_view()
     {
@@ -129,9 +131,12 @@ namespace Terrarium {
         if (light_calc.updatePosition(game->camera) || force_light_update) {
             light_calc.updateLightInput(game);
         }
-        light_calc.update(force_light_update);
+        light_calc.update(game->debug_info, force_light_update);
 
         game->hud.hover(*game, sf::Vector2f(mouse_pos_pixels));
+
+        game->debug_info.updateFps(dtime);
+        game->debug_info.time_of_day = game->time;
     }
 
     void GameActivity::render(sf::RenderTarget &target) {
@@ -145,12 +150,16 @@ namespace Terrarium {
             float daytime = game->time - std::floor(game->time / game->day_length) * game->day_length;
             unsigned phases = game->day_night_cycle.size();
 
+            game->debug_info.total_phases = phases;
+
             float timestamp = 0;
 
             for (unsigned i = 0; i < phases; ++i) {
                 timestamp += game->day_night_cycle[i].length;
 
                 if (daytime < timestamp || i == phases - 1) {
+                    game->debug_info.phase_of_day = i;
+
                     sf::Color prev = game->day_night_cycle[i].sky_color;
                     uint8_t light_prev = game->day_night_cycle[i].light;
 
@@ -167,8 +176,6 @@ namespace Terrarium {
 
                     light_new = float(light_prev) + (float(light_next) - float(light_prev)) * interpolation;
 
-                    //std::cout<<daytime<<" "<<timestamp<<std::endl;
-                    //std::cout<<interpolation<<" "<<int(sky_color.r)<<" "<<int(sky_color.g)<<" "<<int(sky_color.b)<<std::endl;
                     break;
                 }
             }
@@ -197,6 +204,11 @@ namespace Terrarium {
         if (game->hud.tip) {
             target.draw(tip_background);
             target.draw(tip_text);
+        }
+
+        if (show_debug) {
+            debug_overlay.update(game->debug_info);
+            target.draw(debug_overlay);
         }
     };
 
@@ -288,6 +300,10 @@ namespace Terrarium {
 
                     case sf::Keyboard::E:
                         game->world_interact.interact(*game);
+                    break;
+
+                    case sf::Keyboard::O:
+                        show_debug = !show_debug;
                     break;
 
                     case sf::Keyboard::Escape:
