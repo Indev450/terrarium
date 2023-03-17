@@ -41,6 +41,8 @@ namespace Terrarium {
 
         ItemCellRenderer item_cell_renderer;
 
+        sf::RectangleShape cave_layer;
+
         DebugOverlay debug_overlay;
         bool show_debug = false;
 

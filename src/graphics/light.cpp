@@ -118,6 +118,7 @@ namespace Terrarium {
         auto &world = game->world;
         auto &block_defs = game->block_defs;
 
+        int natural_light_depth = game->world.getHeight()/4;
         auto natural_light = game->natural_light;
 
         for (int x = start_x; x < end_x; ++x) {
@@ -140,7 +141,7 @@ namespace Terrarium {
                 // No blocks, use natural light
                 if (tile->fg == 0 && tile->bg == 0) {
                     inp.blocks_light = false;
-                    inp.light = natural_light;
+                    inp.light = (y < natural_light_depth ? natural_light : 0);
                     continue;
                 }
 
@@ -150,7 +151,7 @@ namespace Terrarium {
                 // Background doesn't block natural light, but we can't be sure
                 // about foreground yet
                 if (tile->bg == 0 || !bg.blocks_light) {
-                    inp.light = std::max(natural_light, bg.light);
+                    inp.light = std::max<uint8_t>((y < natural_light_depth ? natural_light : 0), bg.light);
                 } else if (tile->bg != 0) {
                     // Background does block natural light but it might emit
                     // light itself

@@ -49,6 +49,8 @@ namespace Terrarium {
         game->camera.width = win_size.x;
         game->camera.height = win_size.y;
 
+        cave_layer.setFillColor(sf::Color(32, 32, 32));
+
         tip_background.setFillColor(sf::Color(64, 64, 64, 127));
         tip_background.setOutlineColor(sf::Color(127, 127, 127, 127));
         tip_background.setOutlineThickness(4);
@@ -182,6 +184,11 @@ namespace Terrarium {
         }
 
         target.clear(sky_color);
+
+        cave_layer.setPosition(0, std::max(game->world.getHeight()/4 - game->camera.top, 0.f));
+        cave_layer.setSize({ game->camera.width, game->camera.height });
+
+        target.draw(cave_layer, game->blocks_to_pixels);
 
         world_renderer->render(target);
 
