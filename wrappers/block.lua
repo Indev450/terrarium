@@ -54,7 +54,7 @@ local block_defaults = {
     is_solid = true,
 
     blocks_light = nil,
-    light = 0,
+    light = { r = 0, g = 0, b = 0, },
 
     replacable = false,
 
@@ -84,6 +84,10 @@ local block_defaults = {
 function terrarium.register_block(name, def)
     if def.multiblock_size ~= nil and def.draw_type == nil then
         def.draw_type = "Multiblock"
+    end
+
+    if type(def.light) == "number" then
+        def.light = { r = def.light, g = def.light, b = def.light, }
     end
 
     apply_defaults(def, block_defaults)

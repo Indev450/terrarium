@@ -29,23 +29,49 @@
 #include <sstream>
 #include <memory>
 
-#include <SFML/Graphics/VertexBuffer.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "../game.hpp"
 
 #define LIGHT_RECURSION_LIMIT 16
-#define LIGHT_MIN_VALUE 8
-#define LIGHT_DROPOFF_BLOCK 0.75
-#define LIGHT_DROPOFF_DEFAULT 0.85
-#define LIGHT_DROPOFF_DIAGONAL 0.9
+#define LIGHT_MIN_VALUE 10
+#define LIGHT_DROPOFF_BLOCK 0.75f
+#define LIGHT_DROPOFF_DEFAULT 0.85f
+#define LIGHT_DROPOFF_DIAGONAL 0.9f
 
 namespace Terrarium {
 
+    inline void setMaxLight(sf::Vector3i &into, const sf::Vector3i &from) {
+        into.x = std::max(into.x, from.x);
+        into.y = std::max(into.y, from.y);
+        into.z = std::max(into.z, from.z);
+    }
+
+    inline void setMaxLight(sf::Color &into, const sf::Vector3i &from) {
+        into.r = std::max<uint8_t>(into.r, from.x);
+        into.g = std::max<uint8_t>(into.g, from.y);
+        into.b = std::max<uint8_t>(into.b, from.z);
+    }
+
+    inline bool isBrighter(const sf::Vector3i &first, const sf::Vector3i &second) {
+        return first.x >= second.x && first.y >= second.y && first.z >= second.z;
+    }
+
+    inline bool isBrighter(const sf::Color &first, const sf::Vector3i &second) {
+        return first.r >= second.x && first.g >= second.y && first.b >= second.z;
+    }
+
+    inline int getMaxLight(const sf::Vector3i &from) {
+        return std::max(std::max(from.x, from.y), from.z);
+    }
+
+    inline bool hasLight(const sf::Vector3i &val) {
+        return val.x || val.y || val.z;
+    }
+
     struct LightInput {
         bool blocks_light = false;
-        uint8_t light = 0;
+        sf::Vector3i light;
     };
 
     template <class T>
@@ -64,12 +90,11 @@ namespace Terrarium {
             height = _height;
         }
 
-        bool isInRange(int x, int y) {
+        inline bool isInRange(int x, int y) {
             return x >= 0 && x < width && y >= 0 && y < height;
         }
 
         inline T &at(int x, int y) {
-            // Uhhh this is kinda wrong but works?
             if (!isInRange(x, y)) {
                 std::ostringstream errormsg;
                 errormsg<<"light grid index ("<<x<<", "<<y<<") is out of range "
@@ -83,13 +108,11 @@ namespace Terrarium {
 
     class LightCalculator: public sf::Drawable, public sf::Transformable {
         LightGrid<sf::Color> calculated;
-        sf::VertexBuffer vertices;
+        sf::Texture shadow;
+        sf::RectangleShape shadow_rect;
 
         sf::Vector2i in_world_pos = { 0, 0 };
         bool needs_update = true;
-
-        // Helper function that hides transformation from rect to 2 triangles.
-        static void addQuad(std::vector<sf::Vertex> &arr, const sf::FloatRect &rect, const sf::Color &color);
 
     public:
         LightGrid<LightInput> input;
@@ -108,7 +131,7 @@ namespace Terrarium {
     private:
         void calculateLight();
 
-        void lightSource(int x, int y, uint8_t intensity, int ox = 0, int oy = 0, bool recursion = false);
+        void lightSource(int x, int y, const sf::Vector3i &intensity, int ox = 0, int oy = 0, bool recursion = false);
 
         void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     };

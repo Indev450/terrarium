@@ -30,22 +30,15 @@
 
 namespace Terrarium {
 
-    void LightCalculator::addQuad(std::vector<sf::Vertex> &arr, const sf::FloatRect &rect, const sf::Color &color) {
-        arr.push_back(sf::Vertex(sf::Vector2f(rect.left, rect.top), color));
-        arr.push_back(sf::Vertex(sf::Vector2f(rect.left, rect.top+rect.height), color));
-        arr.push_back(sf::Vertex(sf::Vector2f(rect.left+rect.width, rect.top), color));
-
-        arr.push_back(sf::Vertex(sf::Vector2f(rect.left, rect.top+rect.height), color));
-        arr.push_back(sf::Vertex(sf::Vector2f(rect.left+rect.width, rect.top+rect.height), color));
-        arr.push_back(sf::Vertex(sf::Vector2f(rect.left+rect.width, rect.top), color));
-    }
-
     LightCalculator::LightCalculator(int width, int height):
         calculated(width, height),
-        vertices(sf::PrimitiveType::Triangles, sf::VertexBuffer::Dynamic),
         input(width, height)
     {
-        vertices.create(width*height*3*2);
+        shadow.create(width, height);
+        shadow.setSmooth(true);
+
+        shadow_rect.setTexture(&shadow);
+        shadow_rect.setSize({ float(width), float(height) });
     }
 
     void LightCalculator::resize(int width, int height) {
@@ -53,7 +46,9 @@ namespace Terrarium {
         width += (step+1)*2; height += (step+1)*2;
         input.resize(width, height);
         calculated.resize(width, height);
-        vertices.create(width*height*3*2);
+        shadow.create(width, height);
+        shadow_rect.setTexture(&shadow, true);
+        shadow_rect.setSize({ float(width), float(height) });
     }
 
     void LightCalculator::update(DebugInfo &debug_info, bool force) {
@@ -70,22 +65,7 @@ namespace Terrarium {
 
         debug_info.light_calc_time = std::chrono::duration<double, std::milli>(end-start).count();
 
-        // Then we add vertices to vertex array
-        std::vector<sf::Vertex> arr;
-        for (int x = 0; x < input.width; ++x) {
-            for (int y = 0; y < input.height; ++y) {
-                addQuad(arr,
-                {
-                    float(x*Tile::SIZE),
-                    float(y*Tile::SIZE),
-                    1.f*Tile::SIZE,
-                    1.f*Tile::SIZE,
-                }, calculated.at(x, y));
-            }
-        }
-
-        // And then update vertex buffer with that information
-        vertices.update(arr.data(), arr.size(), 0);
+        shadow.update((uint8_t*)calculated.grid.data());
 
         needs_update = false;
     }
@@ -119,7 +99,7 @@ namespace Terrarium {
         auto &block_defs = game->block_defs;
 
         int natural_light_depth = game->world.getHeight()/4;
-        auto natural_light = game->natural_light;
+        auto natural_light_base = sf::Vector3i(game->natural_light,game->natural_light,game->natural_light);
 
         for (int x = start_x; x < end_x; ++x) {
             for (int y = start_y; y < end_y; ++y) {
@@ -131,17 +111,23 @@ namespace Terrarium {
                 auto &inp = input.at(light_calc_x, light_calc_y);
 
                 inp.blocks_light = true;
-                inp.light = 0;
+                inp.light = { 0, 0, 0 };
 
                 // Out of world bounds, don't do anything
                 if (tile == nullptr) {
                     continue;
                 }
 
+                sf::Vector3i natural_light;
+
+                if (y < natural_light_depth) {
+                    natural_light = natural_light_base;
+                }
+
                 // No blocks, use natural light
                 if (tile->fg == 0 && tile->bg == 0) {
                     inp.blocks_light = false;
-                    inp.light = (y < natural_light_depth ? natural_light : 0);
+                    inp.light = natural_light;
                     continue;
                 }
 
@@ -151,26 +137,19 @@ namespace Terrarium {
                 // Background doesn't block natural light, but we can't be sure
                 // about foreground yet
                 if (tile->bg == 0 || !bg.blocks_light) {
-                    inp.light = std::max<uint8_t>((y < natural_light_depth ? natural_light : 0), bg.light);
-                } else if (tile->bg != 0) {
-                    // Background does block natural light but it might emit
-                    // light itself
-                    inp.light = bg.light;
+                    setMaxLight(inp.light, natural_light);
+                }
+
+                // Background might emit light itself
+                if (tile->bg != 0) {
+                    setMaxLight(inp.light, bg.light);
                 }
 
                 // There is foreground block...
                 if (tile->fg != 0) {
-                    if (fg.blocks_light) {
-                        // It blocks light, replace any light from background
-                        inp.light = fg.light;
-                        inp.blocks_light = true;
+                    setMaxLight(inp.light, fg.light);
 
-                    } else {
-                        // It doesn't block light, so we need to select max
-                        // light value
-                        inp.blocks_light = false;
-                        inp.light = std::max(inp.light, fg.light);
-                    }
+                    inp.blocks_light = fg.blocks_light;
                 } else {
                     // There is no block at foreground, don't block light and
                     // use light value from background/natural light
@@ -186,7 +165,8 @@ namespace Terrarium {
         // nearby, such as natural light
         for (int y = 0; y < input.height; ++y) {
             for (int x = 0; x < input.width; ++x) {
-                calculated.at(x, y) = sf::Color(0, 0, 0, 255-input.at(x, y).light);
+                auto &inp = input.at(x, y);
+                calculated.at(x, y) = sf::Color(inp.light.x, inp.light.y, inp.light.z, 255-getMaxLight(inp.light));
             }
         }
 
@@ -199,16 +179,16 @@ namespace Terrarium {
                 // ...But do that if previously calculated light value is lower
                 // than light source from input. Again, this greatly improves
                 // perfomance.
-                if (inp.light && 255-calc.a <= inp.light) {
+                if (hasLight(inp.light) && isBrighter(calc, inp.light)) {
                     lightSource(x, y, inp.light);
                 }
             }
         }
     }
 
-    void LightCalculator::lightSource(int x, int y, uint8_t intensity, int ox, int oy, bool recursion) {
+    void LightCalculator::lightSource(int x, int y, const sf::Vector3i &intensity, int ox, int oy, bool recursion) {
         // Too far from light source
-        if (ox*ox+oy*oy > LIGHT_RECURSION_LIMIT*LIGHT_RECURSION_LIMIT || intensity <= LIGHT_MIN_VALUE) {
+        if (ox*ox+oy*oy > LIGHT_RECURSION_LIMIT*LIGHT_RECURSION_LIMIT || getMaxLight(intensity) <= LIGHT_MIN_VALUE) {
             return;
         }
 
@@ -224,11 +204,12 @@ namespace Terrarium {
         // source. Extra check if that is recursive call is done because light
         // at light source will always be same as calculated, as it was set in
         // calculateLight()
-        if (255-calc.a >= intensity && recursion) {
+        if (isBrighter(calc, intensity) && recursion) {
             return;
         }
 
-        calc = sf::Color(0, 0, 0, 255-intensity);
+        setMaxLight(calc, intensity);
+        calc.a = 255 - getMaxLight(intensity);
 
         for (int nx = -1; nx <= 1; ++nx) {
             for (int ny = -1; ny <= 1; ++ny) {
@@ -239,19 +220,23 @@ namespace Terrarium {
 
                 // New intensity is lower. If light spreads through blocks that
                 // block light or it spreads diagonally, it becomes even lower
-                uint8_t new_intensity = uint8_t(float(intensity)
-                            * (inp.blocks_light ? LIGHT_DROPOFF_BLOCK : 1.f) * LIGHT_DROPOFF_DEFAULT
-                            * (((nx && ny) ? LIGHT_DROPOFF_DIAGONAL : 1.f)));
+                sf::Vector3f new_intensity(intensity);
 
-                lightSource(x, y, new_intensity, ox+nx, oy+ny, true);
+                new_intensity *= LIGHT_DROPOFF_DEFAULT;
+                if (inp.blocks_light) new_intensity *= LIGHT_DROPOFF_BLOCK;
+                if (nx && ny) new_intensity *= LIGHT_DROPOFF_DEFAULT;
+
+                lightSource(x, y, sf::Vector3i(new_intensity), ox+nx, oy+ny, true);
             }
         }
     }
 
     void LightCalculator::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         states.transform *= getTransform();
+        states.transform.scale(sf::Vector2f(Tile::SIZE, Tile::SIZE));
+        states.blendMode = sf::BlendMultiply;
 
-        target.draw(vertices, states);
+        target.draw(shadow_rect, states);
     }
 
 }

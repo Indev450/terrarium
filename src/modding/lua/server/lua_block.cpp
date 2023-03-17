@@ -109,7 +109,8 @@ namespace Terrarium {
             lua_pop(L, 1);
 
             lua_getfield(L, 2, "light");
-            block_def->light = LuaUtil::checkinteger_ranged<uint8_t>(L, -1);
+            sf::Color color = LuaUtil::checkcolor(L, -1);
+            block_def->light = sf::Vector3i(color.r, color.g, color.b);
             lua_pop(L, 1);
 
             lua_pushinteger(L, lua_interface->game->block_defs.add(block_def));

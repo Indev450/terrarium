@@ -80,7 +80,7 @@ namespace Terrarium {
 
         bool is_interactive = false;
 
-        uint8_t light = 0;
+        sf::Vector3i light;
         bool blocks_light = true;
     };
 
