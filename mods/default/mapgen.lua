@@ -267,6 +267,8 @@ terrarium.register_biome("default:desert", {
 
     priority = 2,
 
+    max_depth = 0.2,
+
     decorations = {
         cactus = {
             origin = {
@@ -315,6 +317,93 @@ terrarium.register_biome("default:desert", {
             },
 
             place_chance = 0.01,
+
+            conditions = {
+                {
+                    position = { x = 0, y = -1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
+        }
+    }
+})
+
+terrarium.register_biome("default:underground_desert", {
+    humidity_max = 0.4,
+
+    heat_min = -0.2,
+
+    top = {
+        block = "default:sand",
+        wall = "default:sand",
+    },
+
+    top_depth = 1,
+
+    filler = {
+        block = "default:sand",
+        wall = "default:sand",
+    },
+
+    filler_depth = 1,
+
+    stone = {
+        block = "default:sand",
+        wall = "default:sand",
+    },
+
+    priority = 2,
+
+    min_depth = 0.2,
+
+    decorations = {
+        cactus = {
+            origin = {
+                x = 2,
+                y = 4,
+            },
+
+            tile_aliases = {
+                ['c'] = { block = "default:glow_cactus" },
+            },
+
+            tiles = {
+                "  c  ",
+                "c c c",
+                "ccccc",
+                "  c  ",
+                "  c  ",
+            },
+
+            place_chance = 0.02,
+
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
+        },
+
+        upwards_cactus = {
+            origin = {
+                x = 2,
+                y = 0,
+            },
+
+            tile_aliases = {
+                ['c'] = { block = "default:glow_cactus" },
+            },
+
+            tiles = {
+                "  c  ",
+                "  c  ",
+                "ccccc",
+                "c c c",
+                "  c  ",
+            },
+
+            place_chance = 0.02,
 
             conditions = {
                 {

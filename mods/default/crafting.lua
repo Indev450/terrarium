@@ -14,7 +14,7 @@ terrarium.register_recipe("empty_hands", {
         "default:wood 2",
     },
 
-    result = "default:torch",
+    result = "default:torch 4",
 })
 
 terrarium.add_crafting_category("workbench")

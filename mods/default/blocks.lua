@@ -260,6 +260,33 @@ terrarium.register_block("default:cactus", {
     },
 })
 
+terrarium.register_block("default:glow_cactus", {
+    description = "Glowy cactus",
+
+    image = "glow_cactus.png",
+
+    autotile_neighbour = false,
+    is_solid = false,
+
+    light = { r = 120, g = 120, b = 20 },
+
+    groups = {
+        ["tree"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    place_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.2,
+    },
+})
+
 terrarium.register_block("default:wood", {
     description = "Wood",
 
@@ -505,7 +532,7 @@ terrarium.register_block("default:torch", {
     autotile_neighbour = false,
     is_solid = false,
 
-    light = 250,
+    light = { r = 255, g = 180, b = 140 },
 
     groups = {
         ["ground"] = 1,
