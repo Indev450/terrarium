@@ -40,11 +40,15 @@ namespace Terrarium {
         tip_text("", game->gfx.font, 16),
         def_view()
     {
+        sf::Vector2u win_size_pixels = am.getWindow().getSize();
+
+        onResize(win_size_pixels.x, win_size_pixels.y);
+
         game->modding_interface->onPlayerJoin(game->player);
 
         def_view = am.getWindow().getDefaultView();
 
-        auto win_size = game->pixels_to_blocks.transformPoint(sf::Vector2f(am.getWindow().getSize()));
+        auto win_size = game->pixels_to_blocks.transformPoint(sf::Vector2f(win_size_pixels));
 
         game->camera.width = win_size.x;
         game->camera.height = win_size.y;
@@ -229,24 +233,7 @@ namespace Terrarium {
 
             case sf::Event::Resized:
             {
-                sf::FloatRect visible_area(0, 0, event.size.width, event.size.height);
-                def_view = sf::View(visible_area);
-
-                sf::Vector2f new_size = game->pixels_to_blocks.transformPoint(event.size.width, event.size.height);
-
-                game->camera.width = new_size.x;
-                game->camera.height = new_size.y;
-
-                light_calc.resize(new_size.x, new_size.y);
-
-                // FIXME - recreating world renderer each time screen size changed
-                // is temporary solution. I probably just need to fix
-                // WorldRenderer::setScreenSize instead.
-                world_renderer = std::make_unique<WorldRenderer>(sf::Vector2u{
-                    event.size.width + Tile::SIZE,
-                    event.size.height + Tile::SIZE });
-
-                game->hud.setScreenSize(sf::Vector2f(event.size.width, event.size.height));
+                onResize(event.size.width, event.size.height);
             }
             break;
 
@@ -417,6 +404,27 @@ namespace Terrarium {
 
     GameActivity::~GameActivity() {
         game->save();
+    }
+
+    void GameActivity::onResize(unsigned width, unsigned height) {
+        sf::FloatRect visible_area(0, 0, width, height);
+        def_view = sf::View(visible_area);
+
+        sf::Vector2f new_size = game->pixels_to_blocks.transformPoint(width, height);
+
+        game->camera.width = new_size.x;
+        game->camera.height = new_size.y;
+
+        light_calc.resize(new_size.x, new_size.y);
+
+        // FIXME - recreating world renderer each time screen size changed
+        // is temporary solution. I probably just need to fix
+        // WorldRenderer::setScreenSize instead.
+        world_renderer = std::make_unique<WorldRenderer>(sf::Vector2u{
+            width + Tile::SIZE,
+            height + Tile::SIZE });
+
+        game->hud.setScreenSize(sf::Vector2f(width, height));
     }
 
 }

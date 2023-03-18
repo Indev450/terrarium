@@ -62,6 +62,8 @@ namespace Terrarium {
         uint8_t light_new = 255;
         int light_change_step = 8;
 
+        void onResize(unsigned width, unsigned height);
+
     public:
         GameActivity(ActivityManager &am, std::shared_ptr<GameState> _game, const std::string &_save_name);
 
