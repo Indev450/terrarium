@@ -141,7 +141,7 @@ namespace Terrarium {
                 def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
                 def.sprite.setColor(sf::Color(127, 127, 127, 255)); // Make wall darker
 
-                target.draw(def.sprite);
+                target.draw(def.sprite, sf::BlendNone);
             }
         } else {
             air_block.setPosition(x*Tile::SIZE, y*Tile::SIZE);
