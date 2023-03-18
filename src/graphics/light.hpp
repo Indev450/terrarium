@@ -33,10 +33,10 @@
 
 #include "../game.hpp"
 
-#define LIGHT_RECURSION_LIMIT 16
+#define LIGHT_RECURSION_LIMIT 32
 #define LIGHT_MIN_VALUE 10
 #define LIGHT_DROPOFF_BLOCK 0.75f
-#define LIGHT_DROPOFF_DEFAULT 0.85f
+#define LIGHT_DROPOFF_DEFAULT 0.9f
 #define LIGHT_DROPOFF_DIAGONAL 0.9f
 
 namespace Terrarium {

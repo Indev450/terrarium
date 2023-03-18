@@ -226,7 +226,8 @@ namespace Terrarium {
                 if (inp.blocks_light) new_intensity *= LIGHT_DROPOFF_BLOCK;
                 if (nx && ny) new_intensity *= LIGHT_DROPOFF_DEFAULT;
 
-                lightSource(x, y, sf::Vector3i(new_intensity), ox+nx, oy+ny, true);
+                if (ox*nx >= 0 && oy*ny >= 0)
+                    lightSource(x, y, sf::Vector3i(new_intensity), ox+nx, oy+ny, true);
             }
         }
     }
