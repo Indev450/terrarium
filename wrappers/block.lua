@@ -163,14 +163,48 @@ function terrarium.get_wall(x, y)
     return terrarium.block_names[core._get_wall(x, y)] or "unknown"
 end
 
--- These functions don't use callbacks and don't check multiblocks, use them
+-- These functions only place blocks and don't care about replaced ones, use them
 -- when you need to modify blocks automatically, like in mapgen
-function terrarium.set_block(x, y, block_name)
-    core._set_block(x, y, terrarium.get_block_id(block_name))
+function terrarium.set_block(x, y, block_name, nocall)
+    local def = terrarium.registered_blocks[block_name]
+
+    local block_id = 0
+
+    if def ~= nil then block_id = def.block_id end
+
+    core._set_block(x, y, block_id)
+
+    if def ~= nil and not nocall then
+        def.on_place({ x = x, y = y })
+    end
 end
 
-function terrarium.set_wall(x, y, block_name)
-    core._set_wall(x, y, terrarium.get_block_id(block_name))
+function terrarium.set_wall(x, y, block_name, nocall)
+    local def = terrarium.registered_blocks[block_name]
+
+    local block_id = 0
+
+    if def ~= nil then block_id = def.block_id end
+
+    core._set_wall(x, y, block_id)
+
+    if not nocall then
+        def.on_place({ x = x, y = y })
+    end
+end
+
+function terrarium.set_multiblock(x, y, block_name, nocall)
+    local def = terrarium.registered_blocks[block_name]
+
+    local block_id = 0
+
+    if def ~= nil then block_id = def.block_id end
+
+    core._set_multiblock(x, y, def.multiblock_size.x, def.multiblock_size.y, block_id)
+
+    if not nocall then
+        def.on_place({ x = x, y = y })
+    end
 end
 
 -- These functions use callbacks, use them when blocks modified by user
