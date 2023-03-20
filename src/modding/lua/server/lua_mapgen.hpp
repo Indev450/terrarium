@@ -31,7 +31,16 @@
 
 namespace Terrarium {
 
+    class LuaModdingInterface;
+
     namespace LuaMapgenAPI {
+
+        void init(LuaModdingInterface &lua_interface);
+
+        // Mapgen-related core module functions
+
+        // Vector2i core._get_world_size()
+        int get_world_size(lua_State *L);
 
         // Functions to call from C++
 

@@ -83,6 +83,10 @@ function terrarium.register_on_map_generated(func)
     table.insert(terrarium.on_map_generated, func)
 end
 
+function terrarium.get_world_size()
+    return core._get_world_size()
+end
+
 -- Converts block names into ids
 local function parse_tile(tile)
     return {

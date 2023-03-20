@@ -22,12 +22,29 @@
 
 #include <memory>
 
+#include "lua_interface.hpp"
 #include "lua_mapgen.hpp"
 #include "lua_util.hpp"
 
 namespace Terrarium {
 
     namespace LuaMapgenAPI {
+
+        void init(LuaModdingInterface &lua_interface) {
+            lua_interface.registerFunction("_get_world_size", get_world_size);
+        }
+
+        // Vector2u core._get_world_size()
+        int get_world_size(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            sf::Vector2i world_size(
+                    lua_interface->game->world.getWidth(),
+                    lua_interface->game->world.getHeight());
+            LuaUtil::push_vector2i(L, world_size);
+
+            return 1;
+        }
 
         Tile checktile(lua_State *L, int idx) {
             if (!lua_istable(L, idx)) {

@@ -57,6 +57,7 @@ namespace Terrarium {
         LuaCraftingAPI::init(*this);
         LuaInventoryAPI::init(*this);
         LuaBlockAPI::init(*this);
+        LuaMapgenAPI::init(*this);
         LuaPlayerAPI::init(*this);
         LuaCmdAPI::init(*this);
         LuaHudBarAPI::init(*this);
