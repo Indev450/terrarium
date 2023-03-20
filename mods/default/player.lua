@@ -72,8 +72,8 @@ default_player_saver = {
 
 terrarium.override_player({
     size = {
-        width = 1.5,
-        height = 3
+        width = 1.4,
+        height = 2.8
     },
 
     image = "player.png",
