@@ -74,6 +74,11 @@ namespace Terrarium {
         sf::Vector3i light;
     };
 
+    struct DynamicLightInput {
+        sf::Vector2i position;
+        sf::Vector3i light;
+    };
+
     template <class T>
     struct LightGrid {
         std::vector<T> grid;
@@ -108,6 +113,7 @@ namespace Terrarium {
 
     class LightCalculator: public sf::Drawable, public sf::Transformable {
         LightGrid<sf::Color> calculated;
+        LightGrid<sf::Color> calculated_static;
         sf::Texture shadow;
         sf::RectangleShape shadow_rect;
 
@@ -116,6 +122,7 @@ namespace Terrarium {
 
     public:
         LightGrid<LightInput> input;
+        std::vector<DynamicLightInput> input_dynamic;
         int step = LIGHT_RECURSION_LIMIT;
 
         LightCalculator(int width, int height);
@@ -127,6 +134,8 @@ namespace Terrarium {
         bool updatePosition(const sf::FloatRect &camera);
 
         void updateLightInput(std::shared_ptr<GameState> game);
+
+        void addDynamicLight(const DynamicLightInput &inp);
 
     private:
         void calculateLight();

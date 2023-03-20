@@ -203,6 +203,12 @@ namespace Terrarium {
             entity->anims.setTexture(texture);
         }
 
+        void LuaEntityUD::setLight(const sf::Color &light) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->light = { int(light.r), int(light.g), int(light.b) };
+        }
+
         void LuaEntityUD::kill(EntityManager &entity_mgr) {
             entity_mgr.del(getID());
         }
@@ -295,6 +301,9 @@ namespace Terrarium {
 
             lua_interface.pushClosure(entity_set_texture);
             lua_setfield(L, -2, "set_texture");
+
+            lua_pushcfunction(L, entity_set_light);
+            lua_setfield(L, -2, "set_light");
 
             lua_interface.pushClosure(entity_kill);
             lua_setfield(L, -2, "kill");
@@ -759,6 +768,18 @@ namespace Terrarium {
             return 0;
         }
 
+        int entity_set_light(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+
+            try {
+                entity_ref->setLight(LuaUtil::checkcolor(L, 2));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
         int entity_kill(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 

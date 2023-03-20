@@ -537,6 +537,14 @@ terrarium.register_block("default:torch", {
     groups = {
         ["ground"] = 1,
     },
+
+    on_select = function(user)
+        user.ref:set_light({ r = 230, g = 150, b = 110 })
+    end,
+
+    on_unselect = function(user)
+        user.ref:set_light({ r = 0, g = 0, b = 0 })
+    end,
 })
 
 terrarium.register_block_alias("default:stone", "mapgen:filler_block")

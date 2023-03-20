@@ -67,6 +67,21 @@ namespace Terrarium {
 
         game->entity_mgr.update(*game, dtime);
 
+        DynamicLightInput entity_light;// = { sf::Vector2i(game->player->getPosition()), sf::Vector3i(120, 255, 120) };
+
+        for (auto pair: game->entity_mgr) {
+            if (getMaxLight(pair.second->light) != 0) {
+                entity_light.position = {
+                    int(pair.second->hitbox.left + pair.second->hitbox.width/2),
+                    int(pair.second->hitbox.top + pair.second->hitbox.height/2),
+                };
+
+                entity_light.light = pair.second->light;
+
+                light_calc.addDynamicLight(entity_light);
+            }
+        }
+
         sf::Vector2f target_camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
 
         // Offset caused by zoom

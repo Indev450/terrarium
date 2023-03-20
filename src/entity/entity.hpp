@@ -26,8 +26,8 @@
 #include <cstdint>
 #include <memory>
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
 #include "../tile/tile.hpp"
 #include "../graphics/animation_map.hpp"
@@ -72,6 +72,8 @@ namespace Terrarium {
         PhysicsParams physics;
 
         sf::Vector2f speed = {0, 0};
+
+        sf::Vector3i light;
 
         entityid id = 0;
 

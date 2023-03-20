@@ -108,6 +108,8 @@ namespace Terrarium {
 
             void setTexture(const sf::Texture &texture);
 
+            void setLight(const sf::Color &light);
+
             void kill(EntityManager &entity_mgr);
 
             std::weak_ptr<Entity> getPtr() { return entity_ref; }
@@ -203,6 +205,9 @@ namespace Terrarium {
 
         // void EntityRef:set_texture(string texture)
         int entity_set_texture(lua_State *L);
+
+        // void EntityRef:set_light(Color light)
+        int entity_set_light(lua_State *L);
 
         // void EntityRef:kill()
         int entity_kill(lua_State *L);

@@ -32,6 +32,7 @@ namespace Terrarium {
 
     LightCalculator::LightCalculator(int width, int height):
         calculated(width, height),
+        calculated_static(width, height),
         input(width, height)
     {
         shadow.create(width, height);
@@ -46,28 +47,37 @@ namespace Terrarium {
         width += (step+1)*2; height += (step+1)*2;
         input.resize(width, height);
         calculated.resize(width, height);
+        calculated_static.resize(width, height);
         shadow.create(width, height);
         shadow_rect.setTexture(&shadow, true);
         shadow_rect.setSize({ float(width), float(height) });
     }
 
     void LightCalculator::update(DebugInfo &debug_info, bool force) {
-        if (!(needs_update || force)) {
-            return;
+        if (needs_update || force) {
+            auto start = std::chrono::steady_clock::now();
+
+            // First we calculate light
+            calculateLight();
+
+            auto end = std::chrono::steady_clock::now();
+
+            debug_info.light_calc_time = std::chrono::duration<double, std::milli>(end-start).count();
+
+            calculated_static = calculated;
+
+            needs_update = false;
         }
 
-        auto start = std::chrono::steady_clock::now();
+        calculated = calculated_static;
 
-        // First we calculate light
-        calculateLight();
+        for (auto & inp : input_dynamic) {
+            lightSource(inp.position.x - in_world_pos.x - step/2, inp.position.y - in_world_pos.y - step/2, inp.light);
+        }
 
-        auto end = std::chrono::steady_clock::now();
-
-        debug_info.light_calc_time = std::chrono::duration<double, std::milli>(end-start).count();
+        input_dynamic.clear();
 
         shadow.update((uint8_t*)calculated.grid.data());
-
-        needs_update = false;
     }
 
     bool LightCalculator::updatePosition(const sf::FloatRect &camera) {
@@ -157,6 +167,10 @@ namespace Terrarium {
                 }
             }
         }
+    }
+
+    void LightCalculator::addDynamicLight(const DynamicLightInput &inp) {
+        input_dynamic.push_back(inp);
     }
 
     void LightCalculator::calculateLight() {

@@ -77,10 +77,17 @@ namespace Terrarium {
             OverflowingMap<entityid, Entity>::del(id);
         }
 
+        auto begin() {
+            return OverflowingMap<entityid, Entity>::begin();
+        }
+
+        auto end() {
+            return OverflowingMap<entityid, Entity>::end();
+        }
+
         void update(GameState &game, float dtime);
 
         void draw(GameState &game, sf::RenderTarget &target);
-
     };
 
 } // namespace Terrarium
