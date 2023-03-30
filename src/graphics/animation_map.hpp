@@ -125,6 +125,9 @@ namespace Terrarium {
 
             states.transform.scale(scale_x, scale_y);
 
+            if (current)
+                states.transform *= current->getTransform(mirror);
+
             target.draw(sprite, states);
         }
     };

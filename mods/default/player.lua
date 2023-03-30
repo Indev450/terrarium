@@ -83,7 +83,7 @@ terrarium.override_player({
             time_per_frame = 999,
 
             frames = {
-                { x = 24*4, y = 0, width = 24, height = 48 },
+                { rect = { x = 24*4, y = 0, width = 24, height = 48, }, },
             },
         },
 
@@ -91,18 +91,21 @@ terrarium.override_player({
             time_per_frame = 999,
 
             frames = {
-                { x = 0, y = 0, width = 24, height = 48 },
+                { rect = { x = 0, y = 0, width = 24, height = 48, }, },
             },
         },
 
         jump_start = {
-            time_per_frame = 0.1,
+            time_per_frame = 0.2/3,
 
             next = "jump",
 
+            interpolation = "Linear",
+
             frames = {
-                { x = 24*1, y = 0, width = 24, height = 48 },
-                { x = 24*2, y = 0, width = 24, height = 48 },
+                { rect = { x = 24*1, y = 0, width = 24, height = 48, }, scale_center = { x = 12, y = 24, }, },
+                { rect = { x = 24*2, y = 0, width = 24, height = 48, }, scale = { x = 0.8, y = 1.2, }, scale_center = { x = 12, y = 24, }, },
+                { rect = { x = 24*2, y = 0, width = 24, height = 48, }, scale_center = { x = 12, y = 24, }, },
             },
         },
 
@@ -110,7 +113,7 @@ terrarium.override_player({
             time_per_frame = 999,
 
             frames = {
-                { x = 24*3, y = 0, width = 24, height = 48 },
+                { rect = { x = 24*3, y = 0, width = 24, height = 48, }, },
             },
         },
 
@@ -118,12 +121,12 @@ terrarium.override_player({
             time_per_frame = 0.09,
 
             frames = {
-                { x = 24*0, y = 48, width = 24, height = 48 },
-                { x = 24*1, y = 48, width = 24, height = 48 },
-                { x = 24*2, y = 48, width = 24, height = 48 },
-                { x = 24*3, y = 48, width = 24, height = 48 },
-                { x = 24*4, y = 48, width = 24, height = 48 },
-                { x = 24*5, y = 48, width = 24, height = 48 },
+                { rect = { x = 24*0, y = 48, width = 24, height = 48, }, },
+                { rect = { x = 24*1, y = 48, width = 24, height = 48, }, },
+                { rect = { x = 24*2, y = 48, width = 24, height = 48, }, },
+                { rect = { x = 24*3, y = 48, width = 24, height = 48, }, },
+                { rect = { x = 24*4, y = 48, width = 24, height = 48, }, },
+                { rect = { x = 24*5, y = 48, width = 24, height = 48, }, },
             }
         }
     },

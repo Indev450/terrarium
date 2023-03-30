@@ -30,4 +30,9 @@ inline float stepify(float x, float step) {
     return floor(x / step) * step;
 }
 
+template <class T>
+inline T lerp(T a, T b, float t) {
+    return a + (b - a) * t;
+}
+
 #endif

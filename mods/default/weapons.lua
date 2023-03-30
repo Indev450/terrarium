@@ -10,10 +10,10 @@ local function register_sword(metal, damage, description)
                 next = "invisible",
 
                 frames = {
-                    { x = 0, y = 0*24, width = 48, height = 24, },
-                    { x = 0, y = 1*24, width = 48, height = 24, },
-                    { x = 0, y = 2*24, width = 48, height = 24, },
-                    { x = 0, y = 3*24, width = 48, height = 24, },
+                    { rect = { x = 0, y = 0*24, width = 48, height = 24, }, },
+                    { rect = { x = 0, y = 1*24, width = 48, height = 24, }, },
+                    { rect = { x = 0, y = 2*24, width = 48, height = 24, }, },
+                    { rect = { x = 0, y = 3*24, width = 48, height = 24, }, },
                 },
             },
 
@@ -21,7 +21,7 @@ local function register_sword(metal, damage, description)
                 time_per_frame = 999,
 
                 frames = {
-                    { x = 0, y = 4*24, width = 48, height = 24, },
+                    { rect = { x = 0, y = 4*24, width = 48, height = 24, }, },
                 },
             },
         },

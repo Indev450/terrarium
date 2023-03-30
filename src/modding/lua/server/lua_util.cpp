@@ -309,18 +309,84 @@ namespace Terrarium {
 
             lua_pop(L, 1);
 
+            lua_getfield(L, idx, "interpolation");
+
+            static const char *interp_type_names[] = {
+                "None",
+                "Linear",
+                nullptr,
+            };
+
+            static const Animation::Interpolation interp_type_values[] = {
+                Animation::Interpolation::None,
+                Animation::Interpolation::Linear,
+            };
+
+            anim.interpolation = interp_type_values[luaL_checkoption(L, -1, "None", interp_type_names)];
+
+            lua_pop(L, 1);
+
             lua_getfield(L, idx, "frames");
 
             if (!lua_istable(L, -1)) {
                 luaL_error(L, "<animation>.frames expected to be table");
             }
 
-            lua_pushnil(L); // push first key
-            while (lua_next(L, -2) != 0) { // pop key, push key, value
+            int amount_frames = luaL_len(L, -1);
+            for (int i = 1; i <= amount_frames; ++i) {
+                AnimationFrame frame;
 
-                anim.frames.push_back(checkintrect(L, -1));
+                lua_geti(L, -1, i); // push value
+
+                lua_getfield(L, -1, "rect"); // push rect
+
+                frame.rect = checkintrect(L, -1);
+
+                lua_pop(L, 1); // pop rect
+
+                lua_getfield(L, -1, "offset"); // push offset
+
+                if (!lua_isnil(L, -1)) {
+                    frame.offset = checkvector<float>(L, -1);
+                }
+
+                lua_pop(L, 1); // pop offset
+
+                lua_getfield(L, -1, "rotation"); // push rotation
+
+                if (!lua_isnil(L, -1)) {
+                    frame.rotation = luaL_checknumber(L, -1);
+                }
+
+                lua_pop(L, 1); // pop rotation
+
+                lua_getfield(L, -1, "rotation_center"); // push rotation_center
+
+                if (!lua_isnil(L, -1)) {
+                    frame.rotation_center = checkvector<float>(L, -1);
+                }
+
+                lua_pop(L, 1); // pop rotation center
+
+                lua_getfield(L, -1, "scale"); // push scale
+
+                if (!lua_isnil(L, -1)) {
+                    frame.scale = checkvector<float>(L, -1);
+                }
+
+                lua_pop(L, 1); // pop scale
+
+                lua_getfield(L, -1, "scale_center"); // push scale center
+
+                if (!lua_isnil(L, -1)) {
+                    frame.scale_center = checkvector<float>(L, -1);
+                }
+
+                lua_pop(L, 1); // pop scale center
 
                 lua_pop(L, 1); // pop value
+
+                anim.frames.push_back(frame);
             }
 
             lua_pop(L, 1); // pop frames table

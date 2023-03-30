@@ -25,27 +25,27 @@ terrarium.register_entity("slime:slime", {
             time_per_frame = 0.1,
             next = "in_air",
             frames = {
-                { x = 28*0, y = 0, width = 28, height = 26 },
-                { x = 28*1, y = 0, width = 28, height = 26 },
-                { x = 28*2, y = 0, width = 28, height = 26 },
-                { x = 28*3, y = 0, width = 28, height = 26 },
-                { x = 28*4, y = 0, width = 28, height = 26 },
-                { x = 28*5, y = 0, width = 28, height = 26 },
+                { rect = { x = 28*0, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*1, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*2, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*3, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*4, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*5, y = 0, width = 28, height = 26, }, },
             },
         },
 
         in_air = {
             time_per_frame = 0.2,
             frames = {
-                { x = 28*5, y = 0, width = 28, height = 26 },
+                { rect = { x = 28*5, y = 0, width = 28, height = 26, }, },
             },
         },
 
         idle = {
             time_per_frame = 0.2,
             frames = {
-                { x = 28*0, y = 0, width = 28, height = 26 },
-                { x = 28*2, y = 0, width = 28, height = 26 },
+                { rect = { x = 28*0, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*2, y = 0, width = 28, height = 26, }, },
             },
         },
 
@@ -53,10 +53,10 @@ terrarium.register_entity("slime:slime", {
             time_per_frame = 0.1,
             next = "idle",
             frames = {
-                { x = 28*3, y = 0, width = 28, height = 26 },
-                { x = 28*2, y = 0, width = 28, height = 26 },
-                { x = 28*1, y = 0, width = 28, height = 26 },
-                { x = 28*0, y = 0, width = 28, height = 26 },
+                { rect = { x = 28*3, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*2, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*1, y = 0, width = 28, height = 26, }, },
+                { rect = { x = 28*0, y = 0, width = 28, height = 26, }, },
             },
         },
     },
