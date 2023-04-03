@@ -54,6 +54,12 @@ namespace Terrarium {
             return sf::Vector2f(entity->hitbox.left, entity->hitbox.top);
         }
 
+        sf::Vector2f LuaEntityUD::getCenter() {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            return sf::Vector2f(entity->hitbox.left + entity->hitbox.width/2, entity->hitbox.top + entity->hitbox.height/2);
+        }
+
         void LuaEntityUD::setPosition(const sf::Vector2f &position) {
             std::shared_ptr<Entity> entity = checkedLock();
 
@@ -197,6 +203,12 @@ namespace Terrarium {
             entity->anims.setMirror(mirror);
         }
 
+        void LuaEntityUD::setVertMirror(bool vertmirror) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->anims.setVertMirror(vertmirror);
+        }
+
         void LuaEntityUD::setTexture(const sf::Texture &texture) {
             std::shared_ptr<Entity> entity = checkedLock();
 
@@ -235,6 +247,9 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_set_position);
             lua_setfield(L, -2, "set_position");
+
+            lua_pushcfunction(L, entity_get_center);
+            lua_setfield(L, -2, "get_center");
 
             lua_pushcfunction(L, entity_get_local_position);
             lua_setfield(L, -2, "get_local_position");
@@ -298,6 +313,9 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_set_mirror);
             lua_setfield(L, -2, "set_mirror");
+
+            lua_pushcfunction(L, entity_set_vertmirror);
+            lua_setfield(L, -2, "set_vertmirror");
 
             lua_interface.pushClosure(entity_set_texture);
             lua_setfield(L, -2, "set_texture");
@@ -417,6 +435,22 @@ namespace Terrarium {
             }
 
             return 0;
+        }
+
+        int entity_get_center(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            sf::Vector2f position;
+
+            try {
+                position = entity_ref->getCenter();
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            LuaUtil::push_vector2f(L, position);
+
+            return 1;
         }
 
         int entity_get_local_position(lua_State *L) {
@@ -747,6 +781,18 @@ namespace Terrarium {
 
             try {
                 entity_ref->setMirror(LuaUtil::checkboolean(L, 2));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_set_vertmirror(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            try {
+                entity_ref->setVertMirror(LuaUtil::checkboolean(L, 2));
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }

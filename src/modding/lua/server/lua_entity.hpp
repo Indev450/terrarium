@@ -69,6 +69,8 @@ namespace Terrarium {
             sf::Vector2f getPosition();
             void setPosition(const sf::Vector2f &position);
 
+            sf::Vector2f getCenter();
+
             sf::Vector2f getLocalPosition();
             void setLocalPosition(const sf::Vector2f &position);
 
@@ -106,6 +108,8 @@ namespace Terrarium {
 
             void setMirror(bool mirror);
 
+            void setVertMirror(bool vertmirror);
+
             void setTexture(const sf::Texture &texture);
 
             void setLight(const sf::Color &light);
@@ -139,6 +143,9 @@ namespace Terrarium {
 
         // void EntityRef:set_position(Vector2f position)
         int entity_set_position(lua_State *L);
+
+        // Vector2f EntityRef:get_center()
+        int entity_get_center(lua_State *L);
 
         // Vector2f EntityRef:get_local_position()
         int entity_get_local_position(lua_State *L);
@@ -202,6 +209,9 @@ namespace Terrarium {
 
         // void EntityRef:set_mirror(bool mirror)
         int entity_set_mirror(lua_State *L);
+
+        // void EntityRef:set_vertmirror(bool vertmirror)
+        int entity_set_vertmirror(lua_State *L);
 
         // void EntityRef:set_texture(string texture)
         int entity_set_texture(lua_State *L);
