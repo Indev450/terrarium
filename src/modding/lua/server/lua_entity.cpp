@@ -134,6 +134,12 @@ namespace Terrarium {
             return self->hitbox.intersects(other->hitbox);
         }
 
+        bool LuaEntityUD::isInArea(const sf::FloatRect &area) {
+            auto self = checkedLock();
+
+            return self->hitbox.intersects(area);
+        }
+
         bool LuaEntityUD::isAttachedTo(LuaEntityUD &other_ref) {
             std::shared_ptr<Entity> self = checkedLock();
             std::shared_ptr<Entity> other = other_ref.checkedLock();
@@ -283,6 +289,9 @@ namespace Terrarium {
 
             lua_pushcfunction(L, entity_is_collide);
             lua_setfield(L, -2, "is_collide");
+
+            lua_pushcfunction(L, entity_is_in_area);
+            lua_setfield(L, -2, "is_in_area");
 
             lua_pushcfunction(L, entity_is_attached_to);
             lua_setfield(L, -2, "is_attached_to");
@@ -651,6 +660,19 @@ namespace Terrarium {
 
             try {
                 lua_pushboolean(L, self->isCollide(*other));
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int entity_is_in_area(lua_State *L) {
+            LuaEntityUD *self = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+            sf::FloatRect area = LuaUtil::checkfloatrect(L, 2);
+
+            try {
+                lua_pushboolean(L, self->isInArea(area));
             } catch (const std::invalid_argument &e) {
                 return luaL_error(L, e.what());
             }

@@ -88,6 +88,8 @@ namespace Terrarium {
 
             bool isCollide(LuaEntityUD &other_ref);
 
+            bool isInArea(const sf::FloatRect &area);
+
             bool isAttachedTo(LuaEntityUD &other_ref);
 
             void attachTo(LuaEntityUD &other_ref);
@@ -179,6 +181,9 @@ namespace Terrarium {
 
         // bool EntityRef:is_collide(EntityRef other)
         int entity_is_collide(lua_State *L);
+
+        // bool EntityRef:is_in_area(FloatRect area)
+        int entity_is_in_area(lua_State *L);
 
         // bool EntityRef:is_attached_to(EntityRef other)
         int entity_is_attached_to(lua_State *L);

@@ -172,6 +172,14 @@ function terrarium.iter_entities_with(keys)
     end)
 end
 
+-- Returns iterator that goes through all entities within certain area.
+-- TODO - Combine that with variant above
+function terrarium.iter_entities_within_area(area)
+    return terrarium.iter_entities(function(entity)
+        return entity.ref:is_in_area(area)
+    end)
+end
+
 core._entities = {
     -- List of entities to add in this frame
     to_be_added = {},
