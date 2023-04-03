@@ -34,15 +34,14 @@
 #include "../tile/tile.hpp"
 #include "../item/inventory.hpp"
 #include "../utils/vector2i_hash.hpp"
+#include "../utils/cells.hpp"
 
 namespace Terrarium {
 
     class GameState;
 
     class World {
-        std::vector<Tile> tiles;
-
-        uint16_t width = 0, height = 0;
+        Cells<Tile> tiles;
 
         bool save_updated_blocks = true;
         // Store updated block positions to redraw them
@@ -58,7 +57,7 @@ namespace Terrarium {
         World(const World &copy) = delete;
         World& operator=(const World &copy) = delete;
 
-        void create(uint16_t _width, uint16_t _height);
+        void create(uint16_t width, uint16_t height);
 
         // World save format:
         // u16                               width
@@ -69,24 +68,19 @@ namespace Terrarium {
         void save(std::ostream &file) const;
 
         inline bool isInRange(int x, int y) const {
-            return x >= 0 && x < static_cast<int>(width) &&
-                   y >= 0 && y < static_cast<int>(height);
+            return tiles.isInRange(x, y);
         }
 
         inline const Tile *getTile(int x, int y) const {
-            if (!isInRange(x, y)) {
-                return nullptr;
-            }
-
-            return &tiles[y*width + x];
+            return tiles.get(x, y);
         }
 
         inline blockid getBlock(int x, int y) const {
-            if (!isInRange(x, y)) {
+            if (!tiles.isInRange(x, y)) {
                 return 0;
             }
 
-            return tiles[y*width + x].fg;
+            return tiles.get(x, y)->fg;
         }
 
         inline sf::Vector2i getMultiblockOrigin(int x, int y) const {
@@ -100,19 +94,19 @@ namespace Terrarium {
         }
 
         inline blockid getWall(int x, int y) const {
-            if (!isInRange(x, y)) {
+            if (!tiles.isInRange(x, y)) {
                 return 0;
             }
 
-            return tiles[y*width + x].bg;
+            return tiles.get(x, y)->bg;
         }
 
         inline void setBlock(int x, int y, blockid block) {
-            if (!isInRange(x, y)) {
+            if (!tiles.isInRange(x, y)) {
                 return;
             }
 
-            tiles[y*width + x].fg = block;
+            tiles.get(x, y)->fg = block;
 
             if (save_updated_blocks) {
                 updated_blocks.emplace(x, y);
@@ -124,11 +118,11 @@ namespace Terrarium {
         }
 
         inline void setMultiblockOffset(int x, int y, uint8_t xoff, uint8_t yoff) {
-            if (!isInRange(x, y)) {
+            if (!tiles.isInRange(x, y)) {
                 return;
             }
 
-            tiles[y*width + x].multiblock_origin = sf::Vector2<uint8_t>(xoff, yoff);
+            tiles.get(x, y)->multiblock_origin = sf::Vector2<uint8_t>(xoff, yoff);
 
             if (save_updated_blocks) {
                 updated_blocks.emplace(x, y);
@@ -136,7 +130,7 @@ namespace Terrarium {
         }
 
         inline void setMultiblock(int x, int y, uint8_t width, uint8_t height, blockid block) {
-            if (!(isInRange(x, y) && isInRange(x+width-1, y+height-1))) {
+            if (!(tiles.isInRange(x, y) && tiles.isInRange(x+width-1, y+height-1))) {
                 return;
             }
 
@@ -149,11 +143,11 @@ namespace Terrarium {
         }
 
         inline void setWall(int x, int y, blockid block) {
-            if (!isInRange(x, y)) {
+            if (!tiles.isInRange(x, y)) {
                 return;
             }
 
-            tiles[y*width + x].bg = block;
+            tiles.get(x, y)->bg = block;
 
             if (save_updated_blocks) {
                 updated_blocks.emplace(x, y);
@@ -188,11 +182,11 @@ namespace Terrarium {
         }
 
         inline uint16_t getWidth() const {
-            return width;
+            return tiles.width;
         }
 
         inline uint16_t getHeight() const {
-            return height;
+            return tiles.height;
         }
     };
 

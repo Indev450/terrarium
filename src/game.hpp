@@ -35,7 +35,6 @@
 
 #include "entity/entity_manager.hpp"
 #include "world/world.hpp"
-#include "tile/block_def_holder.hpp"
 #include "item/item_def_manager.hpp"
 #include "item/inventory_storage.hpp"
 #include "craft/craft.hpp"
@@ -48,6 +47,7 @@
 #include "sounds/sfx.hpp"
 #include "utils/binary_io.hpp"
 #include "utils/saves.hpp"
+#include "utils/cell_def_holder.hpp"
 #include "modding/interface.hpp"
 #include "modding/client_interface.hpp"
 
@@ -66,7 +66,7 @@ namespace Terrarium {
     struct GameState {
         World world;
         EntityManager entity_mgr;
-        BlockDefHolder block_defs;
+        CellDefHolder<blockid, BlockDef> block_defs;
         ItemDefManager item_defs;
         CraftManager crafts;
         InventoryStorage inventories;

@@ -32,12 +32,6 @@ namespace Terrarium {
     World& World::operator=(World &&moved) {
         tiles = std::move(moved.tiles);
 
-        width = moved.width;
-        moved.width = 0;
-
-        height = moved.height;
-        moved.height = 0;
-
         return *this;
     }
 
@@ -45,35 +39,30 @@ namespace Terrarium {
         *this = std::move(moved);
     }
 
-    void World::create(uint16_t _width, uint16_t _height) {
-        width = _width;
-        height = _height;
-
-        tiles.resize(width*height);
-
-        std::fill(tiles.begin(), tiles.end(), Tile{0, 0});
+    void World::create(uint16_t width, uint16_t height) {
+        tiles.create(width, height, Tile{0, 0});
     }
 
     void World::load(std::istream &file, GameState &game) {
-        width = read<uint16_t>(file);
-        height = read<uint16_t>(file);
+        uint16_t width = read<uint16_t>(file);
+        uint16_t height = read<uint16_t>(file);
 
-        tiles.resize(width*height);
+        tiles.create(width, height, Tile{0, 0});
 
         for (unsigned int y = 0; y < height; ++y) {
             for (unsigned int x = 0; x < width; ++x) {
-                tiles[y*width + x] = read<Tile>(file);
+                *tiles.get(x, y) = read<Tile>(file);
             }
         }
     }
 
     void World::save(std::ostream &file) const {
-        write(file, width);
-        write(file, height);
+        write<uint16_t>(file, tiles.width);
+        write<uint16_t>(file, tiles.height);
 
-        for (unsigned int y = 0; y < height; ++y) {
-            for (unsigned int x = 0; x < width; ++x) {
-                write(file, tiles[y*width + x]);
+        for (unsigned int y = 0; y < tiles.height; ++y) {
+            for (unsigned int x = 0; x < tiles.width; ++x) {
+                write(file, *tiles.get(x, y));
             }
         }
     }
