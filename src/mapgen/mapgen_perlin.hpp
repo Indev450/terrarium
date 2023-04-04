@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Inner Devil
+ * Copyright 2022 Indev
  *
  * This file is part of TerrariumEngine
  *
