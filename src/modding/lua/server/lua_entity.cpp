@@ -106,13 +106,13 @@ namespace Terrarium {
         float LuaEntityUD::getRotation() {
             std::shared_ptr<Entity> entity = checkedLock();
 
-            return entity->anims.getRotation();
+            return entity->anims.getRotation() / 180 * M_PI;
         }
 
         void LuaEntityUD::setRotation(float angle) {
             std::shared_ptr<Entity> entity = checkedLock();
 
-            entity->anims.setRotation(angle);
+            entity->anims.setRotation(angle * 180 / M_PI);
         }
 
         void LuaEntityUD::rotate(float angle) {

@@ -355,7 +355,7 @@ namespace Terrarium {
                 lua_getfield(L, -1, "rotation"); // push rotation
 
                 if (!lua_isnil(L, -1)) {
-                    frame.rotation = luaL_checknumber(L, -1);
+                    frame.rotation = luaL_checknumber(L, -1) / M_PI * 180;
                 }
 
                 lua_pop(L, 1); // pop rotation
