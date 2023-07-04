@@ -39,6 +39,8 @@ namespace Terrarium {
             return;
         }
 
+        hitbox_prev = hitbox;
+
         // When collision gets disabled, those fields may be true, so we need to
         // fix that
         if (!physics.enable_collision) {
@@ -125,6 +127,11 @@ namespace Terrarium {
                     BlockDef &block_def = game.block_defs.getOrUnknown(block);
 
                     solid = block_def.is_solid;
+
+                    if (block_def.is_platform) {
+                        solid = solid and hitbox_prev.top + hitbox.height <= y and not physics.ignore_platforms;
+                    }
+
                     slippery = block_def.slippery;
                 }
 
@@ -205,6 +212,10 @@ namespace Terrarium {
                     BlockDef &block_def = game.block_defs.getOrUnknown(block);
 
                     solid = block_def.is_solid;
+
+                    if (block_def.is_platform) {
+                        solid = solid and hitbox_prev.top + hitbox.height <= y and not physics.ignore_platforms;
+                    }
                 }
 
                 if (solid) {

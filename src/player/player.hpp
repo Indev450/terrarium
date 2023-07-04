@@ -47,6 +47,7 @@ namespace Terrarium {
     struct PlayerControls {
         bool left = false;
         bool right = false;
+        bool down = false;
 
         bool jump = false;
 

@@ -76,6 +76,7 @@ namespace Terrarium {
         bool autotile_single = false;
 
         bool is_solid = true;
+        bool is_platform = false;
         float slippery = 0;
 
         bool is_interactive = false;

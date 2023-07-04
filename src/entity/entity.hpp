@@ -50,6 +50,7 @@ namespace Terrarium {
         float slippery = 0;
 
         bool enable_collision = true;
+        bool ignore_platforms = false;
     };
 
     class Entity;
@@ -66,6 +67,7 @@ namespace Terrarium {
 
     public:
         sf::FloatRect hitbox = {0, 0, 0, 0};
+        sf::FloatRect hitbox_prev = {0, 0, 0, 0};
 
         CollisionInfo collision_info;
 

@@ -263,6 +263,10 @@ namespace Terrarium {
                         game->player->controls.right = true;
                     break;
 
+                    case sf::Keyboard::S:
+                        game->player->controls.down = true;
+                    break;
+
                     case sf::Keyboard::Space:
                         game->player->controls.jump = true;
                     break;
@@ -350,6 +354,10 @@ namespace Terrarium {
 
                     case sf::Keyboard::D:
                         game->player->controls.right = false;
+                    break;
+
+                    case sf::Keyboard::S:
+                        game->player->controls.down = false;
                     break;
 
                     case sf::Keyboard::Space:

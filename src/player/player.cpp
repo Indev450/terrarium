@@ -55,6 +55,8 @@ namespace Terrarium {
             return;
         }
 
+        physics.ignore_platforms = controls.down;
+
         if ((controls.left && speed.x < 0) || (controls.right && speed.x > 0))
             physics.slippery = 1;
 

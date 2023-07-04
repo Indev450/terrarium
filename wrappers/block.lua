@@ -52,6 +52,7 @@ local block_defaults = {
 
     slippery = 0.1,
     is_solid = true,
+    is_platform = false,
 
     blocks_light = nil,
     light = { r = 0, g = 0, b = 0, },

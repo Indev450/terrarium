@@ -100,6 +100,10 @@ namespace Terrarium {
             block_def->is_solid = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
 
+            lua_getfield(L, 2, "is_platform");
+            block_def->is_platform = LuaUtil::checkboolean(L, -1);
+            lua_pop(L, 1);
+
             lua_getfield(L, 2, "is_interactive");
             block_def->is_interactive = LuaUtil::checkboolean(L, -1);
             lua_pop(L, 1);
