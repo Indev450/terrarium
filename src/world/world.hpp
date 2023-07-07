@@ -114,6 +114,10 @@ namespace Terrarium {
                 updated_blocks.emplace(x+1, y);
                 updated_blocks.emplace(x, y-1);
                 updated_blocks.emplace(x, y+1);
+                updated_blocks.emplace(x-1, y-1);
+                updated_blocks.emplace(x-1, y+1);
+                updated_blocks.emplace(x+1, y+1);
+                updated_blocks.emplace(x+1, y-1);
             }
         }
 
@@ -155,6 +159,10 @@ namespace Terrarium {
                 updated_blocks.emplace(x+1, y);
                 updated_blocks.emplace(x, y-1);
                 updated_blocks.emplace(x, y+1);
+                updated_blocks.emplace(x-1, y-1);
+                updated_blocks.emplace(x-1, y+1);
+                updated_blocks.emplace(x+1, y+1);
+                updated_blocks.emplace(x+1, y-1);
             }
         }
 

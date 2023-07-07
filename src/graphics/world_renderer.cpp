@@ -115,27 +115,51 @@ namespace Terrarium {
 
             if (def.draw_type != BlockDef::DrawType::None) {
                 if (def.draw_type == BlockDef::DrawType::Autotile) {
-                    unsigned idx = 0;
-
-                    // TODO - Check if other blocks count as neighbours for this
-                    // one
-                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x-1, world_y))) {
-                        idx |= 0b0001;
-                    }
-
-                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x+1, world_y))) {
-                        idx |= 0b0010;
-                    }
+                    uint8_t bitmask = 0;
 
                     if (isAutotileNeighbour(game, def, game.world.getWall(world_x, world_y-1))) {
-                        idx |= 0b0100;
+                        bitmask |= BB_TOP;
                     }
 
                     if (isAutotileNeighbour(game, def, game.world.getWall(world_x, world_y+1))) {
-                        idx |= 0b1000;
+                        bitmask |= BB_BOTTOM;
                     }
 
-                    def.sprite.setTextureRect(block_autotile_rects[idx]);
+                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x-1, world_y))) {
+                        bitmask |= BB_LEFT;
+                    }
+
+                    if (isAutotileNeighbour(game, def, game.world.getWall(world_x+1, world_y))) {
+                        bitmask |= BB_RIGHT;
+                    }
+
+                    if (bitmask & BB_TOP && bitmask & BB_LEFT && isAutotileNeighbour(game, def, game.world.getWall(world_x-1, world_y-1))) {
+                        bitmask |= BB_TOPLEFT;
+                    }
+
+                    if (bitmask & BB_TOP && bitmask & BB_RIGHT && isAutotileNeighbour(game, def, game.world.getWall(world_x+1, world_y-1))) {
+                        bitmask |= BB_TOPRIGHT;
+                    }
+
+                    if (bitmask & BB_BOTTOM && bitmask & BB_LEFT && isAutotileNeighbour(game, def, game.world.getWall(world_x-1, world_y+1))) {
+                        bitmask |= BB_BOTTOMLEFT;
+                    }
+
+                    if (bitmask & BB_BOTTOM && bitmask & BB_RIGHT && isAutotileNeighbour(game, def, game.world.getWall(world_x+1, world_y+1))) {
+                        bitmask |= BB_BOTTOMRIGHT;
+                    }
+
+                    unsigned index = block_autotile_rects_indices[bitmask];
+
+                    if (index == 255) {
+                        std::ostringstream oss;
+
+                        oss<<"Index associated with autotile bitmask "<<int(bitmask)<<" is 255";
+
+                        throw std::runtime_error(oss.str());
+                    }
+
+                    def.sprite.setTextureRect(block_autotile_rects[index]);
                 }
 
                 def.sprite.setPosition(x*Tile::SIZE, y*Tile::SIZE);
@@ -153,27 +177,51 @@ namespace Terrarium {
 
             if (def.draw_type != BlockDef::DrawType::None) {
                 if (def.draw_type == BlockDef::DrawType::Autotile) {
-                    unsigned idx = 0;
-
-                    // TODO - Check if other blocks count as neighbours for this
-                    // one
-                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x-1, world_y))) {
-                        idx |= 0b0001;
-                    }
-
-                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x+1, world_y))) {
-                        idx |= 0b0010;
-                    }
+                    uint8_t bitmask = 0;
 
                     if (isAutotileNeighbour(game, def, game.world.getBlock(world_x, world_y-1))) {
-                        idx |= 0b0100;
+                        bitmask |= BB_TOP;
                     }
 
                     if (isAutotileNeighbour(game, def, game.world.getBlock(world_x, world_y+1))) {
-                        idx |= 0b1000;
+                        bitmask |= BB_BOTTOM;
                     }
 
-                    def.sprite.setTextureRect(block_autotile_rects[idx]);
+                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x-1, world_y))) {
+                        bitmask |= BB_LEFT;
+                    }
+
+                    if (isAutotileNeighbour(game, def, game.world.getBlock(world_x+1, world_y))) {
+                        bitmask |= BB_RIGHT;
+                    }
+
+                    if (bitmask & BB_TOP && bitmask & BB_LEFT && isAutotileNeighbour(game, def, game.world.getBlock(world_x-1, world_y-1))) {
+                        bitmask |= BB_TOPLEFT;
+                    }
+
+                    if (bitmask & BB_TOP && bitmask & BB_RIGHT && isAutotileNeighbour(game, def, game.world.getBlock(world_x+1, world_y-1))) {
+                        bitmask |= BB_TOPRIGHT;
+                    }
+
+                    if (bitmask & BB_BOTTOM && bitmask & BB_LEFT && isAutotileNeighbour(game, def, game.world.getBlock(world_x-1, world_y+1))) {
+                        bitmask |= BB_BOTTOMLEFT;
+                    }
+
+                    if (bitmask & BB_BOTTOM && bitmask & BB_RIGHT && isAutotileNeighbour(game, def, game.world.getBlock(world_x+1, world_y+1))) {
+                        bitmask |= BB_BOTTOMRIGHT;
+                    }
+
+                    unsigned index = block_autotile_rects_indices[bitmask];
+
+                    if (index == 255) {
+                        std::ostringstream oss;
+
+                        oss<<"Index associated with autotile bitmask "<<int(bitmask)<<" is 255";
+
+                        throw std::runtime_error(oss.str());
+                    }
+
+                    def.sprite.setTextureRect(block_autotile_rects[index]);
                 } else if (def.draw_type == BlockDef::DrawType::Multiblock) {
                     def.sprite.setTextureRect(sf::IntRect(
                         tile.multiblock_origin.x*Tile::SIZE,
