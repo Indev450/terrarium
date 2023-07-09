@@ -900,12 +900,41 @@ namespace Terrarium {
             }
 
             lua_getfield(L, -1, "width"); // push value
-            prefab->size.x = luaL_checknumber(L, -1);
+            prefab->sprite_size.x = luaL_checknumber(L, -1);
             lua_pop(L, 1); // pop value
 
             lua_getfield(L, -1, "height"); // push value
-            prefab->size.y = luaL_checknumber(L, -1);
+            prefab->sprite_size.y = luaL_checknumber(L, -1);
             lua_pop(L, 2); // pop value and size table
+
+            lua_getfield(L, idx, "hitbox"); // push hitbox table
+
+            if (!lua_isnil(L, -1)) {
+                if (!lua_istable(L, -1)) {
+                    luaL_error(L, "expected table as prefab's hitbox");
+                }
+
+                lua_getfield(L, -1, "x"); // push value
+                prefab->hitbox.left = luaL_checknumber(L, -1);
+                lua_pop(L, 1); // pop value
+
+                lua_getfield(L, -1, "y"); // push value
+                prefab->hitbox.top = luaL_checknumber(L, -1);
+                lua_pop(L, 1); // pop value and size table
+
+                lua_getfield(L, -1, "width"); // push value
+                prefab->hitbox.width = luaL_checknumber(L, -1);
+                lua_pop(L, 1); // pop value
+
+                lua_getfield(L, -1, "height"); // push value
+                prefab->hitbox.height = luaL_checknumber(L, -1);
+                lua_pop(L, 1); // pop value and size table
+            } else {
+                prefab->hitbox.width = prefab->sprite_size.x;
+                prefab->hitbox.height = prefab->sprite_size.y;
+            }
+
+            lua_pop(L, 1); // pop hitbox table or nil
 
             lua_getfield(L, idx, "image"); // push value
             const char *image = luaL_checkstring(L, -1);

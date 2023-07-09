@@ -31,13 +31,25 @@ namespace Terrarium {
 
     struct EntityPrefab {
         PhysicsParams physics;
-        sf::Vector2f size;
+        sf::Vector2f sprite_size;
+        sf::FloatRect hitbox;
 
         AnimationMap anims;
 
         void initEntity(Entity &entity) {
-            entity.hitbox.width = size.x;
-            entity.hitbox.height = size.y;
+            entity.hitbox.width = hitbox.width;
+            entity.hitbox.height = hitbox.height;
+
+            // Might be bit confusing but here how it works:
+            // When you specify sprite size, it is, well, actual sprite. But
+            // when you specify hitbox, its x and y coordinates mean how much
+            // offset it needs to have within sprite. Those are negative because
+            // we actually offsetting sprite, and not hitbox itself.
+            entity.sprite_rect.left = -hitbox.left;
+            entity.sprite_rect.top = -hitbox.top;
+
+            entity.sprite_rect.width = sprite_size.x;
+            entity.sprite_rect.height = sprite_size.y;
 
             entity.physics = physics;
 

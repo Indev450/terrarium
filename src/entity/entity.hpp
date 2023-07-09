@@ -66,6 +66,7 @@ namespace Terrarium {
         bool isCollide(GameState &game);
 
     public:
+        sf::FloatRect sprite_rect = {0, 0, 0, 0};
         sf::FloatRect hitbox = {0, 0, 0, 0};
         sf::FloatRect hitbox_prev = {0, 0, 0, 0};
 

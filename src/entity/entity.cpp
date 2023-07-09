@@ -87,12 +87,12 @@ namespace Terrarium {
 
     void Entity::draw(GameState &game, sf::RenderTarget &target) {
         sf::Vector2f position = game.blocks_to_pixels.transformPoint(
-            hitbox.left - game.camera.left,
-            hitbox.top - game.camera.top);
+            hitbox.left + sprite_rect.left - game.camera.left,
+            hitbox.top + sprite_rect.top - game.camera.top);
 
         anims.setPosition(position + anims.getOrigin());
-        anims.draw_size.x = hitbox.width * Tile::SIZE;
-        anims.draw_size.y = hitbox.height * Tile::SIZE;
+        anims.draw_size.x = sprite_rect.width * Tile::SIZE;
+        anims.draw_size.y = sprite_rect.height * Tile::SIZE;
 
         target.draw(anims);
     }
