@@ -70,6 +70,7 @@ namespace Terrarium {
         }
 
         inline std::shared_ptr<ItemDef> getDef() const {
+            if (empty()) { return nullptr; }
             return def;
         }
 

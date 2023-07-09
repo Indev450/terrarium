@@ -65,6 +65,7 @@ namespace Terrarium {
 
     private:
         std::shared_ptr<ItemStack> hotbar[HOTBAR_SIZE];
+        std::shared_ptr<ItemDef> selected_item;
         unsigned int hotbar_selected = 0;
 
         bool using_item = false;

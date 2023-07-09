@@ -172,6 +172,28 @@ namespace Terrarium {
 
             hotbar_scroll = 0;
 
+            if (hotbar[hotbar_selected])
+                selected_item = hotbar[hotbar_selected]->getDef();
+            else
+                selected_item = nullptr;
+
+            ItemEvent *item_event = new ItemEvent();
+
+            item_event->item_stack = hotbar[hotbar_selected];
+
+            item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
+
+            item_event->position = controls.mouse_pos;
+
+            game.events.emplace(Event::ItemSelect, item_event);
+        } else if ((hotbar[hotbar_selected] && hotbar[hotbar_selected]->getDef() != selected_item)
+                || (!hotbar[hotbar_selected] && selected_item)) {
+
+            if (hotbar[hotbar_selected])
+                selected_item = hotbar[hotbar_selected]->getDef();
+            else
+                selected_item = nullptr;
+
             ItemEvent *item_event = new ItemEvent();
 
             item_event->item_stack = hotbar[hotbar_selected];
