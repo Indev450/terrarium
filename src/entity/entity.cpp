@@ -59,7 +59,7 @@ namespace Terrarium {
         bool collision_occured = false;
         float dx = speed.x * dtime;
         while (dx != 0 && !collision_occured) {
-            float step = std::min(0.9f, std::max(-0.9f, dx));
+            float step = std::min(1.f, std::max(-1.f, dx));
             dx -= step;
 
             hitbox.left += step;
@@ -73,7 +73,7 @@ namespace Terrarium {
         collision_occured = false;
         float dy = speed.y * dtime;
         while (dy != 0 && !collision_occured) {
-            float step = std::min(0.9f, std::max(-0.9f, dy));
+            float step = std::min(1.f, std::max(-1.f, dy));
             dy -= step;
 
             hitbox.top += step;
