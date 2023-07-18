@@ -92,6 +92,7 @@ local function parse_tile(tile)
     return {
         block = terrarium.get_block_id(tile.block),
         wall = terrarium.get_block_id(tile.wall),
+        multiblock_offset = tile.multiblock_offset,
     }
 end
 

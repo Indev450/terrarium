@@ -63,6 +63,12 @@ namespace Terrarium {
             tile.bg = LuaUtil::checkinteger_ranged<blockid>(L, -1);
             lua_pop(L, 1);
 
+            lua_getfield(L, idx, "multiblock_offset");
+            if (!lua_isnil(L, -1)) {
+                tile.multiblock_offset = LuaUtil::checkvector<uint8_t>(L, -1);
+            }
+            lua_pop(L, 1);
+
             return tile;
         }
 

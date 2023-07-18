@@ -128,8 +128,8 @@ Terrarium::Tile read<Terrarium::Tile>(std::istream &s) {
     tile.fg = read<Terrarium::blockid>(s);
     tile.bg = read<Terrarium::blockid>(s);
 
-    tile.multiblock_origin.x = read<uint8_t>(s);
-    tile.multiblock_origin.y = read<uint8_t>(s);
+    tile.multiblock_offset.x = read<uint8_t>(s);
+    tile.multiblock_offset.y = read<uint8_t>(s);
 
     return tile;
 }
@@ -139,8 +139,8 @@ void write<Terrarium::Tile>(std::ostream &s, Terrarium::Tile tile) {
     write(s, tile.fg);
     write(s, tile.bg);
 
-    write(s, tile.multiblock_origin.x);
-    write(s, tile.multiblock_origin.y);
+    write(s, tile.multiblock_offset.x);
+    write(s, tile.multiblock_offset.y);
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -90,7 +90,7 @@ namespace Terrarium {
                 return sf::Vector2i(x, y);
             }
 
-            return sf::Vector2i(x - int(tile->multiblock_origin.x), y - int(tile->multiblock_origin.y));
+            return sf::Vector2i(x - int(tile->multiblock_offset.x), y - int(tile->multiblock_offset.y));
         }
 
         inline blockid getWall(int x, int y) const {
@@ -126,7 +126,7 @@ namespace Terrarium {
                 return;
             }
 
-            tiles.get(x, y)->multiblock_origin = sf::Vector2<uint8_t>(xoff, yoff);
+            tiles.get(x, y)->multiblock_offset = sf::Vector2<uint8_t>(xoff, yoff);
 
             if (save_updated_blocks) {
                 updated_blocks.emplace(x, y);

@@ -87,6 +87,9 @@ namespace Terrarium {
 
                 if (place_tile.fg != 0) {
                     world.setBlock(place_x, place_y, place_tile.fg);
+                    world.setMultiblockOffset(
+                            place_x, place_y,
+                            place_tile.multiblock_offset.x, place_tile.multiblock_offset.y);
                 }
 
                 if (place_tile.bg != 0) {

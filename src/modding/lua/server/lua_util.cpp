@@ -288,6 +288,25 @@ namespace Terrarium {
             return vec;
         }
 
+        template <>
+        sf::Vector2<uint8_t> checkvector<uint8_t>(lua_State *L, int idx) {
+            if (!lua_istable(L, idx)) {
+                luaL_error(L, "function argument #%d expected to be table", idx);
+            }
+
+            sf::Vector2<uint8_t> vec;
+
+            lua_getfield(L, idx, "x");
+            vec.x = checkinteger_ranged<uint8_t>(L, -1);
+            lua_pop(L, 1);
+
+            lua_getfield(L, idx, "y");
+            vec.y = checkinteger_ranged<uint8_t>(L, -1);
+            lua_pop(L, 1);
+
+            return vec;
+        }
+
         Animation checkanimation(lua_State *L, int idx) {
             Animation anim;
 

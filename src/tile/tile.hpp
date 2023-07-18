@@ -35,7 +35,7 @@ namespace Terrarium {
         blockid fg;
         blockid bg;
 
-        sf::Vector2<uint8_t> multiblock_origin;
+        sf::Vector2<uint8_t> multiblock_offset;
     };
 
 }

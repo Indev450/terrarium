@@ -224,8 +224,8 @@ namespace Terrarium {
                     def.sprite.setTextureRect(block_autotile_rects[index]);
                 } else if (def.draw_type == BlockDef::DrawType::Multiblock) {
                     def.sprite.setTextureRect(sf::IntRect(
-                        tile.multiblock_origin.x*Tile::SIZE,
-                        tile.multiblock_origin.y*Tile::SIZE,
+                        tile.multiblock_offset.x*Tile::SIZE,
+                        tile.multiblock_offset.y*Tile::SIZE,
                         Tile::SIZE,
                         Tile::SIZE
                     ));
