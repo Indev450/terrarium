@@ -34,6 +34,7 @@ namespace Terrarium {
         float time_of_day = 0;
         int phase_of_day = 0;
         int total_phases = 0;
+        sf::Vector2f player_pos;
 
         void updateFps(float dtime) {
             fps_update_timer -= dtime;

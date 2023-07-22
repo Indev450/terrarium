@@ -47,6 +47,7 @@ namespace Terrarium {
         oss<<"Light calculation time: "<<info.light_calc_time<<" ms"<<std::endl;
         oss<<"Time of day: "<<info.time_of_day<<std::endl;
         oss<<"Phase of day: "<<info.phase_of_day+1<<"/"<<info.total_phases<<std::endl;
+        oss<<"Player position: x="<<info.player_pos.x<<", y="<<info.player_pos.y<<std::endl;
 
         text.setString(oss.str());
 

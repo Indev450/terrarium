@@ -82,6 +82,8 @@ namespace Terrarium {
             }
         }
 
+        game->debug_info.player_pos = game->player->getPosition();
+
         sf::Vector2f target_camera_pos = game->player->getPosition() - sf::Vector2f(game->camera.width/2, game->camera.height/2);
 
         // Offset caused by zoom
