@@ -37,9 +37,14 @@ namespace Terrarium {
         world->create(width, height);
 
         auto world_ptr_copy = world;
+        auto game_ptr_copy = game;
 
         future = std::async(
-            [mapgen = std::move(mapgen), world_ptr_copy]() { mapgen->run(*world_ptr_copy); });
+            [mapgen = std::move(mapgen), world_ptr_copy, game_ptr_copy]() {
+                mapgen->run(*world_ptr_copy);
+                game_ptr_copy->world = std::move(*world_ptr_copy);
+                game_ptr_copy->modding_interface->onMapgenFinish();
+            });
 
         text.setFont(game->gfx.font);
         text.setString("Generating map, please wait.");
@@ -49,9 +54,6 @@ namespace Terrarium {
 
     void MapgenActivity::update(ActivityManager &am, float dtime) {
         if (future.wait_for(std::chrono::seconds(0)) != std::future_status::timeout) {
-            game->world = std::move(*world);
-
-            game->modding_interface->onMapgenFinish();
 
             // Replace activity with game activity
             am.setActivity(std::make_unique<GameActivity>(am, game, save_name));
