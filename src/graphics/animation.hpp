@@ -25,6 +25,7 @@
 
 #include <vector>
 #include <string>
+#include <limits>
 
 #include <cassert>
 
@@ -46,10 +47,19 @@ namespace Terrarium {
     struct Animation {
         std::vector<AnimationFrame> frames;
 
-        enum Interpolation {
-            None,
+        enum Easing {
+            None = 0,
             Linear,
-        } interpolation = None;
+            InQuad,
+            OutQuad,
+            InOutQuad,
+            InCubic,
+            OutCubic,
+            InOutCubic,
+            InExpo,
+            OutExpo,
+            InOutExpo,
+        } easing = None;
 
         unsigned int current_frame = 0;
         float time_per_frame = 0;
@@ -90,58 +100,104 @@ namespace Terrarium {
 
             sf::Transform result;
 
-            Interpolation use_interpolation = interpolation;
+            Easing use_easing = easing;
 
             // Do not interpolate between last frame and first if there is next
             // animation we will switch to
             if (current_frame == frames.size() - 1 && !next.empty()) {
-                use_interpolation = None;
+                use_easing = None;
             }
 
-            switch (use_interpolation) {
-                case None:
-                {
-                    const auto &frame = frames[current_frame];
+            if (use_easing) {
+                float t = timer / time_per_frame;
 
-                    result.scale(frame.scale, frame.scale_center);
-                    result.rotate(mirror ? frame.rotation : -frame.rotation, frame.rotation_center);
-                    result.translate(mirror ? frame.offset.x : -frame.offset.x, frame.offset.y);
+                switch (use_easing) {
+                    // https://easings.net/#easeInQuad
+                    case InQuad:
+                        t = t*t;
+                    break;
+
+                    // https://easings.net/#easeOutQuad
+                    case OutQuad:
+                        t = 1 - (1-t)*(1-t);
+                    break;
+
+                    // https://easings.net/#easeInOutQuad
+                    case InOutQuad:
+                        t = t < 0.5 ? 2*t*t : 1 - (-2*t + 2)*(-2*t + 2) / 2;
+                    break;
+
+                    // https://easings.net/#easeInCubic
+                    case InCubic:
+                        t = t*t*t;
+                    break;
+
+                    // https://easings.net/#easeOutCubic
+                    case OutCubic:
+                        t = 1 - (1-t)*(1-t)*(1-t);
+                    break;
+
+                    // https://easings.net/#easeInOutCubic
+                    case InOutCubic:
+                        t = t < 0.5 ? 4*t*t*t : 1 - (-2*t + 2)*(-2*t + 2)*(-2*t + 2) / 2;
+                    break;
+
+                    // https://easings.net/#easeInExpo
+                    case InExpo:
+                        t = t == 0 ? 0 : std::pow(2, 10*t - 10);
+                    break;
+
+                    // https://easings.net/#easeOutExpo
+                    case OutExpo:
+                        t = ((1.0 - t) < std::numeric_limits<typeof(t)>::epsilon()) ? 1 : (1 - std::pow(2, -10 * t));
+                    break;
+
+                    // https://easings.net/#easeInOutExpo
+                    case InOutExpo:
+                        t = t == 0 ? 0 :
+                            ((1.0 - t) < std::numeric_limits<typeof(t)>::epsilon()) ? 1 :
+                            t < 0.5 ? std::pow(2, 20 * t - 10) / 2 :
+                            (2 - std::pow(2, -20 * t + 10)) / 2;
+                    break;
+
+                    default:
+                    break;
                 }
-                break;
 
-                case Linear:
-                {
-                    const auto &frame = frames[current_frame];
-                    const auto &next_frame = getFrame(current_frame+1);
+                const auto &frame = frames[current_frame];
+                const auto &next_frame = getFrame(current_frame+1);
 
-                    float frame_rotation = mirror ? frame.rotation : -frame.rotation;
-                    float next_rotation = mirror ? next_frame.rotation : -next_frame.rotation;
+                float frame_rotation = mirror ? frame.rotation : -frame.rotation;
+                float next_rotation = mirror ? next_frame.rotation : -next_frame.rotation;
 
-                    sf::Vector2f frame_offset = frame.offset;
+                sf::Vector2f frame_offset = frame.offset;
 
-                    if (mirror) {
-                        frame_offset.x *= -1;
-                    }
-
-                    sf::Vector2f next_offset = next_frame.offset;
-
-                    if (mirror) {
-                        next_offset.x *= -1;
-                    }
-
-                    float t = timer / time_per_frame;
-
-                    sf::Vector2f offset = lerp(frame_offset, next_offset, t);
-                    float rotation = lerp(frame_rotation, next_rotation, t);
-                    sf::Vector2f rotation_center = lerp(frame.rotation_center, next_frame.rotation_center, t);
-                    sf::Vector2f scale = lerp(frame.scale, next_frame.scale, t);
-                    sf::Vector2f scale_center = lerp(frame.scale_center, next_frame.scale_center, t);
-
-                    result.scale(scale, scale_center);
-                    result.rotate(rotation, rotation_center);
-                    result.translate(offset);
+                if (mirror) {
+                    frame_offset.x *= -1;
                 }
-                break;
+
+                sf::Vector2f next_offset = next_frame.offset;
+
+                if (mirror) {
+                    next_offset.x *= -1;
+                }
+
+                sf::Vector2f offset = lerp(frame_offset, next_offset, t);
+                float rotation = lerp(frame_rotation, next_rotation, t);
+                sf::Vector2f rotation_center = lerp(frame.rotation_center, next_frame.rotation_center, t);
+                sf::Vector2f scale = lerp(frame.scale, next_frame.scale, t);
+                sf::Vector2f scale_center = lerp(frame.scale_center, next_frame.scale_center, t);
+
+                result.scale(scale, scale_center);
+                result.rotate(rotation, rotation_center);
+                result.translate(offset);
+
+            } else {
+                const auto &frame = frames[current_frame];
+
+                result.scale(frame.scale, frame.scale_center);
+                result.rotate(mirror ? frame.rotation : -frame.rotation, frame.rotation_center);
+                result.translate(mirror ? frame.offset.x : -frame.offset.x, frame.offset.y);
             }
 
             return result;

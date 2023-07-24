@@ -328,20 +328,38 @@ namespace Terrarium {
 
             lua_pop(L, 1);
 
-            lua_getfield(L, idx, "interpolation");
+            lua_getfield(L, idx, "easing");
 
-            static const char *interp_type_names[] = {
+            static const char *easing_type_names[] = {
                 "None",
                 "Linear",
+                "InQuad",
+                "OutQuad",
+                "InOutQuad",
+                "InCubic",
+                "OutCubic",
+                "InOutCubic",
+                "InExpo",
+                "OutExpo",
+                "InOutExpo",
                 nullptr,
             };
 
-            static const Animation::Interpolation interp_type_values[] = {
-                Animation::Interpolation::None,
-                Animation::Interpolation::Linear,
+            static const Animation::Easing easing_type_values[] = {
+                Animation::Easing::None,
+                Animation::Easing::Linear,
+                Animation::Easing::InQuad,
+                Animation::Easing::OutQuad,
+                Animation::Easing::InOutQuad,
+                Animation::Easing::InCubic,
+                Animation::Easing::OutCubic,
+                Animation::Easing::InOutCubic,
+                Animation::Easing::InExpo,
+                Animation::Easing::OutExpo,
+                Animation::Easing::InOutExpo,
             };
 
-            anim.interpolation = interp_type_values[luaL_checkoption(L, -1, "None", interp_type_names)];
+            anim.easing = easing_type_values[luaL_checkoption(L, -1, "None", easing_type_names)];
 
             lua_pop(L, 1);
 

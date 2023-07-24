@@ -150,24 +150,32 @@ end
 function terrarium.get_tile(x, y)
     local tile = core._get_tile()
 
-    tile.block = terrarium.block_names[tile.block] or "unknown"
-    tile.wall = terrarium.block_names[tile.wall] or "unknown"
+    tile.block = terrarium.block_names[tile.block]
+    tile.wall = terrarium.block_names[tile.wall]
 
     return tile
 end
 
 function terrarium.get_block(x, y)
-    return terrarium.block_names[core._get_block(x, y)] or "unknown"
+    return terrarium.block_names[core._get_block(x, y)]
 end
 
 function terrarium.get_wall(x, y)
-    return terrarium.block_names[core._get_wall(x, y)] or "unknown"
+    return terrarium.block_names[core._get_wall(x, y)]
 end
 
--- These functions only place blocks and don't care about replaced ones, use them
--- when you need to modify blocks automatically, like in mapgen
+-- These functions only place blocks and don't care about replaced ones (except
+-- for multiblocks), use them when you need to modify blocks automatically,
+-- like in mapgen
 function terrarium.set_block(x, y, block_name, nocall)
-    local def = terrarium.registered_blocks[block_name]
+    local def = terrarium.registered_blocks[terrarium.get_block(x, y)]
+
+    if def and def.multiblock_size then
+        local origin = core._get_multiblock_origin(x, y)
+        core._set_multiblock(origin.x, origin.y, def.multiblock_size.x, def.multiblock_size.y, 0)
+    end
+
+    def = terrarium.registered_blocks[block_name]
 
     local block_id = 0
 
