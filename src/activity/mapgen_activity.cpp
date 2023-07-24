@@ -54,6 +54,8 @@ namespace Terrarium {
 
     void MapgenActivity::update(ActivityManager &am, float dtime) {
         if (future.wait_for(std::chrono::seconds(0)) != std::future_status::timeout) {
+            // If an exception happened, raise it
+            future.get();
 
             // Replace activity with game activity
             am.setActivity(std::make_unique<GameActivity>(am, game, save_name));
