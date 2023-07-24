@@ -67,6 +67,7 @@ namespace Terrarium {
                 "None",
                 "Image",
                 "Autotile",
+                "AutotilePlatform",
                 "Multiblock",
                 nullptr,
             };
@@ -75,6 +76,7 @@ namespace Terrarium {
                 BlockDef::DrawType::None,
                 BlockDef::DrawType::Image,
                 BlockDef::DrawType::Autotile,
+                BlockDef::DrawType::AutotilePlatform,
                 BlockDef::DrawType::Multiblock,
             };
 

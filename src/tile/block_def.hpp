@@ -99,6 +99,21 @@ namespace Terrarium {
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 8,
     };
 
+    // Platforms can only have neighbours from left and right (for now)
+
+    // PB stands for Platform Bitmask
+    static const uint8_t PB_LEFT =   0b00000001;
+    static const uint8_t PB_RIGHT =  0b00000010;
+
+    // There are only 4 variants for all possible values so no need for indices
+    // lookup table.
+    static const sf::IntRect platform_autotile_rects[4] = {
+        { 16*0, 0, 16, 16 }, // No neighbours
+        { 16*3, 0, 16, 16 }, // Neighbour from left
+        { 16*1, 0, 16, 16 }, // Neighbour from right
+        { 16*2, 0, 16, 16 }, // Both neighbours
+    };
+
     struct BlockDef {
         std::string name;
 
@@ -108,6 +123,7 @@ namespace Terrarium {
             None,
             Image,
             Autotile,
+            AutotilePlatform,
             Multiblock,
         } draw_type = Image;
 
