@@ -304,7 +304,7 @@ function terrarium._dig(x, y, user, nosound, fg)
 
     local def = terrarium.registered_blocks[dig_name]
 
-    if fg then
+    if fg and def and def.multiblock_size then
         local origin = core._get_multiblock_origin(x, y)
 
         x = origin.x
