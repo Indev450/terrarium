@@ -304,16 +304,19 @@ function terrarium._dig(x, y, user, nosound, fg)
 
     local def = terrarium.registered_blocks[dig_name]
 
+    if fg then
+        local origin = core._get_multiblock_origin(x, y)
+
+        x = origin.x
+        y = origin.y
+    end
+
+    local pos = vec2.new(x, y)
+
     -- If def is nil, then simply remove that unknown block. If it is not nil,
     -- and on_destroy returns false, we are not allowed to dig block, don't dig
     if def ~= nil then
-        local origin = { x = x, y = y }
-
-        if fg then
-            origin = core._get_multiblock_origin(x, y)
-        end
-
-        if not def.on_destroy(origin, user) then
+        if not def.on_destroy(pos, user) then
             return false
         end
     end
@@ -367,12 +370,11 @@ function terrarium._dig(x, y, user, nosound, fg)
 
     -- Remove multiblock
     if fg and def.multiblock_size then
-        local origin = core._get_multiblock_origin(x, y)
-        core._set_multiblock(origin.x, origin.y, def.multiblock_size.x, def.multiblock_size.y, 0)
+        core._set_multiblock(x, y, def.multiblock_size.x, def.multiblock_size.y, 0)
     end
 
     if def ~= nil and def.drop ~= "" then
-        terrarium.drop_item(ItemStack(def.drop), vec2.new(x, y))
+        terrarium.drop_item(ItemStack(def.drop), pos)
     end
 
     if def ~= nil and def.dig_sound ~= nil and not nosound then
@@ -381,10 +383,7 @@ function terrarium._dig(x, y, user, nosound, fg)
             volume = def.dig_sound.volume,
             pitch = def.dig_sound.pitch,
 
-            source = {
-                x = x,
-                y = y,
-            },
+            source = pos,
         })
     end
 
