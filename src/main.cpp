@@ -102,6 +102,9 @@ int main(int argc, char **argv)
         std::cerr<<"Cannot load font"<<std::endl;
     }
 
+    // Don't smooth muh pixel font!
+    game->gfx.font.setSmooth(false);
+
     game->gfx.textures.addSearchPath("assets");
     game->gfx.textures.load("null.png");
 
