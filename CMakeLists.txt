@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(terrarium VERSION 0.1)
 
 find_package(Lua 5.4 REQUIRED)
-find_package(SFML 2.5 COMPONENTS system window graphics audio REQUIRED)
+find_package(SFML 2.6 COMPONENTS system window graphics audio REQUIRED)
 
 file(GLOB ENTITY_SOURCES "src/entity/*.cpp")
 file(GLOB GRAPHICS_SOURCES "src/graphics/*.cpp")
