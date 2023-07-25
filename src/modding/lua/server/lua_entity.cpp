@@ -221,6 +221,25 @@ namespace Terrarium {
             entity->anims.setTexture(texture);
         }
 
+        void LuaEntityUD::setText(const std::string &str, sf::Color color, unsigned size) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            if (!str.empty()) {
+                entity->text.setString(str);
+                entity->text.setFillColor(color);
+                entity->text.setCharacterSize(size);
+                entity->have_text = true;
+            } else {
+                entity->have_text = false;
+            }
+        }
+
+        void LuaEntityUD::setTextOffset(const sf::Vector2f &offset) {
+            std::shared_ptr<Entity> entity = checkedLock();
+
+            entity->text_offset = offset;
+        }
+
         void LuaEntityUD::setLight(const sf::Color &light) {
             std::shared_ptr<Entity> entity = checkedLock();
 
@@ -329,6 +348,12 @@ namespace Terrarium {
             lua_interface.pushClosure(entity_set_texture);
             lua_setfield(L, -2, "set_texture");
 
+            lua_interface.pushClosure(entity_set_text);
+            lua_setfield(L, -2, "set_text");
+
+            lua_interface.pushClosure(entity_set_text_offset);
+            lua_setfield(L, -2, "set_text_offset");
+
             lua_pushcfunction(L, entity_set_light);
             lua_setfield(L, -2, "set_light");
 
@@ -423,19 +448,7 @@ namespace Terrarium {
         int entity_set_position(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table argument");
-            }
-
-            sf::Vector2f position;
-
-            lua_getfield(L, 2, "x");
-            position.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "y");
-            position.y = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+            sf::Vector2f position = LuaUtil::checkvector<float>(L, 2);
 
             try {
                 entity_ref->setPosition(position);
@@ -481,19 +494,7 @@ namespace Terrarium {
         int entity_set_local_position(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table argument");
-            }
-
-            sf::Vector2f position;
-
-            lua_getfield(L, 2, "x");
-            position.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "y");
-            position.y = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+            sf::Vector2f position = LuaUtil::checkvector<float>(L, 2);
 
             try {
                 entity_ref->setLocalPosition(position);
@@ -523,19 +524,7 @@ namespace Terrarium {
         int entity_set_speed(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table argument");
-            }
-
-            sf::Vector2f speed;
-
-            lua_getfield(L, 2, "x");
-            speed.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "y");
-            speed.y = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+            sf::Vector2f speed = LuaUtil::checkvector<float>(L, 2);
 
             try {
                 entity_ref->setSpeed(speed);
@@ -836,9 +825,49 @@ namespace Terrarium {
             return 0;
         }
 
-        int entity_set_light(lua_State *L) {
+        int entity_set_text(lua_State *L) {
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
+            const char *text = luaL_optstring(L, 2, "");
+
+            sf::Color color = sf::Color::White;
+
+            if (lua_gettop(L) > 2) {
+                color = LuaUtil::checkcolor(L, 3);
+            }
+
+            unsigned size = 24;
+
+            if (lua_gettop(L) > 3) {
+                size = LuaUtil::checkinteger_ranged<unsigned>(L, 4);
+            }
+
+            try {
+                entity_ref->setText(text, color, size);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        // void EntityRef:set_text_offset(Vector2f offset)
+        int entity_set_text_offset(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
+
+            sf::Vector2f offset = LuaUtil::checkvector<float>(L, 2);
+
+            try {
+                entity_ref->setTextOffset(offset);
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 0;
+        }
+
+        int entity_set_light(lua_State *L) {
+            LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
             try {
                 entity_ref->setLight(LuaUtil::checkcolor(L, 2));

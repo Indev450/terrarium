@@ -95,6 +95,16 @@ namespace Terrarium {
         anims.draw_size.y = sprite_rect.height * Tile::SIZE;
 
         target.draw(anims);
+
+        if (have_text) {
+            // TODO - initialize font somewhere else...
+            if (!text.getFont()) {
+                text.setFont(game.gfx.font);
+            }
+
+            text.setPosition(position + text_offset);
+            target.draw(text);
+        }
     }
 
     void Entity::collide(GameState &game, bool by_x) {

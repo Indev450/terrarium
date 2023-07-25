@@ -114,6 +114,10 @@ namespace Terrarium {
 
             void setTexture(const sf::Texture &texture);
 
+            void setText(const std::string &str, sf::Color color, unsigned size);
+
+            void setTextOffset(const sf::Vector2f &position);
+
             void setLight(const sf::Color &light);
 
             void kill(EntityManager &entity_mgr);
@@ -220,6 +224,12 @@ namespace Terrarium {
 
         // void EntityRef:set_texture(string texture)
         int entity_set_texture(lua_State *L);
+
+        // void EntityRef:set_text(string text, Color color = Color::White, unsigned size = 24)
+        int entity_set_text(lua_State *L);
+
+        // void EntityRef:set_text_offset(Vector2f offset)
+        int entity_set_text_offset(lua_State *L);
 
         // void EntityRef:set_light(Color light)
         int entity_set_light(lua_State *L);

@@ -82,6 +82,10 @@ namespace Terrarium {
 
         AnimationMap anims;
 
+        sf::Text text; // Text for names/damage indicators/etc
+        bool have_text = false;
+        sf::Vector2f text_offset;
+
         Parent parent;
 
         virtual void update(GameState &game, float dtime);
