@@ -31,6 +31,14 @@ namespace Terrarium {
         pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);
 
         entity_mgr.addPrefab(std::make_shared<EntityPrefab>());
+
+    }
+
+    std::shared_ptr<GameState> GameState::create(const std::string &_save_name) {
+        auto game = std::shared_ptr<GameState>(new GameState(_save_name));
+        game->hud.setGameState(game);
+
+        return game;
     }
 
     void GameState::loadWorld(std::istream &file) {

@@ -84,7 +84,7 @@ int main(int argc, char **argv)
         save_name = argv[1];
     }
 
-    std::shared_ptr<Terrarium::GameState> game = std::make_shared<Terrarium::GameState>(save_name);
+    std::shared_ptr<Terrarium::GameState> game = Terrarium::GameState::create(save_name);
 
     game->day_length = 60*16;
 

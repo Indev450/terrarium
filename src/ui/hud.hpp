@@ -46,13 +46,21 @@ namespace Terrarium {
 
         sf::Vector2f screen_size;
 
+        std::weak_ptr<GameState> game;
+
     public:
         std::optional<std::string> tip;
 
     public:
+        void setGameState(std::shared_ptr<GameState> _game) { game = _game; };
+
         // Has to do custom logic when screen size changed so thats a setter
         void setScreenSize(const sf::Vector2f &size);
         sf::Vector2f getScreenSize();
+
+        void focusPush(const std::string &name);
+
+        void focusPop();
 
         void addElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus = true);
 
@@ -74,13 +82,13 @@ namespace Terrarium {
 
         void delBar(const std::string &name);
 
-        void hover(GameState &game, const sf::Vector2f &position);
+        void hover(const sf::Vector2f &position);
 
-        bool click(GameState &game, const sf::Vector2f &position);
+        bool click(const sf::Vector2f &position);
 
-        bool scroll(GameState &game, const sf::Vector2f &position, float delta);
+        bool scroll(const sf::Vector2f &position, float delta);
 
-        void render(sf::RenderTarget &target, GameState &game);
+        void render(sf::RenderTarget &target);
     };
 
 }

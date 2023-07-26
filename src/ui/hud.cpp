@@ -41,12 +41,50 @@ namespace Terrarium {
         return screen_size;
     }
 
+    void Hud::focusPush(const std::string &name) {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return; }
+
+        if (!focused_elements.empty()) {
+            auto pair = elements.find(focused_elements.back());
+
+            if (pair != elements.end()) {
+                pair->second->focusLost(*game_ptr);
+            }
+        }
+
+        focused_elements.push_back(name);
+
+        auto pair = elements.find(name);
+
+        if (pair != elements.end()) {
+            pair->second->focusGained(*game_ptr);
+        }
+    }
+
+    void Hud::focusPop() {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return; }
+
+        if (!focused_elements.empty()) {
+            auto pair = elements.find(focused_elements.back());
+
+            if (pair != elements.end()) {
+                pair->second->focusLost(*game_ptr);
+            }
+
+            focused_elements.pop_back();
+        }
+    }
+
     void Hud::addElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus) {
         element->setScreenSize(screen_size);
         elements[name] = std::move(element);
 
         if (elements[name]->visible && focus) {
-            focused_elements.push_back(name);
+            focusPush(name);
         }
     }
 
@@ -70,10 +108,14 @@ namespace Terrarium {
 
         if (visible && focus) {
             if (std::find(focused_elements.begin(), focused_elements.end(), name) == focused_elements.end()) {
-                focused_elements.push_back(name);
+                focusPush(name);
             }
         } else if (!visible) {
-            focused_elements.remove(name);
+            if (focused_elements.back() == name) {
+                focusPop();
+            } else {
+                focused_elements.remove(name);
+            }
         }
     }
 
@@ -98,7 +140,7 @@ namespace Terrarium {
             pair->second->visible = false;
         }
 
-        focused_elements.pop_back();
+        focusPop();
 
         return true;
     }
@@ -136,13 +178,17 @@ namespace Terrarium {
         bars.erase(name);
     }
 
-    void Hud::hover(GameState &game, const sf::Vector2f &position) {
+    void Hud::hover(const sf::Vector2f &position) {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return; }
+
         for (auto it = elements.begin(); it != elements.end(); ++it) {
             if (!it->second->visible) {
                 continue;
             }
 
-            auto hover_tip = it->second->hover(game, position);
+            auto hover_tip = it->second->hover(*game_ptr, position);
 
             if (hover_tip) {
                 tip = hover_tip;
@@ -153,13 +199,17 @@ namespace Terrarium {
         tip = std::nullopt;
     }
 
-    bool Hud::click(GameState &game, const sf::Vector2f &position) {
+    bool Hud::click(const sf::Vector2f &position) {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return false; }
+
         for (auto it = elements.begin(); it != elements.end(); ++it) {
             if (!it->second->visible) {
                 continue;
             }
 
-            if (it->second->click(game, position)) {
+            if (it->second->click(*game_ptr, position)) {
                 return true;
             }
         }
@@ -167,13 +217,17 @@ namespace Terrarium {
         return false;
     }
 
-    bool Hud::scroll(GameState &game, const sf::Vector2f &position, float delta) {
+    bool Hud::scroll(const sf::Vector2f &position, float delta) {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return false; }
+
         for (auto it = elements.begin(); it != elements.end(); ++it) {
             if (!it->second->visible) {
                 continue;
             }
 
-            if (it->second->scroll(game, position, delta)) {
+            if (it->second->scroll(*game_ptr, position, delta)) {
                 return true;
             }
         }
@@ -181,7 +235,11 @@ namespace Terrarium {
         return false;
     }
 
-    void Hud::render(sf::RenderTarget &target, GameState &game) {
+    void Hud::render(sf::RenderTarget &target) {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return; }
+
         sf::Transform transform;
 
         for (auto it = bars.begin(); it != bars.end(); ++it) {
@@ -199,14 +257,14 @@ namespace Terrarium {
                 continue;
             }
 
-            it->second->render(target, game, transform);
+            it->second->render(target, *game_ptr, transform);
         }
 
         if (focused) {
             auto pair = elements.find(*focused);
 
             if (pair != elements.end() && pair->second->visible) {
-                pair->second->render(target, game, transform);
+                pair->second->render(target, *game_ptr, transform);
             }
         }
     }

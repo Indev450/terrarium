@@ -29,6 +29,7 @@
 #include <cstring>
 #include <string>
 #include <stdexcept>
+#include <memory>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Transform.hpp>
@@ -101,7 +102,8 @@ namespace Terrarium {
         std::unique_ptr<ModdingInterface> modding_interface;
         std::unique_ptr<ClientModdingInterface> client_modding_interface;
 
-        GameState(const std::string &_save_name);
+        [[nodiscard]] static std::shared_ptr<GameState> create(const std::string &_save_name);
+
 
         // World save file format:
         // char[8]         signature    should be "terrwrld"
@@ -132,6 +134,9 @@ namespace Terrarium {
         void savePlayer(std::ostream &file);
 
         void save();
+
+    private:
+        GameState(const std::string &_save_name);
     };
 
 } // namespace Terrarium

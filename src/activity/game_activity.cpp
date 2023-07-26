@@ -156,7 +156,7 @@ namespace Terrarium {
         }
         light_calc.update(game->debug_info, force_light_update);
 
-        game->hud.hover(*game, sf::Vector2f(mouse_pos_pixels));
+        game->hud.hover(sf::Vector2f(mouse_pos_pixels));
 
         game->debug_info.updateFps(dtime);
         game->debug_info.time_of_day = game->time;
@@ -222,7 +222,7 @@ namespace Terrarium {
         view = def_view;
         target.setView(view);
 
-        game->hud.render(target, *game);
+        game->hud.render(target);
 
         if (!game->player->hold_item_stack->empty()) {
             item_cell_renderer.render(
@@ -285,7 +285,7 @@ namespace Terrarium {
                     {
                         sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
 
-                        if (!game->hud.scroll(*game, mouse_pos, -1)) {
+                        if (!game->hud.scroll(mouse_pos, -1)) {
                             game->player->hotbar_scroll = -1;
                         }
                     }
@@ -295,7 +295,7 @@ namespace Terrarium {
                     {
                         sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
 
-                        if (!game->hud.scroll(*game, mouse_pos, 1)) {
+                        if (!game->hud.scroll(mouse_pos, 1)) {
                             game->player->hotbar_scroll = 1;
                         }
                     }
@@ -379,7 +379,7 @@ namespace Terrarium {
                     {
                         sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
 
-                        if (!game->hud.click(*game, mouse_pos)) {
+                        if (!game->hud.click(mouse_pos)) {
                             game->player->controls.lmb = true;
                         }
                     }
@@ -416,7 +416,7 @@ namespace Terrarium {
             {
                 sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
 
-                if (!game->hud.scroll(*game, mouse_pos, event.mouseWheelScroll.delta)) {
+                if (!game->hud.scroll(mouse_pos, event.mouseWheelScroll.delta)) {
                     game->player->hotbar_scroll = -event.mouseWheelScroll.delta;
                 }
             }
