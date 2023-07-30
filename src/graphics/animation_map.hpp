@@ -43,21 +43,29 @@ namespace Terrarium {
 
     private:
         void updateFrame() {
+            sf::IntRect rect;
+
             if (current != nullptr) {
-                sf::IntRect rect = current->getRect();
-
-                if (mirror) {
-                    rect.left += rect.width;
-                    rect.width *= -1;
-                }
-
-                if (vertmirror) {
-                    rect.top += rect.height;
-                    rect.height *= -1;
-                }
-
-                sprite.setTextureRect(rect);
+                rect = current->getRect();
+            } else {
+                rect = sprite.getTextureRect();
+                rect.left = 0;
+                rect.top = 0;
+                rect.width = std::abs(rect.width);
+                rect.height = std::abs(rect.height);
             }
+
+            if (mirror) {
+                rect.left += rect.width;
+                rect.width *= -1;
+            }
+
+            if (vertmirror) {
+                rect.top += rect.height;
+                rect.height *= -1;
+            }
+
+            sprite.setTextureRect(rect);
         }
 
     public:
