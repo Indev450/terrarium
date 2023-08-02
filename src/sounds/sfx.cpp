@@ -84,6 +84,13 @@ namespace Terrarium {
         music_volume = 0.0;
     }
 
+    void Sfx::stopMusic() {
+        music_fading = music_playing;
+        music_playing = nullptr;
+
+        music_volume = 0.0;
+    }
+
     sound_handle Sfx::playSound(
         const std::string &name,
         float volume,

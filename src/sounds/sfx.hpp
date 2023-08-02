@@ -53,6 +53,8 @@ namespace Terrarium {
 
         void playMusic(const std::string &name);
 
+        void stopMusic();
+
         sound_handle playSound(
             const std::string &name,
             float volume,

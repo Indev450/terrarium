@@ -38,6 +38,9 @@ namespace Terrarium {
         // void core._play_music(string music_name, string player_name)
         int play_music(lua_State *L);
 
+        // void core._stop_music(string player_name)
+        int stop_music(lua_State *L);
+
         // int core._play_sound(SoundSpec sound)
         int play_sound(lua_State *L);
 

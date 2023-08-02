@@ -31,6 +31,7 @@ namespace Terrarium {
 
         void init(LuaModdingInterface &lua_interface) {
             lua_interface.registerFunction("_play_music", play_music);
+            lua_interface.registerFunction("_stop_music", stop_music);
             lua_interface.registerFunction("_play_sound", play_sound);
             lua_interface.registerFunction("_stop_sound", stop_sound);
         }
@@ -42,6 +43,14 @@ namespace Terrarium {
 
             // Second argument, player name, is currently ignored
             lua_interface->game->sfx.playMusic(name);
+
+            return 0;
+        }
+
+        int stop_music(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            lua_interface->game->sfx.stopMusic();
 
             return 0;
         }
