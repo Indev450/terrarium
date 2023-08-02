@@ -227,6 +227,8 @@ namespace Terrarium {
             if (!str.empty()) {
                 entity->text.setString(str);
                 entity->text.setFillColor(color);
+                entity->text.setOutlineColor(sf::Color::Black);
+                entity->text.setOutlineThickness(1);
                 entity->text.setCharacterSize(size);
                 entity->have_text = true;
             } else {
