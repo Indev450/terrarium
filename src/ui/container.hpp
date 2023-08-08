@@ -39,7 +39,7 @@ namespace Terrarium {
         sf::RectangleShape shape;
         sf::Vector2f size;
 
-        std::vector<std::unique_ptr<UIElement>> elements;
+        std::vector<std::shared_ptr<UIElement>> elements;
 
         float scroll_current = 0;
         float scroll_max = 0;
@@ -53,7 +53,7 @@ namespace Terrarium {
         void setOutlineColor(const sf::Color &color);
         void setOutlineThickness(float thickness);
 
-        void addElement(std::unique_ptr<UIElement> element);
+        void addElement(std::shared_ptr<UIElement> element);
 
         bool click(GameState &game, const sf::Vector2f &position) override;
 

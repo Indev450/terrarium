@@ -43,12 +43,14 @@
 #include "player/world_interact.hpp"
 #include "event/event.hpp"
 #include "ui/hud.hpp"
+#include "ui/text_input.hpp"
 #include "graphics/gfx.hpp"
 #include "graphics/debug_overlay.hpp"
 #include "sounds/sfx.hpp"
 #include "utils/binary_io.hpp"
 #include "utils/saves.hpp"
 #include "utils/cell_def_holder.hpp"
+#include "utils/chat.hpp"
 #include "modding/interface.hpp"
 #include "modding/client_interface.hpp"
 
@@ -71,6 +73,10 @@ namespace Terrarium {
         ItemDefManager item_defs;
         CraftManager crafts;
         InventoryStorage inventories;
+
+        Chat chat;
+
+        std::shared_ptr<TextInput> text_input = nullptr;
 
         SavesManager saves;
         std::string save_name;

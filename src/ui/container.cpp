@@ -48,7 +48,7 @@ namespace Terrarium {
         shape.setOutlineThickness(thickness);
     }
 
-    void UIContainer::addElement(std::unique_ptr<UIElement> element) {
+    void UIContainer::addElement(std::shared_ptr<UIElement> element) {
         element->setScreenSize(size); // Screen size for nested elements is container size
         elements.push_back(std::move(element));
     }

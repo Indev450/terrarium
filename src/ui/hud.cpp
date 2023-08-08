@@ -79,16 +79,16 @@ namespace Terrarium {
         }
     }
 
-    void Hud::addElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus) {
+    void Hud::addElement(const std::string &name, std::shared_ptr<UIElement> element, bool focus) {
         element->setScreenSize(screen_size);
-        elements[name] = std::move(element);
+        elements[name] = element;
 
         if (elements[name]->visible && focus) {
             focusPush(name);
         }
     }
 
-    void Hud::replaceElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus) {
+    void Hud::replaceElement(const std::string &name, std::shared_ptr<UIElement> element, bool focus) {
         auto pair = elements.find(name);
 
         if (pair != elements.end()) {
@@ -96,7 +96,7 @@ namespace Terrarium {
             element->visible = pair->second->visible;
         }
 
-        addElement(name, std::move(element), focus);
+        addElement(name, element, focus);
     }
 
     void Hud::setVisible(const std::string &name, bool visible, bool focus) {
@@ -159,9 +159,9 @@ namespace Terrarium {
         elements.erase(name);
     }
 
-    void Hud::addBar(const std::string &name, std::unique_ptr<Bar> bar) {
+    void Hud::addBar(const std::string &name, std::shared_ptr<Bar> bar) {
         bar->setScreenSize(screen_size);
-        bars[name] = std::move(bar);
+        bars[name] = bar;
     }
 
     Bar *Hud::getBar(const std::string &name) {
@@ -233,6 +233,16 @@ namespace Terrarium {
         }
 
         return false;
+    }
+
+    void Hud::update(float dtime) {
+        std::shared_ptr<GameState> game_ptr = game.lock();
+
+        if (!game_ptr) { return; }
+
+        for (auto it = elements.begin(); it != elements.end(); ++it) {
+            it->second->update(*game_ptr, dtime);
+        }
     }
 
     void Hud::render(sf::RenderTarget &target) {

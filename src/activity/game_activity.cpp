@@ -141,6 +141,8 @@ namespace Terrarium {
 
         game->sfx.update(*game, dtime);
 
+        game->hud.update(dtime);
+
         bool force_light_update = game->world.isUpdated();
 
         if (abs(int(game->natural_light) - int(light_new)) > light_change_step) {
@@ -243,6 +245,69 @@ namespace Terrarium {
     void GameActivity::onEvent(ActivityManager &am, sf::Event event) {
         auto &window = am.getWindow();
 
+        if (game->text_input) {
+            if (game->text_input->handleEvent(*game, event))
+                return;
+
+            // In case we have text input, we are gonna do simplified event
+            // handling
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                break;
+
+                case sf::Event::Resized:
+                {
+                    onResize(event.size.width, event.size.height);
+                }
+                break;
+
+                case sf::Event::KeyPressed:
+                {
+                    switch (event.key.code) {
+                        case sf::Keyboard::Escape:
+                        {
+                            // This is so stupid but i can't figure out another way
+                            // to make opened_inventory work properly :(
+                            bool inventory_was_shown = game->hud.isVisible("inventory");
+
+                            if (game->hud.hideFocused()) {
+                                game->hud.setVisible("craft", game->hud.isVisible("inventory"), false);
+
+                                if (inventory_was_shown && !game->hud.isVisible("inventory")) {
+                                    game->hud.setVisible("opened_inventory", false, false);
+                                }
+
+                                game->player->crafting_category = game->crafts.default_category;
+                            } else {
+                                game->hud.setVisible("pause", !game->hud.isVisible("pause"));
+                            }
+                        }
+                        break;
+
+                        default:
+                        break;
+                    }
+                }
+                break;
+
+                case sf::Event::MouseWheelScrolled:
+                {
+                    sf::Vector2f mouse_pos(sf::Mouse::getPosition(window));
+
+                    if (!game->hud.scroll(mouse_pos, event.mouseWheelScroll.delta)) {
+                        game->player->hotbar_scroll = -event.mouseWheelScroll.delta;
+                    }
+                }
+                break;
+
+                default:
+                break;
+            }
+
+            return;
+        }
+
         switch (event.type) {
             case sf::Event::Closed:
                 window.close();
@@ -311,6 +376,10 @@ namespace Terrarium {
                         game->hud.setVisible("craft", !game->hud.isVisible("craft"), false);
                         game->hud.setVisible("opened_inventory", false, false);
                     }
+                    break;
+
+                    case sf::Keyboard::Enter:
+                        game->hud.setVisible("chat", true);
                     break;
 
                     case sf::Keyboard::E:

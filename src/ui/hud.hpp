@@ -39,8 +39,8 @@ namespace Terrarium {
     class GameState;
 
     class Hud {
-        std::unordered_map<std::string, std::unique_ptr<UIElement>> elements;
-        std::unordered_map<std::string, std::unique_ptr<Bar>> bars;
+        std::unordered_map<std::string, std::shared_ptr<UIElement>> elements;
+        std::unordered_map<std::string, std::shared_ptr<Bar>> bars;
 
         std::list<std::string> focused_elements;
 
@@ -62,9 +62,9 @@ namespace Terrarium {
 
         void focusPop();
 
-        void addElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus = true);
+        void addElement(const std::string &name, std::shared_ptr<UIElement> element, bool focus = true);
 
-        void replaceElement(const std::string &name, std::unique_ptr<UIElement> element, bool focus = true);
+        void replaceElement(const std::string &name, std::shared_ptr<UIElement> element, bool focus = true);
 
         void setVisible(const std::string &name, bool visible, bool focus = true);
 
@@ -76,7 +76,7 @@ namespace Terrarium {
 
         void delElement(const std::string &name);
 
-        void addBar(const std::string &name, std::unique_ptr<Bar> bar);
+        void addBar(const std::string &name, std::shared_ptr<Bar> bar);
 
         Bar *getBar(const std::string &name);
 
@@ -87,6 +87,8 @@ namespace Terrarium {
         bool click(const sf::Vector2f &position);
 
         bool scroll(const sf::Vector2f &position, float delta);
+
+        void update(float dtime);
 
         void render(sf::RenderTarget &target);
     };

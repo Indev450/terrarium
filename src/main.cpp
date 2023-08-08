@@ -39,6 +39,7 @@
 #include "ui/container.hpp"
 #include "ui/bar.hpp"
 #include "ui/craft_ui.hpp"
+#include "ui/chat.hpp"
 #include "utils/saves.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/server/lua_interface.hpp"
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
 
     game->hud.setScreenSize(sf::Vector2f(800, 640));
 
-    if (!game->gfx.font.loadFromFile("assets/dpcomic.ttf")) {
+    if (!game->gfx.font.loadFromFile("assets/monogram.ttf")) {
         std::cerr<<"Cannot load font"<<std::endl;
     }
 
@@ -157,15 +158,15 @@ int main(int argc, char **argv)
     // HUD elements
 
     ////////////////////////////////////////////////////////////////////
-    auto hotbar_renderer = std::make_unique<Terrarium::HotbarRenderer>(
+    auto hotbar_renderer = std::make_shared<Terrarium::HotbarRenderer>(
         game->gfx, Terrarium::Player::HOTBAR_SIZE);
 
     hotbar_renderer->setPosition(32, 32);
 
-    game->hud.addElement("hotbar", std::move(hotbar_renderer), false);
+    game->hud.addElement("hotbar", hotbar_renderer, false);
 
     ////////////////////////////////////////////////////////////////////
-    auto inventory_ui = std::make_unique<Terrarium::InventoryUI>(
+    auto inventory_ui = std::make_shared<Terrarium::InventoryUI>(
         game->gfx,
         Terrarium::Player::HOTBAR_SIZE,
         Terrarium::Player::INVENTORY_ROWS);
@@ -174,26 +175,26 @@ int main(int argc, char **argv)
     inventory_ui->setPosition(32, 74);
     inventory_ui->visible = false;
 
-    game->hud.addElement("inventory", std::move(inventory_ui));
+    game->hud.addElement("inventory", inventory_ui);
 
     ////////////////////////////////////////////////////////////////////
     // Dummy element for opened inventories.
-    inventory_ui = std::make_unique<Terrarium::InventoryUI>(
+    inventory_ui = std::make_shared<Terrarium::InventoryUI>(
         game->gfx, 0, 0);
     inventory_ui->setPosition(
         32 + Terrarium::ItemCellRenderer::realGridSize(Terrarium::Player::HOTBAR_SIZE, 0).x + 4,
         74);
     inventory_ui->visible = false;
 
-    game->hud.addElement("opened_inventory", std::move(inventory_ui));
+    game->hud.addElement("opened_inventory", inventory_ui);
 
     ////////////////////////////////////////////////////////////////////
-    auto pause_container = std::make_unique<Terrarium::UIContainer>(
+    auto pause_container = std::make_shared<Terrarium::UIContainer>(
         sf::Vector2f(100, 110));
     pause_container->setPosition(-50, -55);
     pause_container->setOriginType(ScreenTransformable::Origin::ScreenCenter);
 
-    auto continue_button = std::make_unique<Terrarium::RectButton>(
+    auto continue_button = std::make_shared<Terrarium::RectButton>(
         game->gfx, sf::Vector2f(80, 40),
         [&] (Terrarium::GameState &game) {
             game.hud.setVisible("pause", false);
@@ -208,9 +209,9 @@ int main(int argc, char **argv)
     // this properly right now. Maybe later. UI is too hard for me
     continue_button->setScreenSize(sf::Vector2f(100, 110));
 
-    pause_container->addElement(std::move(continue_button));
+    pause_container->addElement(continue_button);
 
-    auto exit_button = std::make_unique<Terrarium::RectButton>(
+    auto exit_button = std::make_shared<Terrarium::RectButton>(
         game->gfx, sf::Vector2f(80, 40),
         [&] (Terrarium::GameState &game) {
             am.getWindow().close();
@@ -224,18 +225,27 @@ int main(int argc, char **argv)
     // Same as above
     exit_button->setScreenSize(sf::Vector2f(100, 110));
 
-    pause_container->addElement(std::move(exit_button));
+    pause_container->addElement(exit_button);
 
     pause_container->visible = false;
 
-    game->hud.addElement("pause", std::move(pause_container));
+    game->hud.addElement("pause", pause_container);
 
     ////////////////////////////////////////////////////////////////////
-    auto craft_ui = std::make_unique<Terrarium::CraftUI>(game->gfx);
+    auto craft_ui = std::make_shared<Terrarium::CraftUI>(game->gfx);
     craft_ui->setPosition(32, 512);
     craft_ui->visible = false;
 
-    game->hud.addElement("craft", std::move(craft_ui));
+    game->hud.addElement("craft", craft_ui);
+
+    ////////////////////////////////////////////////////////////////////
+    auto chat_ui = std::make_shared<Terrarium::ChatUI>(*game);
+    int offset = -32 - Terrarium::ChatUI::FONT_SIZE*(Terrarium::ChatUI::MAX_SHOW_MESSAGES+2) - Terrarium::ChatUI::GAP*(Terrarium::ChatUI::MAX_SHOW_MESSAGES+3);
+
+    chat_ui->setPosition(32, offset);
+    chat_ui->visible = false;
+
+    game->hud.addElement("chat", chat_ui);
 
     ////////////////////////////////////////////////////////////////////
     am.run();

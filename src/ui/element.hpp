@@ -41,7 +41,7 @@ namespace Terrarium {
         virtual std::optional<std::string> hover(GameState &game, const sf::Vector2f &position) { return std::nullopt; }
 
         // This function should return, was the click handled or not
-        virtual bool click(GameState &game, const sf::Vector2f &position) = 0;
+        virtual bool click(GameState &game, const sf::Vector2f &position) { return false; };
 
         virtual bool scroll(GameState &game, const sf::Vector2f &position, float delta) { return false; }
 
@@ -49,9 +49,9 @@ namespace Terrarium {
 
         virtual void focusLost(GameState &game) {}
 
+        virtual void update(GameState &game, float dtime) {}
+
         virtual void render(sf::RenderTarget &target, GameState &game, const sf::Transform &parent_transform) = 0;
-
-
     };
 
 }
