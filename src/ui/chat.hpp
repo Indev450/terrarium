@@ -68,7 +68,7 @@ namespace Terrarium {
 
         // Timer for how long chat log stays visible. When less than 1 it starts
         // slowly disappear
-        float visible_timer = 4;
+        float visible_timer = 0;
 
         const sf::Color background_color = sf::Color(156, 156, 156);
         const sf::Color input_color = sf::Color(156, 156, 156);
