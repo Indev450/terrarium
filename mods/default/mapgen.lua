@@ -1,4 +1,6 @@
-terrarium.register_biome("default:grassland", {
+local TREE_TYPES = 8
+
+local grassland_biome = {
     top = {
         block = "default:grass",
         wall = "default:grass",
@@ -21,47 +23,6 @@ terrarium.register_biome("default:grassland", {
     priority = 1,
 
     decorations = {
-        tree = {
-            origin = {
-                x = 1,
-                y = 11,
-            },
-
-            tile_aliases = {
-                ['I'] = { block = "default:tree_base" },
-                ['|'] = { block = "default:tree_trunk" },
-                ['q'] = { block = "default:tree_trunk_branch_left" },
-                ['p'] = { block = "default:tree_trunk_branch_right" },
-                ['A'] = { block = "default:tree_trunk_top" },
-                ['<'] = { block = "default:tree_branch_left" },
-                ['>'] = { block = "default:tree_branch_right" },
-            },
-
-            tiles = {
-                " A ",
-                " p>",
-                "<q ",
-                " | ",
-                " p>",
-                " p>",
-                " | ",
-                "<q ",
-                " | ",
-                " p>",
-                " | ",
-                " I ",
-            },
-
-            conditions = {
-                {
-                    position = { x = 0, y = 1 },
-                    fg = { type = "AnySolidBlock" }
-                },
-            },
-
-            place_chance = 0.05,
-        },
-
         vine = {
             origin = {
                 x = 0,
@@ -124,18 +85,61 @@ terrarium.register_biome("default:grassland", {
             place_chance = 0.05,
         },
 
-        grass = terrarium.single_tile_decor {
-            tile = { block = "default:grass_decor" },
-            place_chance = 0.9,
+        bush = {
+            origin = { x = 1, y = 1, },
+
+            tile_aliases = {
+                ['0'] = { block = "default:bush", multiblock_offset = { x = 0, y = 0 } },
+                ['1'] = { block = "default:bush", multiblock_offset = { x = 1, y = 0 } },
+                ['2'] = { block = "default:bush", multiblock_offset = { x = 2, y = 0 } },
+                ['3'] = { block = "default:bush", multiblock_offset = { x = 0, y = 1 } },
+                ['4'] = { block = "default:bush", multiblock_offset = { x = 1, y = 1 } },
+                ['5'] = { block = "default:bush", multiblock_offset = { x = 2, y = 1 } },
+            },
+
+            tiles = {
+                "012",
+                "345",
+            },
+
             conditions = {
                 {
-                    position = { x = 0, y = 1 },
-                    fg = { type = "AnySolidBlock" }
-                }
+                    position = { x = -1, y = 1, },
+                    fg = { type = "AnySolidBlock" },
+                },
+                {
+                    position = { x = 0, y = 1, },
+                    fg = { type = "AnySolidBlock" },
+                },
+                {
+                    position = { x = 1, y = 1, },
+                    fg = { type = "AnySolidBlock" },
+                },
             },
+
+            place_chance = 0.1,
+        }
+    }
+}
+
+for i = 1, TREE_TYPES do
+    grassland_biome.decorations["tree"..i] = default.random_tree(0.2/TREE_TYPES)
+end
+
+for i = 0, 3 do
+    grassland_biome.decorations["grass"..i] = terrarium.single_tile_decor {
+        tile = { block = "default:grass_decor_"..i },
+        place_chance = 0.2,
+        conditions = {
+            {
+                position = { x = 0, y = 1 },
+                fg = { type = "AnySolidBlock" }
+            }
         },
     }
-})
+end
+
+terrarium.register_biome("default:grassland", grassland_biome)
 
 terrarium.register_biome("default:grassland_overgrowth", {
     humidity_min = 0.6,
@@ -166,9 +170,42 @@ terrarium.register_biome("default:grassland_overgrowth", {
     priority = 2,
 
     decorations = {
-        grass = terrarium.single_tile_decor {
-            tile = { block = "default:grass_decor" },
-            place_chance = 1,
+        grass0 = terrarium.single_tile_decor {
+            tile = { block = "default:grass_decor_0" },
+            place_chance = 0.2,
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
+        },
+
+        grass1 = terrarium.single_tile_decor {
+            tile = { block = "default:grass_decor_1" },
+            place_chance = 0.2,
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
+        },
+
+        grass2 = terrarium.single_tile_decor {
+            tile = { block = "default:grass_decor_2" },
+            place_chance = 0.2,
+            conditions = {
+                {
+                    position = { x = 0, y = 1 },
+                    fg = { type = "AnySolidBlock" }
+                }
+            },
+        },
+
+        grass3 = terrarium.single_tile_decor {
+            tile = { block = "default:grass_decor_3" },
+            place_chance = 0.2,
             conditions = {
                 {
                     position = { x = 0, y = 1 },
@@ -521,3 +558,102 @@ terrarium.register_ore({
         block = "default:gold_ore",
     },
 })
+
+terrarium.register_ore({
+    cluster_tiles = 14,
+    distribution = 64,
+
+    min_depth = 0.4,
+
+    tile = {
+        block = "default:silver_ore",
+    },
+})
+
+-- Test dugeons
+lootlib.register_loot("default:test_dungeon_loot_unique", {
+    item = "default:revolver",
+    count = 1,
+    chance = 1,
+    unique = true, -- Don't add multiple revolvers in one chest
+
+    comes_with_bullets = true, -- Add some ammo so player can pew pew
+})
+
+lootlib.register_loot("default:test_dungeon_loot", {
+    item = "default:gold_ingot",
+    count = { min = 1, max = 4, },
+    chance = 0.1,
+})
+
+lootlib.register_loot("default:test_dungeon_loot", {
+    item = "default:torch",
+    count = { min = 10, max = 15, },
+    chance = 0.2,
+})
+
+terrarium.register_on_map_generated(function()
+    local WORLD_SIZE = terrarium.get_world_size()
+
+    local DUNGEONS = 20
+
+    local SIZE = vec2.new(10, 10)
+
+    local PICS = {
+        "default:picture_sungarden",
+        "default:picture_starbound",
+    }
+
+    for i = 1, DUNGEONS do
+        local root_x = math.floor(WORLD_SIZE.x * i/(DUNGEONS+1))
+        local root_y = math.floor(WORLD_SIZE.y / 4 + math.random()*(WORLD_SIZE.y / 4))
+
+        --print("Generated dungeon at "..root_x.." "..root_y)
+
+        local bricks = function() return (math.random() < 0.2) and "default:old_broken_bricks" or "default:old_bricks" end
+
+        for offx = 0, SIZE.x-1 do
+            for offy = 0, SIZE.y-1 do
+                if offx == 0 or offx == SIZE.x-1 or offy == 0 or offy == SIZE.y-1 then
+                    terrarium.set_block(root_x + offx, root_y + offy, bricks())
+                elseif (offx == 1 or offx == SIZE.x-2) and offy == math.floor(SIZE.y/2) then
+                    terrarium.set_block(root_x + offx, root_y + offy, "default:torch")
+                else
+                    terrarium.set_block(root_x + offx, root_y + offy, nil)
+                end
+
+                terrarium.set_wall(root_x + offx, root_y + offy, bricks())
+            end
+        end
+
+        -- Place a chest
+        local offx = math.floor(SIZE.x / 2) - 1
+        local offy = SIZE.y - 3
+
+        terrarium.set_multiblock(root_x + offx, root_y + offy, "default:chest")
+
+        local inv = terrarium.get_block_inventory(root_x + offx, root_y + offy)
+        local unique_table = {}
+        local add_unique = math.random() < 0.5 -- Add 1 unique item
+
+        for i = 1, 8 do
+            local lootgroup = "default:test_dungeon_loot"
+
+            if add_unique then
+                lootgroup = "default:test_dungeon_loot_unique"
+                add_unique = false
+            end
+
+            local item, lootdef = lootlib.add_loot(inv, loot_group, unique_table)
+
+            if lootdef and lootdef.comes_with_bullets then
+                inv:add_item(ItemStack("default:pistol_bullet", math.random(20, 30)))
+            end
+        end
+
+        -- Place random painting
+        offy = offy - 3
+
+        terrarium.set_multiblock(root_x + offx, root_y + offy, PICS[math.random(1, #PICS)])
+    end
+end)

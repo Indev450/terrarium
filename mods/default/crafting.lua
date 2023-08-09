@@ -17,6 +17,14 @@ terrarium.register_recipe("empty_hands", {
     result = "default:torch 4",
 })
 
+terrarium.register_recipe("empty_hands", {
+    requirements = {
+        "default:wood",
+    },
+
+    result = "default:wood_platform 4",
+})
+
 terrarium.add_crafting_category("workbench")
 
 terrarium.register_recipe("workbench", {
@@ -51,6 +59,14 @@ terrarium.register_recipe("furnace", {
     },
 
     result = "default:iron_ingot",
+})
+
+terrarium.register_recipe("furnace", {
+    requirements = {
+        "default:silver_ore 2",
+    },
+
+    result = "default:silver_ingot",
 })
 
 terrarium.register_recipe("furnace", {

@@ -13,7 +13,7 @@ default_player_saver = {
                 local cmd = line:sub(cmd_start, cmd_end)
 
                 if cmd == "player" then
-                    playername = line:sub(line:find(".+", cmd_end+2))
+                    local playername = line:sub(line:find(".+", cmd_end+2))
 
                     save_data = self:get_save_data(playername)
                 elseif cmd == "gave_init_stuff" then
@@ -72,8 +72,15 @@ default_player_saver = {
 
 terrarium.override_player({
     size = {
-        width = 1.4,
-        height = 2.8
+        width = 1.5,
+        height = 3,
+    },
+
+    hitbox = {
+        x = 0.2,
+        y = 0.4,
+        width = 1.1,
+        height = 3 - 1/16 - 0.4,
     },
 
     image = "player.png",
@@ -100,7 +107,7 @@ terrarium.override_player({
 
             next = "jump",
 
-            interpolation = "Linear",
+            easing = "InCubic",
 
             frames = {
                 { rect = { x = 24*1, y = 0, width = 24, height = 48, }, scale_center = { x = 12, y = 24, }, },
@@ -143,7 +150,7 @@ terrarium.register_on_player_join(function(player)
 
         player.ref:get_player_inventory():add_item(ItemStack("default:copper_pickaxe", 1))
         player.ref:get_player_inventory():add_item(ItemStack("default:copper_axe", 1))
-        player.ref:get_player_inventory():add_item(ItemStack("default:chest", 5))
+        player.ref:get_player_inventory():add_item(ItemStack("default:copper_sword", 1))
     end
 
     player.equipment = save_data.equipment
@@ -248,36 +255,17 @@ terrarium.register_on_player_join(function(player)
         self.hp = math.min(self.max_hp, self.hp + hp)
     end
 
-    player.hurt = function(self, damage, source, knockback, inv_time)
-        if not self.inv_timer:ready() or self.hp <= 0 then return end
+    -- Flag for damagelib to not remove player entity when player is killed.
+    player.no_kill = true
 
-        knockback = knockback or 2
+    -- Don't kill player in 1 touch pls
+    player.default_inv_time = 0.5
 
-        local kb_vec = {
-            x = 0,
-            y = -knockback,
-        }
-
-        if source ~= nil then
-            kb_vec.x = knockback
-
-            local our_pos = self.ref:get_position()
-            local their_pos = source.ref:get_position()
-
-            if our_pos.x < their_pos.x then kb_vec.x = kb_vec.x * -1 end
-        end
-
-        self.ref:set_speed(kb_vec)
-
-        self.hp = self.hp - damage
-
-        self.inv_timer.time_to_wait = inv_time or 0.5
-        self.inv_timer:restart()
-
-        if self.hp <= 0 then
-            terrarium.send_cmd(self, "default:player_died")
-        end
+    player.on_death = function(self, damage, source, knockback)
+        terrarium.send_cmd(self, "default:player_died")
     end
+
+    player.hurt = damagelib.entity_hurt
 
     player.use_energy = function(self, amount)
         if amount > self.energy then return false end

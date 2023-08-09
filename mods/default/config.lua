@@ -1,4 +1,4 @@
 config = {}
 
 config.name = "default"
-config.depends = {"damagelib"}
+config.depends = {"damagelib", "lootlib"}

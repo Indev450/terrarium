@@ -1,3 +1,19 @@
+function default.area_collision_check(size)
+    return function(self, enemy)
+        local source = self.source or self
+
+        local top = source.ref:get_position().y
+        local centerx = source.ref:get_center().x
+
+        return enemy.ref:is_in_area({
+            x = centerx,
+            y = top,
+            width = size.x,
+            height = size.y,
+        })
+    end
+end
+
 function default.register_swing(name, def)
     terrarium.register_entity(name, {
         physics = {
@@ -15,6 +31,7 @@ function default.register_swing(name, def)
             self.source = data.source
             self.source_team = data.source_team
             self.damage = data.damage or { amount = 1 }
+            self.collision_check = data.collision_check or function(self, enemy) return enemy.ref:is_collide(self.ref) end
             self.on_land_hit = data.on_land_hit or function() end
 
             self.timer = timer.new(def.lifetime)
@@ -29,7 +46,7 @@ function default.register_swing(name, def)
             end
 
             for enemy in terrarium.iter_entities_with { "team", "hurt" } do
-                if (self.source_team == nil or enemy.team ~= self.source_team) and enemy.ref:is_collide(self.ref) then
+                if (self.source_team == nil or enemy.team ~= self.source_team) and self:collision_check(enemy) then
                     local damage = damagelib.hurt(enemy, self.damage, self.source, self)
                     self.on_land_hit(enemy, damage)
                 end
