@@ -44,6 +44,8 @@ terrarium.register_entity("__builtin:item_entity", {
     end,
 
     update = function(self, dtime)
+        if not self.item_stack then return self:kill() end
+
         local closest = {
             player = nil,
             dist_sqr = nil,
