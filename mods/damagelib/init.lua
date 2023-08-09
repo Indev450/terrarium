@@ -1,6 +1,9 @@
-damagelib = {}
+damagelib = {
+    damage_color = {},
+}
 
 dofile("equipment.lua")
+dofile("entity.lua")
 
 function damagelib.calc_damage(victim_gear, damage, damager_gear)
     local amount = damage.amount
@@ -19,7 +22,13 @@ end
 function damagelib.hurt(victim, damage, damager, damage_source)
     local amount = damagelib.calc_damage(victim.equipment, damage, damager and damager.equipment)
 
-    victim:hurt(amount, damage_source or damager, damage.knockback, damage.invincible_time)
+    local pos = victim.ref:get_position()
+    pos.x = victim.ref:get_center().x + (math.random()-0.5) * 2
+    pos.y = pos.y + (math.random()-0.5) * 2
+
+    if victim:hurt(amount, damage_source or damager, damage.knockback, damage.invincible_time) then
+        terrarium.new_entity("damagelib:damage_indicator", pos, { amount = amount, color = damage.color or damagelib.damage_color[damage.element or "normal"] })
+    end
 
     return amount
 end
