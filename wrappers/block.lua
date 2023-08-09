@@ -206,10 +206,20 @@ function terrarium.set_multiblock(x, y, block_name, nocall)
     local def = terrarium.registered_blocks[block_name]
 
     local block_id = 0
+    local width = 1
+    local height = 1
 
-    if def ~= nil then block_id = def.block_id end
+    if def then
+        if not def.multiblock_size then
+            error("Attempt to use terrarium.set_multiblock with usual block. Use terrarium.set_block instead")
+        end
 
-    core._set_multiblock(x, y, def.multiblock_size.x, def.multiblock_size.y, block_id)
+        block_id = def.block_id
+        width = def.multiblock_size.x
+        height = def.multiblock_size.y
+    end
+
+    core._set_multiblock(x, y, width, height, block_id)
 
     if not nocall then
         def.on_place({ x = x, y = y })
