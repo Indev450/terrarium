@@ -69,8 +69,10 @@ namespace Terrarium {
             ItemSelect, // Start wield item. Can be used for torches
 
             ModCmd, // Arbitary client->server or server->client command
+            ChatCmd, // Chat command
 
             BlockActivate, // Sent when using interactive block
+
         } type;
 
         const union {
@@ -90,7 +92,7 @@ namespace Terrarium {
         Event(Type _type, ModCmdEvent *_cmd):
             type(_type), cmd(_cmd) {
 
-            assert(type == ModCmd);
+            assert(type == ModCmd || type == ChatCmd);
         }
 
         Event(Type _type, BlockEvent *_block):
@@ -106,8 +108,8 @@ namespace Terrarium {
 
         // Sadly, there is no easy way to convert enum value to string, so i have to use this
         const char *getName() const {
-            #define ENUM_TOSTRING(value) case value: return #value
 
+#define ENUM_TOSTRING(value) case value: return #value
             // Switch to warn myself if i add new event types and forget to stringify them
             switch (type) {
                 ENUM_TOSTRING(ItemUseStart);
@@ -119,13 +121,15 @@ namespace Terrarium {
                 ENUM_TOSTRING(ItemSelect);
 
                 ENUM_TOSTRING(ModCmd);
+                ENUM_TOSTRING(ChatCmd);
 
                 ENUM_TOSTRING(BlockActivate);
             }
+#undef ENUM_TOSTRING
 
             // Execution flow should never reach this, but compiler still prints warning,
             // so i add this return;
-            return nullptr;
+            return "Unknown";
         }
 
         ~Event() {
@@ -139,6 +143,7 @@ namespace Terrarium {
                 break;
 
                 case ModCmd:
+                case ChatCmd:
                     delete cmd;
                 break;
 

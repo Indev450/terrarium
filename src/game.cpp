@@ -25,7 +25,7 @@
 namespace Terrarium {
 
     GameState::GameState(const std::string &_save_name):
-        chat(128, 32), saves("saves"), save_name(_save_name)
+        chat(128, 48), saves("saves"), save_name(_save_name)
     {
         blocks_to_pixels.scale(Tile::SIZE, Tile::SIZE);
         pixels_to_blocks.scale(1./Tile::SIZE, 1./Tile::SIZE);

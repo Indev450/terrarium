@@ -84,10 +84,51 @@ namespace Terrarium {
     bool ChatUI::preHandleEvent(GameState &game, const sf::Event &event) {
         // 13 - newline control symbol. Not '\n' unfortunately...
         if (event.type == sf::Event::TextEntered && event.text.unicode == 13) {
-            if (buffer.getSize() != 0) {
-                game.chat.print({ takeString(), sf::Color::White });
-                visual_pos = 0;
-                updateInputText(game);
+            sf::String input = takeString();
+            visual_pos = 0;
+            updateInputText(game);
+
+            if (input.getSize() != 0) {
+                // Handle chat commands
+                if (input[0] == '/' && input.getSize() > 1 && input[1] != ' ') {
+                    ModCmdEvent *event = new ModCmdEvent();
+
+                    event->user = game.player;
+
+                    size_t cmd_name_len = 0;
+
+                    for (size_t i = 1; i < input.getSize() && input[i] != ' '; ++cmd_name_len, ++i) {}
+
+                    // Notice that cmd_name_end is "length" in this context.
+                    event->name = input.substring(1, cmd_name_len).toAnsiString();
+
+                    size_t cmd_arg_start = cmd_name_len+2;
+                    size_t cmd_arg_len = 0;
+
+                    for (size_t i = cmd_name_len+2; i < input.getSize(); ++i) {
+                        if (input[i] == ' ') {
+                            if (cmd_arg_len) {
+                                event->args.push_back(input.substring(cmd_arg_start, cmd_arg_len).toAnsiString());
+                            }
+
+                            cmd_arg_start = i+1;
+                            cmd_arg_len = 0;
+                        } else {
+                            ++cmd_arg_len;
+                        }
+                    }
+
+                    // Last argument. Dunno how to make it work better atm
+                    if (cmd_arg_len) {
+                        event->args.push_back(input.substring(cmd_arg_start, cmd_arg_len).toAnsiString());
+                    }
+
+                    game.events.emplace(Event::ChatCmd, event);
+                } else {
+                    game.chat.print({ "<singleplayer> " + input, sf::Color::White });
+                }
+
+                game.hud.focusPop();
             }
 
             return true;
@@ -171,6 +212,14 @@ namespace Terrarium {
 
             input_shape.setFillColor(i_color);
             target.draw(input_shape, combined_transform);
+
+            sf::Color input_text_color = sf::Color::White;
+
+            if (buffer.getSize() != 0 && buffer[0] == '/') {
+                input_text_color = command_color;
+            }
+
+            input_text.setFillColor(input_text_color);
 
             target.draw(input_text, combined_transform);
 

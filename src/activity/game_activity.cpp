@@ -379,6 +379,10 @@ namespace Terrarium {
                     break;
 
                     case sf::Keyboard::Enter:
+                    // For some reason when i handle printable characters for
+                    // opening chat, they also get added. Imma abuse that for
+                    // commands but not sure if this thing is actually portable.
+                    case sf::Keyboard::Slash:
                         game->hud.setVisible("chat", true);
                     break;
 

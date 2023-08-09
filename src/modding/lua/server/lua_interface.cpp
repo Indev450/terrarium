@@ -37,6 +37,7 @@
 #include "lua_block.hpp"
 #include "lua_player.hpp"
 #include "lua_cmd.hpp"
+#include "lua_chat.hpp"
 #include "lua_mapgen.hpp"
 #include "lua_hud_bar.hpp"
 #include "lua_sound.hpp"
@@ -60,6 +61,7 @@ namespace Terrarium {
         LuaMapgenAPI::init(*this);
         LuaPlayerAPI::init(*this);
         LuaCmdAPI::init(*this);
+        LuaChatAPI::init(*this);
         LuaHudBarAPI::init(*this);
         LuaSoundAPI::init(*this);
 
@@ -123,6 +125,13 @@ namespace Terrarium {
                 {
                     pushModCmdEvent(*event.cmd);
                     lua_setfield(L, -2, "mod_cmd");
+                }
+                break;
+
+                case Event::ChatCmd:
+                {
+                    pushModCmdEvent(*event.cmd);
+                    lua_setfield(L, -2, "chat_cmd");
                 }
                 break;
 

@@ -72,6 +72,7 @@ namespace Terrarium {
 
         const sf::Color background_color = sf::Color(156, 156, 156);
         const sf::Color input_color = sf::Color(156, 156, 156);
+        const sf::Color command_color = sf::Color(212, 212, 128);
         const uint8_t base_transparency = 128;
 
         // Used to check if there are new messages appeared
