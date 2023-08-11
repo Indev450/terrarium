@@ -24,7 +24,7 @@
 
 #include "lua_interface.hpp"
 #include "lua_mapgen.hpp"
-#include "lua_util.hpp"
+#include "../common/lua_util.hpp"
 
 namespace Terrarium {
 

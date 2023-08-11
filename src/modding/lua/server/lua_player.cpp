@@ -23,7 +23,7 @@
 #include "lua_player.hpp"
 #include "lua_interface.hpp"
 #include "lua_inventory.hpp"
-#include "lua_util.hpp"
+#include "../common/lua_util.hpp"
 
 namespace Terrarium {
 

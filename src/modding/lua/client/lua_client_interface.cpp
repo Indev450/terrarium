@@ -22,8 +22,7 @@
 
 #include "lua_client_interface.hpp"
 
-// TODO - create 'common' directory for this
-#include "../server/lua_util.hpp"
+#include "../common/lua_util.hpp"
 
 #include "lua_cmd.hpp"
 #include "lua_rendering.hpp"

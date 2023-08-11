@@ -15,6 +15,7 @@ file(GLOB CRAFT_SOURCES "src/craft/*.cpp")
 file(GLOB UI_SOURCES "src/ui/*.cpp")
 file(GLOB WORLD_SOURCES "src/world/*.cpp")
 file(GLOB MAPGEN_SOURCES "src/mapgen/*.cpp")
+file(GLOB LUA_COMMON_API_SOURCES "src/modding/lua/common/*.cpp")
 file(GLOB LUA_SERVER_API_SOURCES "src/modding/lua/server/*.cpp")
 file(GLOB LUA_CLIENT_API_SOURCES "src/modding/lua/client/*.cpp")
 file(GLOB UTILS_SOURCES "src/utils/*.cpp")
@@ -33,6 +34,7 @@ add_executable(terrarium
     ${UI_SOURCES}
     ${WORLD_SOURCES}
     ${MAPGEN_SOURCES}
+    ${LUA_COMMON_API_SOURCES}
     ${LUA_SERVER_API_SOURCES}
     ${LUA_CLIENT_API_SOURCES}
     ${UTILS_SOURCES}

@@ -22,7 +22,7 @@
 
 #include "lua_ui.hpp"
 #include "lua_client_interface.hpp"
-#include "../server/lua_util.hpp"
+#include "../common/lua_util.hpp"
 #include "../../../game.hpp"
 #include "../../../ui/frame.hpp"
 

@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-#include "lua_util.hpp"
+#include "../common/lua_util.hpp"
 
 namespace Terrarium {
 

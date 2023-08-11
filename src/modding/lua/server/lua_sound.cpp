@@ -22,7 +22,7 @@
 
 #include "lua_sound.hpp"
 #include "lua_interface.hpp"
-#include "lua_util.hpp"
+#include "../common/lua_util.hpp"
 #include "lua_entity.hpp"
 
 namespace Terrarium {

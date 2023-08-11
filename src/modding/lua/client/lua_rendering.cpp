@@ -24,7 +24,7 @@
 
 #include "lua_rendering.hpp"
 #include "lua_client_interface.hpp"
-#include "../server/lua_util.hpp"
+#include "../common/lua_util.hpp"
 #include "../../../game.hpp"
 
 namespace Terrarium {

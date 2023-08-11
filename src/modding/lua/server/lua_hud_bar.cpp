@@ -23,7 +23,7 @@
 #include <memory>
 
 #include "lua_interface.hpp"
-#include "lua_util.hpp"
+#include "../common/lua_util.hpp"
 #include "lua_hud_bar.hpp"
 #include "../../../ui/bar.hpp"
 

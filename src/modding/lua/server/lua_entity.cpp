@@ -23,7 +23,7 @@
 #include <stdexcept>
 
 #include "lua_entity.hpp"
-#include "lua_util.hpp"
+#include "../common/lua_util.hpp"
 #include "lua_interface.hpp"
 
 namespace Terrarium {
