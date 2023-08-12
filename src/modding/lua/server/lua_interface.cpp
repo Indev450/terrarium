@@ -308,7 +308,7 @@ namespace Terrarium {
         for (const auto &entry: fs::directory_iterator(mods_path)) {
             if (entry.is_directory(ec)) {
                 try {
-                    mods_unsorted.push_back(load_config(L_conf, entry.path()));
+                    mods_unsorted.push_back(load_config(entry.path()));
                 } catch (const std::runtime_error &e) {
                     std::cerr<<"Terrarium::LuaModdingInterface::loadMods: cannot open ";
                     std::cerr<<entry;

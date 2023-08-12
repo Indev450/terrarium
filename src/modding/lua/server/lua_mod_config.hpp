@@ -27,8 +27,6 @@
 #include <filesystem>
 #include <set>
 
-#include <lua.hpp>
-
 namespace fs = std::filesystem;
 
 namespace Terrarium {
@@ -43,7 +41,7 @@ namespace Terrarium {
         std::set<std::string> unsatisfied_depends;
     };
 
-    LuaModConfig load_config(lua_State *L, const fs::path &root);
+    LuaModConfig load_config(const fs::path &root);
 
 }
 

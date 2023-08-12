@@ -23,66 +23,35 @@
 #include <stdexcept>
 
 #include "lua_mod_config.hpp"
-#include "../common/lua_util.hpp"
+
+#include "../../../utils/datafile.hpp"
 
 namespace Terrarium {
 
-    LuaModConfig load_config(lua_State *L, const fs::path &root) {
-        if (!LuaUtil::run_script(L, (root / "config.lua").string().c_str())) {
-            std::string error_msg = "Failed to load config at ";
-            error_msg += (root / "config.lua").string();
+    LuaModConfig load_config(const fs::path &root) {
+        Datafile datafile;
 
-            throw std::runtime_error(error_msg);
+        if (!datafile.loadFromFile(root / "config.txt")) {
+            throw std::runtime_error("No mod config found in " + root.string());
         }
 
         LuaModConfig config;
 
         config.root = root;
 
-        if (lua_getglobal(L, "config") != LUA_TTABLE) {
-            lua_pop(L, 1);
+        config.name = datafile["name"].getString();
 
-            std::string error_msg = "'config' global expected to be a table in ";
-            error_msg += (root / "config.lua").string().c_str();
-
-            throw std::runtime_error(error_msg);
-        }
-
-        lua_getfield(L, -1, "name");
-        config.name = luaL_checkstring(L, -1);
-        lua_pop(L, 1);
-
-        if (!lua_getfield(L, -1, "depends") == LUA_TNIL) {
-            lua_Integer len = luaL_len(L, -1);
-
-            for (lua_Integer i = 1; i <= len; ++i) {
-                lua_geti(L, -1, i);
-
-                config.depends.insert(luaL_checkstring(L, -1));
-
-                lua_pop(L, 1);
+        if (datafile.childExists("depends")) {
+            for (size_t i = 0; i < datafile["depends"].getValueCount(); ++i) {
+                config.depends.insert(datafile["depends"].getString(i));
             }
         }
 
-        lua_pop(L, 1);
-
-        if (!lua_getfield(L, -1, "optional_depends") == LUA_TNIL) {
-            lua_Integer len = luaL_len(L, -1);
-
-            for (lua_Integer i = 1; i < len; ++i) {
-                lua_geti(L, -1, i);
-
-                config.optional_depends.insert(luaL_checkstring(L, -1));
-
-                lua_pop(L, 1);
+        if (datafile.childExists("optional_depends")) {
+            for (size_t i = 0; i < datafile["optional_depends"].getValueCount(); ++i) {
+                config.optional_depends.insert(datafile["optional_depends"].getString(i));
             }
         }
-
-        lua_pop(L, 2); // Also pops "config"
-
-        // Remove that table to avoid conflicts with other mods
-        lua_pushnil(L);
-        lua_setglobal(L, "config");
 
         return config;
     }

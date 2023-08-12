@@ -27,6 +27,9 @@
 #include <fstream>
 #include <utility>
 #include <functional>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace Terrarium {
 
@@ -96,7 +99,7 @@ namespace Terrarium {
             return children[children_ids[child_name]].second;
         }
 
-        bool saveToFile(const std::string &filename,
+        bool saveToFile(const fs::path &filename,
                         const std::string &indent = "    ",
                         char listSep = ',') {
 
@@ -109,7 +112,7 @@ namespace Terrarium {
             return true;
         }
 
-        bool loadFromFile(const std::string &filename, char listSep = ',') {
+        bool loadFromFile(const fs::path &filename, char listSep = ',') {
             std::ifstream file(filename);
 
             if (!file.is_open()) return false;
