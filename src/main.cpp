@@ -41,6 +41,7 @@
 #include "ui/craft_ui.hpp"
 #include "ui/chat.hpp"
 #include "utils/saves.hpp"
+#include "utils/datafile.hpp"
 #include "mapgen/mapgen_perlin.hpp"
 #include "modding/lua/server/lua_interface.hpp"
 #include "modding/lua/client/lua_client_interface.hpp"
@@ -54,6 +55,36 @@
 #define TERRARIUM_VERSION_MINOR 6
 #define TERRARIUM_VERSION_PATCH 0
 
+#define SETTINGS_VERSION 1
+
+void applyDefaultSettings(Terrarium::Datafile &settings) {
+    auto &video = settings["video"];
+
+    video["vsync"].setBool(true);
+    video["max_fps"].setInt(60);
+
+    video["resolution"].setInt(800, 0);
+    video["resolution"].setInt(640, 1);
+
+    auto &mapgen = settings["mapgen"];
+
+    mapgen["world_size"].setInt(2000, 0);
+    mapgen["world_size"].setInt(1000, 1);
+
+    auto &perlin = mapgen["perlin"];
+
+    perlin["ground_gen_scale"].setReal(0.05);
+
+    perlin["cave_gen_scale"].setReal(0.05, 0);
+    perlin["cave_gen_scale"].setReal(0.05, 1);
+
+    perlin["biome_gen_scale"].setReal(0.003, 0);
+    perlin["biome_gen_scale"].setReal(0.005, 1);
+
+    perlin["min_block_density"].setReal(0.4);
+    perlin["min_wall_density"].setReal(0.2);
+}
+
 const char *TITLE = "TerrariumEngine";
 
 int main(int argc, char **argv)
@@ -63,8 +94,29 @@ int main(int argc, char **argv)
              <<TERRARIUM_VERSION_MINOR<<'.'
              <<TERRARIUM_VERSION_PATCH<<std::endl;
 
-    auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(800, 640), TITLE);
-    window->setVerticalSyncEnabled(true);
+    Terrarium::Datafile settings;
+
+    // Create "version" field so it is in the beginning of file
+    settings["version"];
+
+    applyDefaultSettings(settings);
+
+    // Would create default settings file if it didn't exist or is outdated
+    if (!settings.loadFromFile("settings.txt") || settings["version"].getInt() < SETTINGS_VERSION) {
+        std::cout<<"Writing to settings file"<<std::endl;
+        settings["version"].setInt(SETTINGS_VERSION);
+        settings.saveToFile("settings.txt");
+    }
+
+    auto &video = settings["video"];
+
+    auto window = std::make_unique<sf::RenderWindow>(sf::VideoMode(video["resolution"].getInt(0), video["resolution"].getInt(1)), TITLE);
+
+    if (video["vsync"].getBool()) {
+        window->setVerticalSyncEnabled(true);
+    } else {
+        window->setFramerateLimit(video["max_fps"].getInt());
+    }
 
     sf::Image icon;
 
@@ -97,7 +149,7 @@ int main(int argc, char **argv)
         { sf::Color(20, 10, 70),   60.0*4, 40  },
     };
 
-    game->hud.setScreenSize(sf::Vector2f(800, 640));
+    game->hud.setScreenSize(sf::Vector2f(video["resolution"].getInt(0), video["resolution"].getInt(1)));
 
     if (!game->gfx.font.loadFromFile("assets/monogram.ttf")) {
         std::cerr<<"Cannot load font"<<std::endl;
@@ -132,27 +184,28 @@ int main(int argc, char **argv)
 
         am.setActivity(std::make_unique<Terrarium::GameActivity>(am, game, save_name));
     } else {
-        // Create mapgen. I think mapgen can be configured when game will have
-        // menu and settings, so i will leave hardcoded settings for now
+        auto &mgsettings = settings["mapgen"];
+        auto &perlin = mgsettings["perlin"];
+
         auto mapgen = std::make_unique<Terrarium::MapgenPerlin>(time(nullptr));
 
-        mapgen->settings.ground_gen_scale = 1./20;
+        mapgen->settings.ground_gen_scale = perlin["ground_gen_scale"].getReal();
 
-        mapgen->settings.cave_gen_scale_x = 1./20;
-        mapgen->settings.cave_gen_scale_y = 1./20;
+        mapgen->settings.cave_gen_scale_x = perlin["cave_gen_scale"].getReal(0);
+        mapgen->settings.cave_gen_scale_y = perlin["cave_gen_scale"].getReal(1);
 
-        mapgen->settings.biome_gen_scale_x = 1./300;
-        mapgen->settings.biome_gen_scale_y = 1./200;
+        mapgen->settings.biome_gen_scale_x = perlin["biome_gen_scale"].getReal(0);
+        mapgen->settings.biome_gen_scale_y = perlin["biome_gen_scale"].getReal(1);
 
-        mapgen->settings.min_block_density = 0.4;
-        mapgen->settings.min_wall_density = 0.2;
+        mapgen->settings.min_block_density = perlin["min_block_density"].getReal();
+        mapgen->settings.min_wall_density = perlin["min_wall_density"].getReal();
 
         // In theory, i could leave mapgen configuration to lua, but i'm planning
         // to add more different mapgens in future (just like in minetest),
         // and i currently haven't figured "protocol" for polymorphic mapgen configuration.
         game->modding_interface->initMapgen(*mapgen);
 
-        am.setActivity(std::make_unique<Terrarium::MapgenActivity>(game, std::move(mapgen), 2000, 1000, save_name));
+        am.setActivity(std::make_unique<Terrarium::MapgenActivity>(game, std::move(mapgen), mgsettings["world_size"].getInt(0), mgsettings["world_size"].getInt(1), save_name));
     }
 
     // HUD elements
