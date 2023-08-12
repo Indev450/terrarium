@@ -1,59 +1,41 @@
 default_player_saver = {
     load = function(self, save_dir_path)
-        local file = io.open(save_dir_path.."/".."default.save")
+        local save = datafile.from_file(save_dir_path.."/default_save.txt")
 
-        if not file then return end
+        for pname, pdata in save:iter_children() do
+            self.data[pname] = {
+                gave_init_stuff = pdata["gave_init_stuff"]:get_bool(),
+                equipment = {}
+            }
 
-        local save_data
+            local equipment = self.data[pname].equipment
 
-        for line in file:lines() do
-            local cmd_start, cmd_end = line:find("[^%s]+")
-
-            if cmd_start then
-                local cmd = line:sub(cmd_start, cmd_end)
-
-                if cmd == "player" then
-                    local playername = line:sub(line:find(".+", cmd_end+2))
-
-                    save_data = self:get_save_data(playername)
-                elseif cmd == "gave_init_stuff" then
-                    save_data.gave_init_stuff = true
-                elseif cmd == "equipment" then
-                    local slot_start, slot_end = line:find("[^%s]+", cmd_end+2)
-
-                    local slot = line:sub(slot_start, slot_end)
-
-                    local item_str = line:sub(line:find(".+", slot_end+2))
-
-                    local item_stack = ItemStack(item_str)
-
-                    save_data.equipment[slot] = item_stack
-                end
+            for slot, itemdata in pdata["equipment"]:iter_children() do
+                equipment[slot] = ItemStack(itemdata["name"]:get_string(), itemdata["count"]:get_number())
             end
         end
-
-        file:close()
     end,
 
     save = function(self, save_dir_path)
-        local file = io.open(save_dir_path.."/".."default.save", "w")
+        local save = datafile.new()
 
         for name, save_data in pairs(self.data) do
-            file:write("player "..name.."\n")
+            local pdata = save[name]
 
             if save_data.gave_init_stuff then
-                file:write("gave_init_stuff\n")
+                pdata["gave_init_stuff"]:set_bool(true)
             end
 
+            local equipment = pdata["equipment"]
+
             for slot, item_stack in pairs(save_data.equipment) do
-                file:write("equipment "..slot
-                           .." "..item_stack:get_item_name()
-                           .." "..item_stack:get_item_count()
-                           .."\n")
+                local itemdata = equipment[slot]
+                itemdata["name"]:set_string(item_stack:get_item_name())
+                itemdata["count"]:set_number(item_stack:get_item_count())
             end
         end
 
-        file:close()
+        save:to_file(save_dir_path.."/default_save.txt")
     end,
 
     get_save_data = function(self, playername)

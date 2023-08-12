@@ -1,6 +1,7 @@
 terraclient = {}
 
 dofile("wrappers/vec2.lua")
+dofile("wrappers/datafile.lua")
 
 local update = {}
 local frames = {}

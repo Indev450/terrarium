@@ -30,6 +30,7 @@
 #include "lua_interface.hpp"
 #include "lua_mod_config.hpp"
 #include "../common/lua_util.hpp"
+#include "../common/lua_datafile.hpp"
 #include "lua_entity.hpp"
 #include "lua_item.hpp"
 #include "lua_crafting.hpp"
@@ -52,6 +53,8 @@ namespace Terrarium {
 
         lua_newtable(L);
         lua_setglobal(L, "core");
+
+        LuaDatafileAPI::init(L);
 
         LuaEntityAPI::init(*this);
         LuaItemAPI::init(*this);

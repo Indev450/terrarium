@@ -4,6 +4,7 @@ core._event_handlers = {}
 core._update_hooks = {}
 
 dofile("wrappers/util.lua")
+dofile("wrappers/datafile.lua")
 dofile("wrappers/timer.lua")
 dofile("wrappers/vec2.lua")
 dofile("wrappers/color.lua")

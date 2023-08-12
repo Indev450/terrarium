@@ -90,6 +90,10 @@ namespace Terrarium {
             return content.empty() && children.empty();
         }
 
+        const std::vector<std::pair<std::string, Datafile>> &getChildren() const {
+            return children;
+        }
+
         Datafile &operator[](const std::string &child_name) {
             if (!childExists(child_name)) {
                 children_ids[child_name] = children.size();

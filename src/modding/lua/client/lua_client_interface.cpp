@@ -23,6 +23,7 @@
 #include "lua_client_interface.hpp"
 
 #include "../common/lua_util.hpp"
+#include "../common/lua_datafile.hpp"
 
 #include "lua_cmd.hpp"
 #include "lua_rendering.hpp"
@@ -38,6 +39,8 @@ namespace Terrarium {
 
         lua_newtable(L);
         lua_setglobal(L, "core");
+
+        LuaDatafileAPI::init(L);
 
         LuaClientCmdAPI::init(*this);
         LuaClientRenderingAPI::init(*this);
