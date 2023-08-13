@@ -637,10 +637,10 @@ terrarium.register_on_map_generated(function()
         local add_unique = math.random() < 0.5 -- Add 1 unique item
 
         for i = 1, 8 do
-            local lootgroup = "default:test_dungeon_loot"
+            local loot_group = "default:test_dungeon_loot"
 
             if add_unique then
-                lootgroup = "default:test_dungeon_loot_unique"
+                loot_group = "default:test_dungeon_loot_unique"
                 add_unique = false
             end
 
