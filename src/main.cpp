@@ -73,16 +73,22 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
 
     auto &perlin = mapgen["perlin"];
 
-    perlin["ground_gen_scale"].setReal(0.05);
+    perlin["ground_gen_scale"].setReal(0.035);
+    perlin["ground_height_amp"].setReal(0.35);
 
     perlin["cave_gen_scale"].setReal(0.05, 0);
-    perlin["cave_gen_scale"].setReal(0.05, 1);
+    perlin["cave_gen_scale"].setReal(0.06, 1);
 
     perlin["biome_gen_scale"].setReal(0.003, 0);
     perlin["biome_gen_scale"].setReal(0.005, 1);
 
-    perlin["min_block_density"].setReal(0.4);
-    perlin["min_wall_density"].setReal(0.2);
+    perlin["min_block_density"].setReal(0.35);
+    perlin["max_block_density"].setReal(0.55);
+
+    perlin["min_density_factor"].setReal(0.35);
+
+    perlin["min_cave_scale_factor"].setReal(0.5);
+    perlin["max_cave_scale_factor"].setReal(0.7);
 }
 
 const char *TITLE = "TerrariumEngine";
@@ -191,6 +197,8 @@ int main(int argc, char **argv)
 
         mapgen->settings.ground_gen_scale = perlin["ground_gen_scale"].getReal();
 
+        mapgen->settings.height_amp = perlin["ground_height_amp"].getReal();
+
         mapgen->settings.cave_gen_scale_x = perlin["cave_gen_scale"].getReal(0);
         mapgen->settings.cave_gen_scale_y = perlin["cave_gen_scale"].getReal(1);
 
@@ -198,7 +206,12 @@ int main(int argc, char **argv)
         mapgen->settings.biome_gen_scale_y = perlin["biome_gen_scale"].getReal(1);
 
         mapgen->settings.min_block_density = perlin["min_block_density"].getReal();
-        mapgen->settings.min_wall_density = perlin["min_wall_density"].getReal();
+        mapgen->settings.max_block_density = perlin["max_block_density"].getReal();
+
+        mapgen->settings.min_density_factor = perlin["min_density_factor"].getReal();
+
+        mapgen->settings.min_cave_scale_factor = perlin["min_cave_scale_factor"].getReal();
+        mapgen->settings.max_cave_scale_factor = perlin["max_cave_scale_factor"].getReal();
 
         // In theory, i could leave mapgen configuration to lua, but i'm planning
         // to add more different mapgens in future (just like in minetest),

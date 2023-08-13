@@ -51,11 +51,18 @@ namespace Terrarium {
         float biome_gen_scale_x = 1.0;
         float biome_gen_scale_y = 1.0;
 
-        // If density value is higher than this, foreground filler block
-        // placed. Same goes for background. Usually, background density
-        // should be lower.
+        // If density value is outside of this range, solid block is placed
         float min_block_density = 0.0;
-        float min_wall_density = -0.2;
+        float max_block_density = 0.2;
+
+        // Minimal value for density factor. Density factor increases with
+        // depth, so at surface level it is quite small, so to avoid 1-block
+        // caves, this minimum value picked if actual value is too small.
+        float min_density_factor = 0.5;
+
+        // Same, but for scaling caves
+        float min_cave_scale_factor = 0.5;
+        float max_cave_scale_factor = 1.0;
 
         // Default filler for world, usually this is regular stone
         Tile filler = { 0, 0 };

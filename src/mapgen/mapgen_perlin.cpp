@@ -47,17 +47,35 @@ namespace Terrarium {
             column_height += base_height * (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
 
             for (int y = column_height; y < static_cast<int>(world.getHeight()); ++y) {
+                world.setWall(x, y, settings.filler.bg);
+
+                // Makes caves less common on surface
+                float density_check_factor = float(y)/world.getHeight();
+
+                // Make it squared so it doesn't grow too fast
+                density_check_factor *= density_check_factor;
+
+                // Don't make it way too small so we don't have 1 block size
+                // caves or around that
+                float cave_scale_factor = std::max(std::min(density_check_factor, settings.min_cave_scale_factor), settings.min_cave_scale_factor);
+                density_check_factor = std::max(density_check_factor, settings.min_density_factor);
+
                 float density = perlin.noise(
-                    x*settings.cave_gen_scale_x,
-                    y*settings.cave_gen_scale_y,
+                    x*settings.cave_gen_scale_x*cave_scale_factor,
+                    y*settings.cave_gen_scale_y*cave_scale_factor,
                     DENSITY);
 
-                // Depending on density, place walls and blocks
-                if (density > settings.min_wall_density) {
-                    world.setWall(x, y, settings.filler.bg);
-                }
+                float density_space = settings.max_block_density - settings.min_block_density;
+                float density_avg = (settings.max_block_density + settings.min_block_density) / 2;
+                float min_density = density_avg - density_space/2*density_check_factor;
+                float max_density = density_avg + density_space/2*density_check_factor;
 
-                if (density > settings.min_block_density) {
+
+                // Depending on density, place walls and blocks
+                //
+                // Is the condition non-intuitive? Maybe, dunno how do i rename
+                // settings then...
+                if (density < min_density || density > max_density) {
                     world.setBlock(x, y, settings.filler.fg);
                 }
             }
