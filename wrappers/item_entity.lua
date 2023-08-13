@@ -83,7 +83,7 @@ terrarium.register_entity("__builtin:item_entity", {
                 speed = closest.dir*speed:length() + closest.dir*item_entity.magnet_accel*dtime
 
                 if speed:length_squared() > item_entity.magnet_max_speed_sqr then
-                    speed:resize_ip(math.sqrt(item_entity.max_speed_sqr))
+                    speed:resize_ip(math.sqrt(item_entity.magnet_max_speed_sqr))
                 end
 
                 self.ref:set_speed(speed)
