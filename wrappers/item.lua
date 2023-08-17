@@ -96,7 +96,7 @@ end
 
 core._event_handlers["ItemUseStop"] = function(event)
     local user = core.get_user(event.item_event.user)
-    local itemstack = event.item_event.item_stack
+    local itemstack = core._item_users[user].itemstack
     local position = event.item_event.position
 
     local name = itemstack:get_item_name()
@@ -139,7 +139,7 @@ end
 
 core._event_handlers["ItemAltUseStop"] = function(event)
     local user = core.get_user(event.item_event.user)
-    local itemstack = event.item_event.item_stack
+    local itemstack = core._item_alt_users[user].itemstack
     local position = event.item_event.position
 
     local name = itemstack:get_item_name()

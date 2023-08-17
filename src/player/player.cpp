@@ -96,7 +96,8 @@ namespace Terrarium {
             if (!hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->item_stack = hotbar[hotbar_selected];
+                // Would use item stack from previously sent ItemUseStart event
+                //item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
@@ -126,7 +127,8 @@ namespace Terrarium {
             if (!hotbar[hotbar_selected]->empty()) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->item_stack = hotbar[hotbar_selected];
+                // See above
+                //item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
@@ -143,7 +145,8 @@ namespace Terrarium {
             if (using_item || alt_using_item) {
                 ItemEvent *item_event = new ItemEvent();
 
-                item_event->item_stack = hotbar[hotbar_selected];
+                // See above
+                //item_event->item_stack = hotbar[hotbar_selected];
 
                 item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
 
@@ -188,6 +191,22 @@ namespace Terrarium {
             game.events.emplace(Event::ItemSelect, item_event);
         } else if ((hotbar[hotbar_selected] && hotbar[hotbar_selected]->getDef() != selected_item)
                 || (!hotbar[hotbar_selected] && selected_item)) {
+
+            // If we were using some item, send event so we stop
+            if (using_item || alt_using_item) {
+                ItemEvent *item_event = new ItemEvent();
+
+                // See above
+                //item_event->item_stack = hotbar[hotbar_selected];
+
+                item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
+
+                item_event->position = controls.mouse_pos;
+
+                game.events.emplace(using_item ? Event::ItemUseStop : Event::ItemAltUseStop, item_event);
+
+                using_item = alt_using_item = false;
+            }
 
             if (hotbar[hotbar_selected])
                 selected_item = hotbar[hotbar_selected]->getDef();
