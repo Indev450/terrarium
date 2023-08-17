@@ -96,6 +96,11 @@ end
 
 core._event_handlers["ItemUseStop"] = function(event)
     local user = core.get_user(event.item_event.user)
+
+    -- Happens if you use item too quickly so use timer prevents from creating
+    -- use ctx
+    if not core._item_users[user] then return end
+
     local itemstack = core._item_users[user].itemstack
     local position = event.item_event.position
 
@@ -139,6 +144,10 @@ end
 
 core._event_handlers["ItemAltUseStop"] = function(event)
     local user = core.get_user(event.item_event.user)
+
+    -- See ItemUseStop
+    if not core._item_alt_users[user] then return end
+
     local itemstack = core._item_alt_users[user].itemstack
     local position = event.item_event.position
 
