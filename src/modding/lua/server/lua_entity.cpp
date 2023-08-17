@@ -890,6 +890,11 @@ namespace Terrarium {
         }
 
         void push_entity(lua_State *L, std::weak_ptr<Entity> entity) {
+            if (!entity.lock()) {
+                lua_pushnil(L);
+                return;
+            }
+
             void *entity_ref_mem = lua_newuserdatauv(L, sizeof(LuaEntityUD), 0);
 
             // Hope that calls constructor

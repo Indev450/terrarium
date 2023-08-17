@@ -197,6 +197,11 @@ namespace Terrarium {
         }
 
         void push_itemstack(lua_State *L, std::shared_ptr<ItemStack> istack) {
+            if (!istack) {
+                lua_pushnil(L);
+                return;
+            }
+
             void *item_stack_mem = lua_newuserdatauv(L, sizeof(LuaItemStackUD), 0);
 
             new (item_stack_mem) LuaItemStackUD(istack);

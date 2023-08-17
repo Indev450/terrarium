@@ -311,6 +311,11 @@ namespace Terrarium {
         }
 
         void push_player(lua_State *L, std::weak_ptr<Player> player_ref) {
+            if (!player_ref.lock()) {
+                lua_pushnil(L);
+                return;
+            }
+
             void *player_ref_mem = lua_newuserdatauv(L, sizeof(LuaPlayerUD), 0);
 
             new (player_ref_mem) LuaPlayerUD(player_ref);
