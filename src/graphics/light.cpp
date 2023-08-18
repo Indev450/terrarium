@@ -157,7 +157,11 @@ namespace Terrarium {
 
                 // There is foreground block...
                 if (tile->fg != 0) {
-                    setMaxLight(inp.light, fg.light);
+                    if (!fg.blocks_light) {
+                        setMaxLight(inp.light, fg.light);
+                    } else {
+                        inp.light = fg.light;
+                    }
 
                     inp.blocks_light = fg.blocks_light;
                 } else {
