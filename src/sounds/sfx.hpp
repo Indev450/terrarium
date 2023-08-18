@@ -28,7 +28,7 @@
 #include <SFML/Audio.hpp>
 
 #include "sound.hpp"
-#include "../utils/overflowing_map.hpp"
+#include "../utils/auto_id_map.hpp"
 #include "../utils/resource_holder.hpp"
 
 namespace Terrarium {
@@ -38,7 +38,7 @@ namespace Terrarium {
     class GameState;
 
     struct Sfx {
-        OverflowingMap<sound_handle, SoundController> playing_sounds;
+        AutoIDMap<sound_handle, SoundController> playing_sounds;
         ResourceHolder<sf::SoundBuffer> sounds;
         ResourceHolder<sf::Music> music;
 

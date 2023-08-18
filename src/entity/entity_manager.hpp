@@ -25,16 +25,16 @@
 
 #include <iostream>
 
-#include "../utils/overflowing_map.hpp"
+#include "../utils/auto_id_map.hpp"
 #include "entity.hpp"
 #include "entity_prefab.hpp"
 
 namespace Terrarium {
 
-    // Protected because OverflowingMap::add function doesn't set entitys id, which can
+    // Protected because AutoIDMap::add function doesn't set entitys id, which can
     // (i think) lead to problems
-    class EntityManager: protected OverflowingMap<entityid, Entity> {
-        OverflowingMap<entity_prefabid, EntityPrefab> prefabs;
+    class EntityManager: protected AutoIDMap<entityid, Entity> {
+        AutoIDMap<entity_prefabid, EntityPrefab> prefabs;
 
     public:
         entity_prefabid addPrefab(std::shared_ptr<EntityPrefab> prefab);
@@ -70,19 +70,19 @@ namespace Terrarium {
 
         // Looks a little ugly, but probably will work without any overhead
         inline std::shared_ptr<Entity> get(entityid id) {
-            return OverflowingMap<entityid, Entity>::get(id);
+            return AutoIDMap<entityid, Entity>::get(id);
         }
 
         inline void del(entityid id) {
-            OverflowingMap<entityid, Entity>::del(id);
+            AutoIDMap<entityid, Entity>::del(id);
         }
 
         auto begin() {
-            return OverflowingMap<entityid, Entity>::begin();
+            return AutoIDMap<entityid, Entity>::begin();
         }
 
         auto end() {
-            return OverflowingMap<entityid, Entity>::end();
+            return AutoIDMap<entityid, Entity>::end();
         }
 
         void update(GameState &game, float dtime);

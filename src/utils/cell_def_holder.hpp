@@ -20,16 +20,16 @@
  *
  */
 
-#include "overflowing_map.hpp"
+#include "auto_id_map.hpp"
 
 namespace Terrarium {
     template <class Id, class CellDef>
-    class CellDefHolder: public OverflowingMap<Id, CellDef> {
+    class CellDefHolder: public AutoIDMap<Id, CellDef> {
         CellDef unknown;
         std::unordered_map<std::string, Id> cell_names;
 
         bool isKeyFree(Id key) override {
-            return key != 0 && OverflowingMap<Id, CellDef>::map.find(key) == OverflowingMap<Id, CellDef>::map.end() && std::all_of(
+            return key != 0 && AutoIDMap<Id, CellDef>::map.find(key) == AutoIDMap<Id, CellDef>::map.end() && std::all_of(
                 cell_names.begin(),
                 cell_names.end(),
                 [&] (auto &pair) { return pair.second != key; }
@@ -41,7 +41,7 @@ namespace Terrarium {
         // or reference to "unknown" cell. It makes easier to control
         // unknown cell behavior.
         CellDef &getOrUnknown(Id id) {
-            std::shared_ptr<CellDef> def = OverflowingMap<Id, CellDef>::get(id);
+            std::shared_ptr<CellDef> def = AutoIDMap<Id, CellDef>::get(id);
 
             if (def == nullptr) {
                 return unknown;
@@ -54,11 +54,11 @@ namespace Terrarium {
             auto pair = cell_names.find(def->name);
 
             if (pair != cell_names.end()) {
-                OverflowingMap<Id, CellDef>::set(pair->second, def);
+                AutoIDMap<Id, CellDef>::set(pair->second, def);
 
                 return pair->second;
             } else {
-                Id id = OverflowingMap<Id, CellDef>::add(def);
+                Id id = AutoIDMap<Id, CellDef>::add(def);
 
                 cell_names[def->name] = id;
 

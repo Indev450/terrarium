@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef OVERFLOWING_MAP_HPP
-#define OVERFLOWING_MAP_HPP
+#ifndef AUTO_ID_MAP_HPP
+#define AUTO_ID_MAP_HPP
 
 #include <unordered_map>
 #include <memory>
@@ -31,7 +31,7 @@ namespace Terrarium {
     // Utility class that stores data associated with id that can be overflowed,
     // such as uint16_t
     template <class Key, class Value>
-    class OverflowingMap {
+    class AutoIDMap {
         Key last_key = 0;
 
         Key getFreeKey() {
