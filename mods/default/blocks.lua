@@ -466,6 +466,7 @@ terrarium.register_block("default:sand", {
 terrarium.register_block("default:glass", {
     description = "Glass",
 
+    draw_type = "Autotile",
     image = "glass.png",
 
     slippery = 0.7,
@@ -477,6 +478,8 @@ terrarium.register_block("default:glass", {
     groups = {
         ["ground"] = 1,
     },
+
+    inventory_image = "glass_item.png",
 })
 
 terrarium.register_block("default:stone_bricks", {
@@ -982,6 +985,34 @@ terrarium.register_block("default:torch", {
         user.ref:set_light({ r = 0, g = 0, b = 0 })
     end,
 })
+
+local crystals = {
+    { name = "Cyan",   light = color.new(60, 80, 120) },
+    { name = "Green",  light = color.new(60, 120, 80) },
+    { name = "Purple", light = color.new(120, 60, 120) },
+    { name = "Red", light = color.new(120, 80, 60) },
+    { name = "White", light = color.new(120, 120, 120) },
+    { name = "Yellow", light = color.new(120, 120, 60) },
+}
+
+for _, crystal in ipairs(crystals) do
+    terrarium.register_block("default:"..crystal.name:lower().."_crystal", {
+        description = crystal.name.." crystal",
+
+        image = crystal.name:lower().."_crystal_block.png",
+
+        autotile_neighbour = false,
+        is_solid = false,
+
+        light = crystal.light,
+
+        groups = {
+            ["ground"] = 1,
+        },
+
+        inventory_image = crystal.name:lower().."_crystal.png",
+    })
+end
 
 terrarium.register_block("default:alarm_lamp", {
     description = "Alarm Lamp",

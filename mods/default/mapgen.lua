@@ -523,6 +523,59 @@ terrarium.register_ore({
     },
 })
 
+local crystals = {
+    "cyan",
+    "green",
+    "purple",
+    "red",
+    "white",
+    "yellow",
+}
+
+local crystal_decorations = {}
+
+for _, name in ipairs(crystals) do
+    crystal_decorations[name.."_crystal"] = terrarium.single_tile_decor {
+        tile = { block = "default:"..name.."_crystal" },
+        place_chance = 0.01,
+        conditions = {
+            {
+                position = { x = 0, y = 1 },
+                fg = { type = "AnySolidBlock" }
+            }
+        },
+    }
+end
+
+terrarium.register_biome("default:crystal_caves", {
+    humidity_min = 0.2,
+    heat_min = 0.6,
+
+    top = {
+        block = "default:stone",
+        wall = "default:stone",
+    },
+
+    top_depth = 1,
+
+    filler = {
+        block = "default:stone",
+        wall = "default:stone",
+    },
+
+    filler_depth = 1,
+
+    stone = {
+        block = "default:stone",
+        wall = "default:stone",
+    },
+
+    priority = 2,
+
+    min_depth = 0.6,
+
+    decorations = crystal_decorations,
+})
 
 terrarium.register_ore({
     cluster_tiles = 12,
