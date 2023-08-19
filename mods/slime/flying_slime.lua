@@ -8,8 +8,8 @@ local function register_flying_slime(name, image, projectile)
         image = image,
 
         size = {
-            width = 22/16,
-            height = 37/16,
+            x = 22/16,
+            y = 37/16,
         },
 
         animations = {

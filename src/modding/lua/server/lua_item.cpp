@@ -25,6 +25,7 @@
 #include "lua_item.hpp"
 #include "lua_interface.hpp"
 #include "../common/lua_util.hpp"
+#include "../common/lua_field_checker.hpp"
 
 namespace Terrarium {
 
@@ -86,29 +87,28 @@ namespace Terrarium {
             const char *name = luaL_checkstring(L, 1);
             item_def->name = name;
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table as item def");
+            luaL_checktype(L, 2, LUA_TTABLE);
+
+            LuaUtil::FieldChecker checker(L, "ItemDef", 2);
+
+            try {
+                item_def->description = checker.checkstring("description");
+
+                const char *inventory_image = checker.checkstring("inventory_image");
+                item_def->inventory_image.setTexture(lua_interface->game->gfx.textures.get(inventory_image));
+
+                uint16_t max_count = checker.checkunsigned("max_count");
+
+                if (max_count == 0) {
+                    checker.fielderror("max_count", "number should be natural");
+                }
+
+                item_def->max_count = max_count;
+
+                lua_interface->game->item_defs.add(item_def);
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_getfield(L, 2, "description");
-            item_def->description = luaL_checkstring(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "inventory_image");
-            const char *inventory_image = luaL_checkstring(L, -1);
-            item_def->inventory_image.setTexture(lua_interface->game->gfx.textures.get(inventory_image));
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "max_count");
-            uint16_t max_count = LuaUtil::checkinteger_ranged<uint16_t>(L, -1);
-
-            if (max_count == 0) {
-                return luaL_error(L, "max item count cannot be 0");
-            }
-
-            item_def->max_count = max_count;
-
-            lua_interface->game->item_defs.add(item_def);
 
             return 0;
         }

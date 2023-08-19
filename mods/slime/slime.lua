@@ -21,8 +21,8 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
         image = image,
 
         size = {
-            width = sprite_width/16,
-            height = sprite_height/16,
+            x = sprite_width/16,
+            y = sprite_height/16,
         },
 
         hitbox = {
@@ -278,7 +278,7 @@ local function spawn_slime(player)
                     for y = start_y, start_y+2 do
                         local def = terrarium.registered_blocks[terrarium.get_block(x, y)]
 
-                        if def ~= nil and def.is_solid then
+                        if def ~= nil and def.solid then
                             return false
                         end
                     end

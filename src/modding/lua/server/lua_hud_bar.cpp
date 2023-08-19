@@ -24,6 +24,7 @@
 
 #include "lua_interface.hpp"
 #include "../common/lua_util.hpp"
+#include "../common/lua_field_checker.hpp"
 #include "lua_hud_bar.hpp"
 #include "../../../ui/bar.hpp"
 
@@ -43,71 +44,57 @@ namespace Terrarium {
 
             std::string name = luaL_checkstring(L, 1);
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table as bar def");
+            luaL_checktype(L, 2, LUA_TTABLE);
+
+            LuaUtil::FieldChecker checker(L, "HudBar", 2);
+
+            try {
+                sf::FloatRect geometry = checker.checkrect<float>("geometry");
+
+                auto bar = std::make_unique<Bar>(
+                    sf::Vector2f(geometry.width, geometry.height),
+                    lua_interface->game->gfx
+                );
+
+                bar->setPosition(geometry.left, geometry.top);
+
+                static const char* styles[] = {
+                    "Division",
+                    "Value",
+                    "None",
+                    nullptr,
+                };
+
+                int text_style_i = checker.checkoption("text_style", "None", styles);
+
+                BarTextStyle text_style;
+
+                switch (text_style_i) {
+                    case 0: text_style = BarTextStyle::Division; break;
+                    case 1: text_style = BarTextStyle::Value; break;
+                    default: text_style = BarTextStyle::None; break;
+                }
+
+                bar->setTextStyle(text_style);
+
+                if (text_style != BarTextStyle::None) {
+                    bar->setText(checker.checkstring("text"));
+
+                    bar->setTextSize(checker.checkunsigned("text_size"));
+
+                    bar->setTextColor(checker.checkcolor("text_color"));
+                }
+
+                bar->setBackgroundColor(checker.checkcolor("background_color"));
+
+                bar->setBarColor(checker.checkcolor("bar_color"));
+
+                bar->setMaxValue(checker.checknumber("max_value"));
+
+                lua_interface->game->hud.addBar(name, std::move(bar));
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_getfield(L, 2, "geometry");
-            sf::FloatRect geometry = LuaUtil::checkfloatrect(L, -1);
-            lua_pop(L, 1);
-
-            auto bar = std::make_unique<Bar>(
-                sf::Vector2f(geometry.width, geometry.height),
-                lua_interface->game->gfx
-            );
-
-            bar->setPosition(geometry.left, geometry.top);
-
-            lua_getfield(L, 2, "text_style");
-
-            static const char* styles[] = {
-                "Division",
-                "Value",
-                "None",
-                nullptr,
-            };
-
-            int text_style_i = luaL_checkoption(L, -1, "None", styles);
-
-            BarTextStyle text_style;
-
-            switch (text_style_i) {
-                case 0: text_style = BarTextStyle::Division; break;
-                case 1: text_style = BarTextStyle::Value; break;
-                default: text_style = BarTextStyle::None; break;
-            }
-
-            lua_pop(L, 1);
-
-            bar->setTextStyle(text_style);
-
-            if (text_style != BarTextStyle::None) {
-                lua_getfield(L, 2, "text");
-                bar->setText(luaL_checkstring(L, -1));
-                lua_pop(L, 1);
-
-                lua_getfield(L, 2, "text_size");
-                bar->setTextSize(LuaUtil::checkinteger_ranged<unsigned int>(L, -1));
-                lua_pop(L, 1);
-
-                lua_getfield(L, 2, "text_color");
-                bar->setTextColor(LuaUtil::checkcolor(L, -1));
-                lua_pop(L, 1);
-            }
-
-            lua_getfield(L, 2, "background_color");
-            bar->setBackgroundColor(LuaUtil::checkcolor(L, -1));
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "bar_color");
-            bar->setBarColor(LuaUtil::checkcolor(L, -1));
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "max_value");
-            bar->setMaxValue(luaL_checknumber(L, -1));
-            lua_pop(L, 1);
-
-            lua_interface->game->hud.addBar(name, std::move(bar));
 
             return 0;
         }

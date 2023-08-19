@@ -6,7 +6,7 @@ terrarium.register_block("default:stone", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -23,7 +23,7 @@ terrarium.register_block("default:ice", {
 
     slippery = 0.85,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -39,7 +39,7 @@ terrarium.register_block("default:obsidian", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 3,
@@ -54,7 +54,7 @@ terrarium.register_block("default:copper_ore", {
 
     slippery = 0.7,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -78,7 +78,7 @@ terrarium.register_block("default:iron_ore", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -102,7 +102,7 @@ terrarium.register_block("default:silver_ore", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -126,7 +126,7 @@ terrarium.register_block("default:gold_ore", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -150,7 +150,7 @@ terrarium.register_block("default:dirt", {
 
     slippery = 0.8,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -182,7 +182,7 @@ terrarium.register_block("default:grass", {
 
     slippery = 0.4,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -209,7 +209,7 @@ terrarium.register_block("default:snow", {
 
     slippery = 0.6,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -238,7 +238,7 @@ terrarium.register_block("default:overgrowth_grass", {
 
     slippery = 0.4,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -266,7 +266,7 @@ for i = 0, 3 do
         image = "grass"..i..".png",
 
         autotile_neighbour = false,
-        is_solid = false,
+        solid = false,
         replacable = true,
 
         drop = "",
@@ -287,7 +287,7 @@ terrarium.register_block("default:bush", {
     multiblock_size = { x = 3, y = 2 },
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
     replacable = true,
 
     drop = "",
@@ -305,7 +305,7 @@ terrarium.register_block("default:cactus", {
     draw_type = "Autotile",
     image = "cactus.png",
 
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -332,7 +332,7 @@ terrarium.register_block("default:glow_cactus", {
     draw_type = "Autotile",
     image = "glow_cactus.png",
 
-    is_solid = false,
+    solid = false,
 
     light = { r = 120, g = 120, b = 20 },
 
@@ -361,7 +361,7 @@ terrarium.register_block("default:wood", {
     draw_type = "Autotile",
     image = "wood_block.png",
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -392,8 +392,8 @@ terrarium.register_block("default:wood_platform", {
     autotile_neighbour = false,
     blocks_light = false,
 
-    is_solid = true,
-    is_platform = true,
+    solid = true,
+    platform = true,
 
     groups = {
         ["ground"] = 1,
@@ -424,8 +424,8 @@ terrarium.register_block("default:old_bricks_platform", {
     autotile_neighbour = false,
     blocks_light = false,
 
-    is_solid = true,
-    is_platform = true,
+    solid = true,
+    platform = true,
 
     groups = {
         ["ground"] = 1,
@@ -442,7 +442,7 @@ terrarium.register_block("default:sand", {
 
     slippery = 0.4,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -471,7 +471,7 @@ terrarium.register_block("default:glass", {
 
     slippery = 0.7,
 
-    is_solid = true,
+    solid = true,
 
     blocks_light = false,
 
@@ -490,7 +490,7 @@ terrarium.register_block("default:stone_bricks", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -507,7 +507,7 @@ terrarium.register_block("default:old_bricks", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -524,7 +524,7 @@ terrarium.register_block("default:old_broken_bricks", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -541,7 +541,7 @@ terrarium.register_block("default:roof_tiles", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -560,7 +560,7 @@ terrarium.register_block("default:metal_block", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -578,7 +578,7 @@ terrarium.register_block("default:metal_beam", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -595,7 +595,7 @@ terrarium.register_block("default:lab_bricks", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,
@@ -612,7 +612,7 @@ terrarium.register_block("default:glow_metal_block", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     light = { r = 20, g = 30, b = 100 },
 
@@ -634,8 +634,8 @@ terrarium.register_block("default:metal_platform", {
 
     slippery = 0.2,
 
-    is_solid = true,
-    is_platform = true,
+    solid = true,
+    platform = true,
 
     groups = {
         ["ground"] = 1,
@@ -648,7 +648,7 @@ terrarium.register_block("default:chest", {
     image = "chest.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 2 },
 
@@ -706,7 +706,7 @@ terrarium.register_block("default:workbench", {
     image = "workbench.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 1 },
 
@@ -737,7 +737,7 @@ terrarium.register_block("default:furnace", {
     image = "furnace.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 2 },
 
@@ -756,7 +756,7 @@ terrarium.register_block("default:anvil", {
     image = "anvil.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 1 },
 
@@ -789,7 +789,7 @@ local function register_door(name, def)
         inventory_image = def.inventory_image,
 
         autotile_neighbour = false,
-        is_solid = true,
+        solid = true,
 
         multiblock_size = def.size,
 
@@ -813,7 +813,7 @@ local function register_door(name, def)
         drop = name,
 
         autotile_neighbour = false,
-        is_solid = false,
+        solid = false,
 
         multiblock_size = def.size,
 
@@ -875,7 +875,7 @@ terrarium.register_block("default:picture_sungarden", {
 
     image = "sungarden.png",
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 2, },
 
@@ -901,7 +901,7 @@ terrarium.register_block("default:picture_starbound", {
 
     image = "starbound.png",
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 2, },
 
@@ -927,7 +927,7 @@ terrarium.register_block("default:picture_fediverse", {
 
     image = "fediverse.png",
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 4, y = 4, },
 
@@ -954,7 +954,7 @@ terrarium.register_block("default:vine", {
     image = "vine.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["ground"] = 1,
@@ -969,7 +969,7 @@ terrarium.register_block("default:torch", {
     image = "torch.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     light = { r = 255, g = 180, b = 140 },
 
@@ -1002,7 +1002,7 @@ for _, crystal in ipairs(crystals) do
         image = crystal.name:lower().."_crystal_block.png",
 
         autotile_neighbour = false,
-        is_solid = false,
+        solid = false,
 
         light = crystal.light,
 
@@ -1020,7 +1020,7 @@ terrarium.register_block("default:alarm_lamp", {
     image = "alarm_lamp.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     light = { r = 255, g = 30, b = 10 },
 
@@ -1035,7 +1035,7 @@ terrarium.register_block("default:lab_lamp", {
     image = "lab_lamp.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     light = { r = 245, g = 250, b = 255 },
 
@@ -1050,7 +1050,7 @@ terrarium.register_block("default:lamp", {
     image = "lamp.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     light = { r = 255, g = 255, b = 220 },
 
@@ -1065,11 +1065,11 @@ terrarium.register_block("default:ai_projector", {
     image = "ai_projector.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     on_interact = function(position, user)
         local size = terrarium.registered_entities["default:ai_holo"].size
-        local holo_pos = position + vec2.new(0.5, 1) - vec2.new(size.width/2, size.height)
+        local holo_pos = position + vec2.new(0.5, 1) - vec2.new(size.x/2, size.y)
 
         if user.ai_holo and user.ai_holo.ref:is_valid() then
             user.ai_holo:reset_position(holo_pos)
@@ -1091,7 +1091,7 @@ terrarium.register_block("default:lab_monitor", {
     multiblock_size = { x = 2, y = 1, },
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     on_interact = function(position)
         local origin = terrarium.get_multiblock_origin(position.x, position.y)
@@ -1112,7 +1112,7 @@ terrarium.register_block("default:lab_monitor_on", {
     multiblock_size = { x = 2, y = 1, },
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     on_interact = function(position)
         local origin = terrarium.get_multiblock_origin(position.x, position.y)
@@ -1133,7 +1133,7 @@ terrarium.register_block("default:lab_weapon_container_vm", {
     image = "lab_weapon_container_vm.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     multiblock_size = { x = 2, y = 2 },
 

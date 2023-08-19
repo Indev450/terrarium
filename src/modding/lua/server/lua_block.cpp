@@ -26,6 +26,7 @@
 #include "lua_inventory.hpp"
 #include "lua_interface.hpp"
 #include "../common/lua_util.hpp"
+#include "../common/lua_field_checker.hpp"
 #include "../../../tile/block_def.hpp"
 
 namespace Terrarium {
@@ -52,74 +53,56 @@ namespace Terrarium {
 
             block_def->name = luaL_checkstring(L, 1);
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table as block def");
+            luaL_checktype(L, 2, LUA_TTABLE);
+
+            LuaUtil::FieldChecker checker(L, "BlockDef", 2);
+
+            try {
+                const char *image = checker.checkstring("image");
+                block_def->sprite.setTexture(lua_interface->game->gfx.textures.get(image));
+
+                static const char *draw_type_names[] = {
+                    "None",
+                    "Image",
+                    "Autotile",
+                    "AutotilePlatform",
+                    "Multiblock",
+                    nullptr,
+                };
+
+                static const BlockDef::DrawType draw_type_values[] = {
+                    BlockDef::DrawType::None,
+                    BlockDef::DrawType::Image,
+                    BlockDef::DrawType::Autotile,
+                    BlockDef::DrawType::AutotilePlatform,
+                    BlockDef::DrawType::Multiblock,
+                };
+
+                block_def->draw_type = draw_type_values[checker.checkoption("draw_type", "None", draw_type_names)];
+
+                block_def->autotile_neighbour = checker.checkboolean("autotile_neighbour");
+
+                block_def->autotile_single = checker.checkboolean("autotile_single");
+
+                float slippery = checker.checknumber_range("slippery", 0, 1);
+
+                block_def->slippery = slippery;
+
+                block_def->is_solid = checker.checkboolean("solid");
+
+                block_def->is_platform = checker.checkboolean("platform");
+
+                block_def->is_interactive = checker.checkboolean("interactive");
+
+                block_def->blocks_light = checker.checkboolean("blocks_light");
+
+                sf::Color color = checker.checkcolor("light");
+                block_def->light = sf::Vector3i(color.r, color.g, color.b);
+
+                lua_pushinteger(L, lua_interface->game->block_defs.add(block_def));
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_getfield(L, 2, "image");
-            const char *image = luaL_checkstring(L, -1);
-            block_def->sprite.setTexture(lua_interface->game->gfx.textures.get(image));
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "draw_type");
-
-            static const char *draw_type_names[] = {
-                "None",
-                "Image",
-                "Autotile",
-                "AutotilePlatform",
-                "Multiblock",
-                nullptr,
-            };
-
-            static const BlockDef::DrawType draw_type_values[] = {
-                BlockDef::DrawType::None,
-                BlockDef::DrawType::Image,
-                BlockDef::DrawType::Autotile,
-                BlockDef::DrawType::AutotilePlatform,
-                BlockDef::DrawType::Multiblock,
-            };
-
-            block_def->draw_type = draw_type_values[luaL_checkoption(L, -1, "None", draw_type_names)];
-
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "autotile_neighbour");
-            block_def->autotile_neighbour = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "autotile_single");
-            block_def->autotile_single = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "slippery");
-            float slippery = LuaUtil::checknumber_ranged(L, -1, 0, 1);
-
-            block_def->slippery = slippery;
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "is_solid");
-            block_def->is_solid = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "is_platform");
-            block_def->is_platform = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "is_interactive");
-            block_def->is_interactive = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "blocks_light");
-            block_def->blocks_light = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "light");
-            sf::Color color = LuaUtil::checkcolor(L, -1);
-            block_def->light = sf::Vector3i(color.r, color.g, color.b);
-            lua_pop(L, 1);
-
-            lua_pushinteger(L, lua_interface->game->block_defs.add(block_def));
 
             return 1;
         }

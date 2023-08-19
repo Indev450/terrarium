@@ -13,7 +13,7 @@ for i = 1, #types do
 
         slippery = 0.9,
 
-        is_solid = true,
+        solid = true,
 
         groups = {
             ["ground"] = 1,
@@ -31,7 +31,7 @@ for i = 1, #types do
         image = "grass_small_slime"..types[i]..".png",
 
         autotile_neighbour = false,
-        is_solid = false,
+        solid = false,
         replacable = true,
 
         drop = "",
@@ -52,7 +52,7 @@ for i = 1, #types do
         multiblock_size = { x = 1, y = 2, },
 
         autotile_neighbour = false,
-        is_solid = false,
+        solid = false,
         replacable = true,
 
         drop = "",
@@ -73,7 +73,7 @@ for i = 1, #types do
         multiblock_size = { x = 1, y = 2, },
 
         autotile_neighbour = false,
-        is_solid = false,
+        solid = false,
         replacable = true,
 
         drop = "",

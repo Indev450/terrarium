@@ -7,8 +7,8 @@ local entity_defaults = {
     },
 
     size = {
-        width = 1,
-        height = 1,
+        x = 1,
+        y = 1,
     },
 
     image = "",

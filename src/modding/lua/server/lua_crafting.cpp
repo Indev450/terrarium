@@ -1,6 +1,7 @@
 #include "lua_crafting.hpp"
 #include "lua_interface.hpp"
 #include "lua_item.hpp"
+#include "../common/lua_field_checker.hpp"
 
 namespace Terrarium {
 
@@ -35,34 +36,42 @@ namespace Terrarium {
             const char *category = luaL_checkstring(L, 1);
             LuaItemAPI::LuaItemStackUD *istack_udata = nullptr;
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table as recipe");
-            }
+            luaL_checktype(L, 2, LUA_TTABLE);
+
+            LuaUtil::FieldChecker checker(L, "Recipe", 2);
 
             std::unique_ptr<Recipe> recipe = std::make_unique<Recipe>();
 
-            lua_getfield(L, 2, "result");
-            istack_udata = reinterpret_cast<LuaItemAPI::LuaItemStackUD*>(luaL_checkudata(L, -1, LUA_ITEMSTACK));
-            recipe->result = *(istack_udata->istack);
-            lua_pop(L, 1);
+            try {
+                istack_udata = reinterpret_cast<LuaItemAPI::LuaItemStackUD*>(checker.checkudata("result", LUA_ITEMSTACK));
+                recipe->result = *(istack_udata->istack);
 
-            lua_getfield(L, 2, "requirements");
+                checker.getfield("requirements", LUA_TTABLE);
 
-            if (!lua_istable(L, -1)) {
-                return luaL_error(L, "expected table as recipe requirements");
+                LuaUtil::FieldChecker reqs_checker(L, "RecipeReqsList", -1);
+
+                try {
+                    lua_pushnil(L);
+                    while (lua_next(L, -2) != 0) {
+                        istack_udata = reinterpret_cast<LuaItemAPI::LuaItemStackUD*>(luaL_testudata(L, -1, LUA_ITEMSTACK));
+
+                        if (istack_udata == nullptr) {
+                            reqs_checker.typeerror(lua_tostring(L, -2), LUA_ITEMSTACK, luaL_typename(L, -1));
+                        }
+
+                        recipe->requirements.emplace_back();
+                        recipe->requirements.back() = *istack_udata->istack;
+
+                        lua_pop(L, 1);
+                    }
+
+                    lua_pop(L, 1);
+                } catch (const std::invalid_argument &e) {
+                    checker.rfielderror("requirements", e.what());
+                }
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_pushnil(L);
-            while (lua_next(L, -2) != 0) {
-                istack_udata = reinterpret_cast<LuaItemAPI::LuaItemStackUD*>(luaL_checkudata(L, -1, LUA_ITEMSTACK));
-
-                recipe->requirements.emplace_back();
-                recipe->requirements.back() = *istack_udata->istack;
-
-                lua_pop(L, 1);
-            }
-
-            lua_pop(L, 1);
 
             lua_interface->game->crafts.addRecipe(category, std::move(recipe));
 

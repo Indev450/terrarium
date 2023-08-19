@@ -23,6 +23,7 @@
 #include "lua_sound.hpp"
 #include "lua_interface.hpp"
 #include "../common/lua_util.hpp"
+#include "../common/lua_field_checker.hpp"
 #include "lua_entity.hpp"
 
 namespace Terrarium {
@@ -58,51 +59,53 @@ namespace Terrarium {
         int play_sound(lua_State *L) {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
 
-            if (!lua_istable(L, 1)) {
-                return luaL_error(L, "expected table as sound spec");
+            luaL_checktype(L, 1, LUA_TTABLE);
+
+            LuaUtil::FieldChecker checker(L, "SoundSpec", 1);
+
+            try {
+                const char *name = checker.checkstring("name");
+
+                float volume = checker.checknumber_range("volume", 0, 1) * 100;
+
+                // TODO - maybe pitch also should be "ranged"?
+                float pitch = checker.checknumber("pitch");
+
+                int got = checker.getfieldtype("source");
+
+                sound_handle handle;
+
+                switch (got) {
+                    case LUA_TNIL:
+                        handle = lua_interface->game->sfx.playSound(name, volume, pitch);
+                    break;
+
+                    case LUA_TTABLE:
+                        handle = lua_interface->game->sfx.playSoundAt(name, volume, pitch, checker.checkvector<float>("source"));
+                    break;
+
+                    case LUA_TUSERDATA:
+                    {
+                        LuaEntityAPI::LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityAPI::LuaEntityUD*>(
+                            checker.checksubclass("source", LuaEntityAPI::LUA_ENTITYREF));
+
+                        handle = lua_interface->game->sfx.playSoundAt(name, volume, pitch, entity_ref->getPtr());
+                    }
+                    break;
+
+                    default:
+                        checker.typeerror("source", "nil, Vector2f or EntityRef", lua_typename(L, got));
+
+                        // Should never reach that, putting it just so compiler
+                        // doesn't complain about handle being uninitialized
+                        return 0;
+                    break;
+                }
+
+                lua_pushinteger(L, handle);
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_getfield(L, 1, "name");
-            const char *name = luaL_checkstring(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 1, "volume");
-            float volume = LuaUtil::checknumber_ranged(L, -1, 0, 1) * 100;
-            lua_pop(L, 1);
-
-            // TODO - maybe pitch also should be "ranged"?
-            lua_getfield(L, 1, "pitch");
-            float pitch = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 1, "source");
-
-            sound_handle handle;
-
-            if (lua_isnil(L, -1)) {
-                handle = lua_interface->game->sfx.playSound(name, volume, pitch);
-
-            } else if (lua_istable(L, -1)) {
-                lua_getfield(L, -1, "x");
-                float x = luaL_checknumber(L, -1);
-                lua_pop(L, 1);
-
-                lua_getfield(L, -1, "y");
-                float y = luaL_checknumber(L, -1);
-                lua_pop(L, 1);
-
-                handle = lua_interface->game->sfx.playSoundAt(name, volume, pitch, sf::Vector2f(x, y));
-
-            } else {
-                LuaEntityAPI::LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityAPI::LuaEntityUD*>(
-                    LuaUtil::checksubclass(L, 1, LuaEntityAPI::LUA_ENTITYREF));
-
-                handle = lua_interface->game->sfx.playSoundAt(name, volume, pitch, entity_ref->getPtr());
-            }
-
-            lua_pop(L, 1);
-
-            lua_pushinteger(L, handle);
 
             return 1;
         }

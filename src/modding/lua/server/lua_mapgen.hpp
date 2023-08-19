@@ -28,6 +28,7 @@
 #include <lua.hpp>
 
 #include "../../../mapgen/mapgen_base.hpp"
+#include "../common/lua_field_checker.hpp"
 
 namespace Terrarium {
 
@@ -44,15 +45,15 @@ namespace Terrarium {
 
         // Functions to call from C++
 
-        Tile checktile(lua_State *L, int idx);
+        Tile checktile(LuaUtil::FieldChecker &checker);
 
-        Decoration checkdecor(lua_State *L, int idx);
+        Decoration checkdecor(LuaUtil::FieldChecker &checker);
 
-        Biome checkbiome(lua_State *L, int idx);
+        Biome checkbiome(LuaUtil::FieldChecker &checker);
 
-        Ore checkore(lua_State *L, int idx);
+        Ore checkore(LuaUtil::FieldChecker &checker);
 
-        std::unique_ptr<PlaceConditions::Condition> checkcondition(lua_State *L, int idx);
+        std::unique_ptr<PlaceConditions::Condition> checkcondition(LuaUtil::FieldChecker &checker);
     }
 
 }

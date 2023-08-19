@@ -33,6 +33,9 @@ function default.register_projectile(name, def)
 
             local position = self.ref:get_position()
             local collision_info = self.ref:get_collision_info()
+            local speed = self.ref:get_speed()
+
+            self.ref:set_rotation(speed:direction())
 
             if collision_info.blockl or collision_info.blockr or collision_info.blocku or collision_info.blockd then
                 if def.hit_ground_sound ~= nil then
@@ -58,8 +61,8 @@ default.register_projectile("default:small_bullet", {
     image = "small_bullet.png",
 
     size = {
-        width = 9/16,
-        height = 1/16,
+        x = 9/16,
+        y = 1/16,
     },
 
     light = color.new(120, 30, 20),
@@ -74,8 +77,8 @@ default.register_projectile("default:small_energy_bullet", {
     },
 
     size = {
-        width = 9/16,
-        height = 1/16,
+        x = 9/16,
+        y = 1/16,
     },
 
     light = color.new(20, 30, 120),

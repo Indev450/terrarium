@@ -93,9 +93,7 @@ namespace Terrarium {
         }
 
         int draw(lua_State *L) {
-            if (!lua_islightuserdata(L, 1)) {
-                return luaL_error(L, "argument #1 expected to be render target");
-            }
+            luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
 
             sf::RenderTarget *target = reinterpret_cast<sf::RenderTarget*>(lua_touserdata(L, 1));
 
@@ -107,7 +105,7 @@ namespace Terrarium {
             } else if (text) {
                 target->draw(*text);
             } else {
-                return luaL_error(L, "Unknown drawable");
+                return luaL_typeerror(L, 2, (LUA_SPRITE + " or " + LUA_TEXT + " subclass").c_str());
             }
 
             // Maybe more drawable things later
@@ -116,9 +114,7 @@ namespace Terrarium {
         }
 
         int clear(lua_State *L) {
-            if (!lua_islightuserdata(L, 1)) {
-                return luaL_error(L, "argument #1 expected to be render target");
-            }
+            luaL_checktype(L, 1, LUA_TLIGHTUSERDATA);
 
             sf::RenderTarget *target = reinterpret_cast<sf::RenderTarget*>(lua_touserdata(L, 1));
 

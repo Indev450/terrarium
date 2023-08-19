@@ -171,39 +171,34 @@ namespace Terrarium {
                     throw std::runtime_error("core._get_mapgen_data() should return table");
                 }
 
-                lua_getfield(L, -1, "filler");
-                mapgen.setFiller(LuaMapgenAPI::checktile(L, -1));
-                lua_pop(L, 1);
+                LuaUtil::FieldChecker checker(L, "MapgenData", -1);
 
-                lua_getfield(L, -1, "biomes");
+                checker.rfield("filler", [&] () {
+                    LuaUtil::FieldChecker tile_checker(L, "Tile", -1);
+                    mapgen.setFiller(LuaMapgenAPI::checktile(tile_checker));
+                });
 
-                if (!lua_istable(L, -1)) {
-                    throw std::runtime_error("table returned by core._get_mapgen_data() should have 'biomes' table");
-                }
+                checker.rfield("biomes", [&] () {
+                    lua_pushnil(L);
+                    while (lua_next(L, -2) != 0) {
+                        LuaUtil::FieldChecker biome_checker(L, "BiomeDef", -1);
+                        mapgen.addBiome(LuaMapgenAPI::checkbiome(biome_checker));
 
-                lua_pushnil(L);
-                while (lua_next(L, -2) != 0) {
-                    mapgen.addBiome(LuaMapgenAPI::checkbiome(L, -1));
+                        lua_pop(L, 1);
+                    }
+                });
 
-                    lua_pop(L, 1);
-                }
+                checker.rfield("ores", [&] () {
+                    lua_pushnil(L);
+                    while (lua_next(L, -2) != 0) {
+                        LuaUtil::FieldChecker ore_checker(L, "OreDef", -1);
+                        mapgen.addOre(LuaMapgenAPI::checkore(ore_checker));
 
-                lua_pop(L, 1);
+                        lua_pop(L, 1);
+                    }
+                });
 
-                lua_getfield(L, -1, "ores");
-
-                if (!lua_istable(L, -1)) {
-                    throw std::runtime_error("table returned by core._get_mapgen_data() should have 'ores' table");
-                }
-
-                lua_pushnil(L);
-                while (lua_next(L, -2) != 0) {
-                    mapgen.addOre(LuaMapgenAPI::checkore(L, -1));
-
-                    lua_pop(L, 1);
-                }
-
-                lua_pop(L, 2); // pops ores and "mapgen data" table
+                lua_pop(L, 1); // "mapgen data" table
             }
 
 

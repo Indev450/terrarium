@@ -24,6 +24,7 @@
 
 #include "lua_entity.hpp"
 #include "../common/lua_util.hpp"
+#include "../common/lua_field_checker.hpp"
 #include "lua_interface.hpp"
 
 namespace Terrarium {
@@ -558,19 +559,7 @@ namespace Terrarium {
             LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
             LuaEntityUD *entity_ref = reinterpret_cast<LuaEntityUD*>(LuaUtil::checksubclass(L, 1, LUA_ENTITYREF));
 
-            if (!lua_istable(L, 2)) {
-                return luaL_error(L, "expected table argument");
-            }
-
-            sf::Vector2f origin;
-
-            lua_getfield(L, 2, "x");
-            origin.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, 2, "y");
-            origin.y = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+            sf::Vector2f origin = LuaUtil::checkvector<float>(L, 2);
 
             try {
                 entity_ref->setOrigin(lua_interface->game->blocks_to_pixels.transformPoint(origin));
@@ -906,92 +895,66 @@ namespace Terrarium {
         std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx) {
             lua_State *L = lua_interface.getLuaState();
 
-            idx = lua_absindex(L, idx);
-
             std::shared_ptr<EntityPrefab> prefab = std::make_shared<EntityPrefab>();
 
+            idx = lua_absindex(L, idx);
+
             // Stack should contain one argument - table with entity prefab values
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "expected table as entity prefab");
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
 
-            lua_getfield(L, idx, "physics"); // push physics table
+            LuaUtil::FieldChecker checker(L, "EntityPrefab", idx);
 
-            if (!lua_istable(L, -1)) {
-                luaL_error(L, "expected table as prefab's physics");
-            }
+            try {
+                checker.typecheck("physics", LUA_TTABLE, lua_getfield(L, idx, "physics")); // push physics table
 
-            lua_getfield(L, -1, "gravity"); // push value
-            prefab->physics.gravity = luaL_checknumber(L, -1);
-            lua_pop(L, 1); // pop value
+                LuaUtil::FieldChecker physics_checker(L, "PhysicsParams", -1);
 
-            lua_getfield(L, -1, "enable_collision"); // push value
-            prefab->physics.enable_collision = LuaUtil::checkboolean(L, -1);
-            lua_pop(L, 2); // pop value and physics table
+                try {
+                    prefab->physics.gravity = physics_checker.checknumber("gravity");
 
-            lua_getfield(L, idx, "size"); // push size table
-
-            if (!lua_istable(L, -1)) {
-                luaL_error(L, "expected table as prefab's size");
-            }
-
-            lua_getfield(L, -1, "width"); // push value
-            prefab->sprite_size.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1); // pop value
-
-            lua_getfield(L, -1, "height"); // push value
-            prefab->sprite_size.y = luaL_checknumber(L, -1);
-            lua_pop(L, 2); // pop value and size table
-
-            lua_getfield(L, idx, "hitbox"); // push hitbox table
-
-            if (!lua_isnil(L, -1)) {
-                if (!lua_istable(L, -1)) {
-                    luaL_error(L, "expected table as prefab's hitbox");
+                    prefab->physics.enable_collision = physics_checker.checkboolean("enable_collision");
+                } catch (const std::invalid_argument &e) {
+                    checker.rfielderror("physics", e.what());
                 }
 
-                lua_getfield(L, -1, "x"); // push value
-                prefab->hitbox.left = luaL_checknumber(L, -1);
+                lua_pop(L, 1); // Pop physics table
+
+                prefab->sprite_size = checker.checkvector<float>("size");
+
+                if (checker.havefield("hitbox")) {
+                    prefab->hitbox = checker.checkrect<float>("hitbox");
+                } else {
+                    prefab->hitbox.width = prefab->sprite_size.x;
+                    prefab->hitbox.height = prefab->sprite_size.y;
+                }
+
+                const char *image = checker.checkstring("image");
+                prefab->anims.setTexture(lua_interface.game->gfx.textures.get(image));
+
+                checker.typecheck("animations", LUA_TTABLE, lua_getfield(L, idx, "animations")); // push value
+
+                LuaUtil::FieldChecker animlist_checker(L, "AnimationList", -1);
+
+                try {
+                    lua_pushnil(L);
+                    while (lua_next(L, -2) != 0) {
+                        if (lua_type(L, -2) != LUA_TSTRING) {
+                            throw std::invalid_argument("AnimationList keys should be strings");
+                        }
+
+                        const char *name = lua_tostring(L, -2);
+                        prefab->anims.add(name, animlist_checker.checkanimation(name));
+
+                        lua_pop(L, 1);
+                    }
+                } catch (const std::invalid_argument &e) {
+                    checker.rfielderror("animations", e.what());
+                }
+
                 lua_pop(L, 1); // pop value
-
-                lua_getfield(L, -1, "y"); // push value
-                prefab->hitbox.top = luaL_checknumber(L, -1);
-                lua_pop(L, 1); // pop value and size table
-
-                lua_getfield(L, -1, "width"); // push value
-                prefab->hitbox.width = luaL_checknumber(L, -1);
-                lua_pop(L, 1); // pop value
-
-                lua_getfield(L, -1, "height"); // push value
-                prefab->hitbox.height = luaL_checknumber(L, -1);
-                lua_pop(L, 1); // pop value and size table
-            } else {
-                prefab->hitbox.width = prefab->sprite_size.x;
-                prefab->hitbox.height = prefab->sprite_size.y;
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_pop(L, 1); // pop hitbox table or nil
-
-            lua_getfield(L, idx, "image"); // push value
-            const char *image = luaL_checkstring(L, -1);
-            prefab->anims.setTexture(lua_interface.game->gfx.textures.get(image));
-            lua_pop(L, 1); // pop value
-
-            lua_getfield(L, idx, "animations"); // push value
-
-            if (!lua_istable(L, -1)) {
-                luaL_error(L, "expected table as prefab's animations list");
-            }
-
-            lua_pushnil(L);
-            while (lua_next(L, -2) != 0) {
-                const char *name = luaL_checkstring(L, -2);
-                prefab->anims.add(name, LuaUtil::checkanimation(L, -1));
-
-                lua_pop(L, 1);
-            }
-
-            lua_pop(L, 1); // pop value
 
             return prefab;
         }

@@ -6,7 +6,7 @@ terrarium.register_block("kanzaki:blue_bricks", {
 
     slippery = 0.2,
 
-    is_solid = true,
+    solid = true,
 
     groups = {
         ["ground"] = 1,

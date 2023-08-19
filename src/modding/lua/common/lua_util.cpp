@@ -21,21 +21,17 @@
  */
 
 #include <cstdint>
+#include <cstring>
 
 #include "../common/lua_util.hpp"
+#include "../common/lua_field_checker.hpp"
 
 namespace Terrarium {
 
     namespace LuaUtil {
 
         bool checkboolean(lua_State *L, int idx) {
-            if (!lua_isboolean(L, idx)) {
-                std::string msg = "function argument #";
-                msg += std::to_string(idx);
-                msg += " expected to be boolean";
-
-                lua_warning(L, msg.c_str(), false);
-            }
+            luaL_checktype(L, idx, LUA_TBOOLEAN);
 
             return lua_toboolean(L, idx);
         }
@@ -44,7 +40,9 @@ namespace Terrarium {
             lua_Number num = luaL_checknumber(L, idx);
 
             if (num < min || num > max) {
-                luaL_error(L, "function argument #%d expected to be in range from %f to %f", idx, min, max);
+                char errormsg[128];
+                snprintf(errormsg, 128, "should be in range from %.5lf to %.5lf", min, max);
+                luaL_argerror(L, idx, errormsg);
             }
 
             return num;
@@ -71,7 +69,9 @@ namespace Terrarium {
             void *result = trysubclass(L, idx, base);
 
             if (!result) {
-                luaL_error(L, "function argument #%d expected to be %s subclass", idx, base.c_str());
+                char errormsg[100];
+                snprintf(errormsg, 100, "expected %s subclass", base.c_str());
+                luaL_argerror(L, idx, errormsg);
             }
 
             return result;
@@ -161,29 +161,23 @@ namespace Terrarium {
         }
 
         sf::FloatRect checkfloatrect(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
+
+            FieldChecker checker(L, "FloatRect", idx);
 
             sf::FloatRect rect;
 
-            idx = lua_absindex(L, idx);
+            try {
+                rect.left = checker.checknumber("x");
 
-            lua_getfield(L, idx, "x");
-            rect.left = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+                rect.top = checker.checknumber("y");
 
-            lua_getfield(L, idx, "y");
-            rect.top = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+                rect.width = checker.checknumber("width");
 
-            lua_getfield(L, idx, "width");
-            rect.width = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "height");
-            rect.height = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+                rect.height = checker.checknumber("height");
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
+            }
 
             return rect;
         }
@@ -191,244 +185,103 @@ namespace Terrarium {
         // Code duplication :(
         // I don't know how to avoid it
         sf::IntRect checkintrect(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
+
+            FieldChecker checker(L, "IntRect", idx);
 
             sf::IntRect rect;
 
-            idx = lua_absindex(L, idx);
+            try {
+                rect.left = checker.checkinteger("x");
 
-            lua_getfield(L, idx, "x");
-            rect.left = luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
+                rect.top = checker.checkinteger("y");
 
-            lua_getfield(L, idx, "y");
-            rect.top = luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
+                rect.width = checker.checkinteger("width");
 
-            lua_getfield(L, idx, "width");
-            rect.width = luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "height");
-            rect.height = luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
+                rect.height = checker.checkinteger("height");
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
+            }
 
             return rect;
         }
 
         sf::Color checkcolor(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
+
+            FieldChecker checker(L, "Color", idx);
 
             sf::Color color;
 
-            idx = lua_absindex(L, idx);
+            try {
+                color.r = checker.checkunsigned("r");
 
-            lua_getfield(L, idx, "r");
-            color.r = checkinteger_ranged<uint8_t>(L, -1);
-            lua_pop(L, 1);
+                color.g = checker.checkunsigned("g");
 
-            lua_getfield(L, idx, "g");
-            color.g = checkinteger_ranged<uint8_t>(L, -1);
-            lua_pop(L, 1);
+                color.b = checker.checkunsigned("b");
 
-            lua_getfield(L, idx, "b");
-            color.b = checkinteger_ranged<uint8_t>(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "a");
-
-            if (!lua_isnil(L, -1)) {
-                color.a = checkinteger_ranged<uint8_t>(L, -1);
+                if (checker.havefield("a")) {
+                    color.a = checker.checkunsigned("a");
+                }
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
             }
-
-            lua_pop(L, 1);
 
             return color;
         }
 
         template <>
         sf::Vector2<float> checkvector<float>(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
+
+            FieldChecker checker(L, "Vector2f", idx);
 
             sf::Vector2<float> vec;
 
-            lua_getfield(L, idx, "x");
-            vec.x = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "y");
-            vec.y = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
+            try {
+                vec.x = checker.checknumber("x");
+                vec.y = checker.checknumber("y");
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
+            }
 
             return vec;
         }
 
         template <>
         sf::Vector2<int> checkvector<int>(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
+
+            FieldChecker checker(L, "Vector2i", idx);
 
             sf::Vector2<int> vec;
 
-            lua_getfield(L, idx, "x");
-            vec.x = luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "y");
-            vec.y = luaL_checkinteger(L, -1);
-            lua_pop(L, 1);
+            try {
+                vec.x = checker.checkinteger("x");
+                vec.y = checker.checkinteger("y");
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
+            }
 
             return vec;
         }
 
         template <>
         sf::Vector2<uint8_t> checkvector<uint8_t>(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+            luaL_checktype(L, idx, LUA_TTABLE);
+
+            FieldChecker checker(L, "Vector2<uint8_t>", idx);
 
             sf::Vector2<uint8_t> vec;
 
-            lua_getfield(L, idx, "x");
-            vec.x = checkinteger_ranged<uint8_t>(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "y");
-            vec.y = checkinteger_ranged<uint8_t>(L, -1);
-            lua_pop(L, 1);
+            try {
+                vec.x = checker.checkunsigned("x");
+                vec.y = checker.checkunsigned("y");
+            } catch (const std::invalid_argument &e) {
+                luaL_error(L, e.what());
+            }
 
             return vec;
-        }
-
-        Animation checkanimation(lua_State *L, int idx) {
-            Animation anim;
-
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
-
-            idx = lua_absindex(L, idx);
-
-            lua_getfield(L, idx, "time_per_frame");
-            anim.time_per_frame = luaL_checknumber(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "next");
-
-            if (!lua_isnil(L, -1)) {
-                anim.next = luaL_checkstring(L, -1);
-            }
-
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "easing");
-
-            static const char *easing_type_names[] = {
-                "None",
-                "Linear",
-                "InQuad",
-                "OutQuad",
-                "InOutQuad",
-                "InCubic",
-                "OutCubic",
-                "InOutCubic",
-                "InExpo",
-                "OutExpo",
-                "InOutExpo",
-                nullptr,
-            };
-
-            static const Animation::Easing easing_type_values[] = {
-                Animation::Easing::None,
-                Animation::Easing::Linear,
-                Animation::Easing::InQuad,
-                Animation::Easing::OutQuad,
-                Animation::Easing::InOutQuad,
-                Animation::Easing::InCubic,
-                Animation::Easing::OutCubic,
-                Animation::Easing::InOutCubic,
-                Animation::Easing::InExpo,
-                Animation::Easing::OutExpo,
-                Animation::Easing::InOutExpo,
-            };
-
-            anim.easing = easing_type_values[luaL_checkoption(L, -1, "None", easing_type_names)];
-
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "frames");
-
-            if (!lua_istable(L, -1)) {
-                luaL_error(L, "<animation>.frames expected to be table");
-            }
-
-            int amount_frames = luaL_len(L, -1);
-            for (int i = 1; i <= amount_frames; ++i) {
-                AnimationFrame frame;
-
-                lua_geti(L, -1, i); // push value
-
-                lua_getfield(L, -1, "rect"); // push rect
-
-                frame.rect = checkintrect(L, -1);
-
-                lua_pop(L, 1); // pop rect
-
-                lua_getfield(L, -1, "offset"); // push offset
-
-                if (!lua_isnil(L, -1)) {
-                    frame.offset = checkvector<float>(L, -1);
-                }
-
-                lua_pop(L, 1); // pop offset
-
-                lua_getfield(L, -1, "rotation"); // push rotation
-
-                if (!lua_isnil(L, -1)) {
-                    frame.rotation = luaL_checknumber(L, -1) / M_PI * 180;
-                }
-
-                lua_pop(L, 1); // pop rotation
-
-                lua_getfield(L, -1, "rotation_center"); // push rotation_center
-
-                if (!lua_isnil(L, -1)) {
-                    frame.rotation_center = checkvector<float>(L, -1);
-                }
-
-                lua_pop(L, 1); // pop rotation center
-
-                lua_getfield(L, -1, "scale"); // push scale
-
-                if (!lua_isnil(L, -1)) {
-                    frame.scale = checkvector<float>(L, -1);
-                }
-
-                lua_pop(L, 1); // pop scale
-
-                lua_getfield(L, -1, "scale_center"); // push scale center
-
-                if (!lua_isnil(L, -1)) {
-                    frame.scale_center = checkvector<float>(L, -1);
-                }
-
-                lua_pop(L, 1); // pop scale center
-
-                lua_pop(L, 1); // pop value
-
-                anim.frames.push_back(frame);
-            }
-
-            lua_pop(L, 1); // pop frames table
-
-            return anim;
         }
 
     } // namespace LuaUtil

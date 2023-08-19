@@ -39,6 +39,21 @@ namespace Terrarium {
 
     namespace LuaUtil {
 
+        // Smol class that keeps lua top consistent
+        class TopKeeper {
+            lua_State *L;
+            int top;
+
+        public:
+            TopKeeper(lua_State *_L):
+                L(_L), top(lua_gettop(L))
+            {}
+
+            ~TopKeeper() {
+                lua_settop(L, top);
+            }
+        };
+
         // Calls userdata class destructor. Use as __gc metatable function
         template <class T>
         int call_destructor(lua_State *L) {

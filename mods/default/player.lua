@@ -54,8 +54,8 @@ default_player_saver = {
 
 terrarium.override_player({
     size = {
-        width = 1.5,
-        height = 3,
+        x = 1.5,
+        y = 3,
     },
 
     hitbox = {

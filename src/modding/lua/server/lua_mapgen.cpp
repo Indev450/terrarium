@@ -46,163 +46,153 @@ namespace Terrarium {
             return 1;
         }
 
-        Tile checktile(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
-
-            idx = lua_absindex(L, idx);
+        Tile checktile(LuaUtil::FieldChecker &checker) {
+            checker.checkself();
 
             Tile tile;
 
-            lua_getfield(L, idx, "block");
-            tile.fg = LuaUtil::checkinteger_ranged<blockid>(L, -1);
-            lua_pop(L, 1);
+            tile.fg = checker.checkunsigned("block");
 
-            lua_getfield(L, idx, "wall");
-            tile.bg = LuaUtil::checkinteger_ranged<blockid>(L, -1);
-            lua_pop(L, 1);
+            tile.bg = checker.checkunsigned("wall");
 
-            lua_getfield(L, idx, "multiblock_offset");
-            if (!lua_isnil(L, -1)) {
-                tile.multiblock_offset = LuaUtil::checkvector<uint8_t>(L, -1);
+            if (checker.havefield("multiblock_offset")) {
+                tile.multiblock_offset = checker.checkvector<uint8_t>("multiblock_offset");
             }
-            lua_pop(L, 1);
 
             return tile;
         }
 
-        Decoration checkdecor(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
+        Decoration checkdecor(LuaUtil::FieldChecker &checker) {
+            lua_State *L = checker.getState();
+            LuaUtil::TopKeeper top_keeper(L);
+            checker.checkself();
 
             Decoration decor;
 
-            idx = lua_absindex(L, idx);
+            decor.origin = checker.checkvector<int>("origin");
 
-            lua_getfield(L, idx, "origin");
-            decor.origin = LuaUtil::checkvector<int>(L, -1);
-            lua_pop(L, 1);
+            decor.width = checker.checkunsigned("width");
 
-            lua_getfield(L, idx, "width");
-            decor.width = LuaUtil::checkinteger_ranged<uint16_t>(L, -1);
-            lua_pop(L, 1);
+            decor.height = checker.checkunsigned("height");
 
-            lua_getfield(L, idx, "height");
-            decor.height = LuaUtil::checkinteger_ranged<uint16_t>(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "tiles");
+            checker.getfield("tiles", LUA_TTABLE);
             for (unsigned int i = 1; i <= decor.width * decor.height; ++i) {
                 lua_geti(L, -1, i);
 
-                decor.tiles.push_back(checktile(L, -1));
+                LuaUtil::FieldChecker tile_checker(L, "Tile", -1);
+
+                try {
+                    decor.tiles.push_back(checktile(tile_checker));
+                } catch (const std::invalid_argument &e) {
+                    checker.rfielderror("tiles", e.what());
+                }
 
                 lua_pop(L, 1);
             }
             lua_pop(L, 1);
 
-            lua_getfield(L, idx, "conditions");
+            checker.getfield("conditions", LUA_TTABLE);
             size_t len = luaL_len(L, -1);
             for (size_t i = 1; i <= len; ++i) {
                 lua_geti(L, -1, i);
 
+                LuaUtil::FieldChecker place_cond_checker(L, "PlaceCondition", -1);
+
                 sf::Vector2i position;
                 std::unique_ptr<PlaceConditions::Condition> fg, bg;
 
-                lua_getfield(L, -1, "position");
-                position = LuaUtil::checkvector<int>(L, -1);
-                lua_pop(L, 1);
+                try {
+                    position = place_cond_checker.checkvector<int>("position");
 
-                lua_getfield(L, -1, "fg");
-                fg = checkcondition(L, -1);
-                lua_pop(L, 1);
+                    place_cond_checker.rfield("fg", [&] () {
+                        LuaUtil::FieldChecker cond_checker(L, "Condition", -1);
+                        fg = checkcondition(cond_checker);
+                    }, true);
 
-                lua_getfield(L, -1, "bg");
-                bg = checkcondition(L, -1);
-                lua_pop(L, 1);
+                    place_cond_checker.rfield("bg", [&] () {
+                        LuaUtil::FieldChecker cond_checker(L, "Condition", -1);
+                        bg = checkcondition(cond_checker);
+                    }, true);
 
-                decor.conditions.emplace_back(
-                    TileCondition { position, std::move(fg), std::move(bg) }
-                );
+                    decor.conditions.emplace_back(
+                        TileCondition { position, std::move(fg), std::move(bg) }
+                    );
+                } catch (const std::invalid_argument &e) {
+                    checker.rfielderror("conditions", e.what());
+                }
 
                 lua_pop(L, 1);
             }
             lua_pop(L, 1);
 
-            lua_getfield(L, idx, "place_chance");
-            decor.place_chance = LuaUtil::checknumber_ranged(L, -1, 0, 1);
-            lua_pop(L, 1);
+            decor.place_chance = checker.checknumber_range("place_chance", 0, 1);
 
             return decor;
         }
 
-        Biome checkbiome(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
-
-            idx = lua_absindex(L, idx);
+        Biome checkbiome(LuaUtil::FieldChecker &checker) {
+            lua_State *L = checker.getState();
+            LuaUtil::TopKeeper top_keeper(L);
+            checker.checkself();
 
             Biome biome;
 
-            lua_getfield(L, idx, "humidity_min");
-            biome.humidity_min = LuaUtil::checknumber_ranged(L, -1, -1.0, 1.0);
-            lua_pop(L, 1);
+            biome.humidity_min = checker.checknumber_range("humidity_min", -1.0, 1.0);
 
-            lua_getfield(L, idx, "humidity_max");
-            biome.humidity_max = LuaUtil::checknumber_ranged(L, -1, -1.0, 1.0);
-            lua_pop(L, 1);
+            biome.humidity_max = checker.checknumber_range("humidity_max", -1.0, 1.0);
 
-            lua_getfield(L, idx, "heat_min");
-            biome.heat_min = LuaUtil::checknumber_ranged(L, -1, -1.0, 1.0);
-            lua_pop(L, 1);
+            biome.heat_min = checker.checknumber_range("heat_min", -1.0, 1.0);
 
-            lua_getfield(L, idx, "heat_max");
-            biome.heat_max = LuaUtil::checknumber_ranged(L, -1, -1.0, 1.0);
-            lua_pop(L, 1);
+            biome.heat_max = checker.checknumber_range("heat_max", -1.0, 1.0);
 
-            lua_getfield(L, idx, "top");
-            biome.top = checktile(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "top_depth");
-            biome.top_depth = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "filler");
-            biome.filler = checktile(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "filler_depth");
-            biome.filler_depth = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "stone");
-            biome.stone = checktile(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "min_depth");
-            biome.min_depth = LuaUtil::checknumber_ranged(L, -1, -1.0, 1.0);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "max_depth");
-            biome.max_depth = LuaUtil::checknumber_ranged(L, -1, -1.0, 1.0);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "priority");
-            biome.priority = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
-            lua_pop(L, 1);
-
-            lua_getfield(L, idx, "decorations");
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "expected table as biome decorations");
+            checker.getfield("top", LUA_TTABLE);
+            LuaUtil::FieldChecker tile_checker(L, "Tile", -1);
+            try {
+                biome.top = checktile(tile_checker);
+            } catch (const std::invalid_argument &e) {
+                checker.rfielderror("top", e.what());
             }
+            lua_pop(L, 1);
+
+            biome.top_depth = checker.checkunsigned("top_depth");
+
+            checker.getfield("filler", LUA_TTABLE);
+            try {
+                // Reuse tile_checker
+                biome.filler = checktile(tile_checker);
+            } catch (const std::invalid_argument &e) {
+                checker.rfielderror("filler", e.what());
+            }
+            lua_pop(L, 1);
+
+            biome.filler_depth = checker.checkunsigned("filler_depth");
+
+            checker.getfield("stone", LUA_TTABLE);
+            try {
+                // Reuse tile_checker
+                biome.stone = checktile(tile_checker);
+            } catch (const std::invalid_argument &e) {
+                checker.rfielderror("stone", e.what());
+            }
+            lua_pop(L, 1);
+
+            biome.min_depth = checker.checknumber_range("min_depth", -1.0, 1.0);
+
+            biome.max_depth = checker.checknumber_range("max_depth", -1.0, 1.0);
+
+            biome.priority = checker.checkunsigned("priority");
+
+            checker.getfield("decorations", LUA_TTABLE);
 
             lua_pushnil(L);
             while (lua_next(L, -2) != 0) {
-                biome.decorations.push_back(std::make_shared<Decoration>(checkdecor(L, -1)));
+                LuaUtil::FieldChecker decor_checker(L, "Decoration", -1);
+
+                try {
+                    biome.decorations.push_back(std::make_shared<Decoration>(checkdecor(decor_checker)));
+                } catch (const std::invalid_argument &e) {
+                    checker.rfielderror("decorations", e.what());
+                }
                 lua_pop(L, 1);
             }
 
@@ -211,45 +201,40 @@ namespace Terrarium {
             return biome;
         }
 
-        Ore checkore(lua_State *L, int idx) {
-            if (!lua_istable(L, idx)) {
-                luaL_error(L, "function argument #%d expected to be table", idx);
-            }
-
-            idx = lua_absindex(L, idx);
+        Ore checkore(LuaUtil::FieldChecker &checker) {
+            lua_State *L = checker.getState();
+            LuaUtil::TopKeeper top_keeper(L);
+            checker.checkself();
 
             Ore ore;
 
-            lua_getfield(L, idx, "cluster_tiles");
-            ore.cluster_tiles = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
-            lua_pop(L, 1);
+            ore.cluster_tiles = checker.checkunsigned("cluster_tiles");
 
-            lua_getfield(L, idx, "distribution");
-            ore.distribution = LuaUtil::checkinteger_ranged<unsigned int>(L, -1);
-            lua_pop(L, 1);
+            ore.distribution = checker.checkunsigned("distribution");
 
-            lua_getfield(L, idx, "min_depth");
-            ore.min_depth = LuaUtil::checknumber_ranged(L, -1, 0.0, 1.0);
-            lua_pop(L, 1);
+            ore.min_depth = checker.checknumber_range("min_depth", 0.0, 1.0);
 
-            lua_getfield(L, idx, "max_depth");
-            ore.max_depth = LuaUtil::checknumber_ranged(L, -1, 0.0, 1.0);
-            lua_pop(L, 1);
+            ore.max_depth = checker.checknumber_range("max_depth", 0.0, 1.0);
 
-            lua_getfield(L, idx, "tile");
-            ore.tile = checktile(L, -1);
+            checker.getfield("tile", LUA_TTABLE);
+            LuaUtil::FieldChecker tile_checker(L, "Tile", -1);
+
+            try {
+                ore.tile = checktile(tile_checker);
+            } catch (const std::invalid_argument &e) {
+                checker.rfielderror("tile", e.what());
+            }
+
             lua_pop(L, 1);
 
             return ore;
         }
 
-        std::unique_ptr<PlaceConditions::Condition> checkcondition(lua_State *L, int idx) {
-            // Null conditions are valid
-            if (lua_isnil(L, idx)) {
-                return nullptr;
-            }
+        std::unique_ptr<PlaceConditions::Condition> checkcondition(LuaUtil::FieldChecker &checker) {
+            lua_State *L = checker.getState();
+            LuaUtil::TopKeeper top_keeper(L);
 
-            idx = lua_absindex(L, idx);
+            checker.checkself();
 
             static const char* conditions[] = {
                 "AnySolidBlock",
@@ -260,9 +245,7 @@ namespace Terrarium {
                 nullptr
             };
 
-            lua_getfield(L, idx, "type");
-            int condition_type = luaL_checkoption(L, -1, "AnySolidBlock", conditions);
-            lua_pop(L, 1);
+            int condition_type = checker.checkoption("type", "AnySolidBlock", conditions);
 
             switch (condition_type) {
                 case 0: return std::make_unique<PlaceConditions::AnySolidBlock>();
@@ -274,12 +257,14 @@ namespace Terrarium {
                 {
                     std::unordered_set<blockid> blocks;
 
-                    lua_getfield(L, idx, "blocks");
+                    checker.getfield("blocks", LUA_TTABLE);
                     size_t len = luaL_len(L, -1);
                     for (size_t i = 1; i <= len; ++i) {
                         lua_geti(L, -1, i);
 
-                        blocks.insert(LuaUtil::checkinteger_ranged<blockid>(L, -1));
+                        checker.fieldcheck("blocks", lua_isinteger(L, -1) && lua_tointeger(L, -1) >= 0, "expected array of unsigned integers");
+
+                        blocks.insert(static_cast<blockid>(lua_tointeger(L, -1)));
 
                         lua_pop(L, 1);
                     }
@@ -293,8 +278,7 @@ namespace Terrarium {
 
                 case 4:
                 {
-                    lua_getfield(L, idx, "block");
-                    blockid block = LuaUtil::checkinteger_ranged<blockid>(L, -1);
+                    blockid block = checker.checkunsigned("block");
                     lua_pop(L, 1);
 
                     return std::make_unique<PlaceConditions::ExactBlock>(block);

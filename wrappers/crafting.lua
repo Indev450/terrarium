@@ -15,7 +15,7 @@ function terrarium.register_recipe(category, def)
     -- "player has at least 10 default:stone? yes."
     -- "player has at least 5 default:stone? yes. "
     -- "then we can craft item, take 15 default:stone from player inventory"
-    -- This won't make item count negative, but it makes craft aviable
+    -- This won't make item count negative, but it makes craft available
     -- even if it isn't meant to be.
     local used_item_types = {}
     local items = {}

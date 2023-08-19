@@ -19,7 +19,7 @@ terrarium.register_entity("__builtin:item_entity", {
 
     image = "null.png",
 
-    size = { width = 1, height = 1 },
+    size = { x = 1, y = 1 },
 
     on_create = function(self, item_stack)
         self:set_item_stack(item_stack)

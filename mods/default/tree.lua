@@ -9,7 +9,7 @@ terrarium.register_block("default:tree_trunk_root_both", {
     image = "tree_trunk_root_both.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -30,7 +30,7 @@ terrarium.register_block("default:tree_trunk_root_left", {
     image = "tree_trunk_root_left.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -51,7 +51,7 @@ terrarium.register_block("default:tree_trunk_root_right", {
     image = "tree_trunk_root_right.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -72,7 +72,7 @@ terrarium.register_block("default:tree_root_left", {
     image = "tree_root_left.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -93,7 +93,7 @@ terrarium.register_block("default:tree_root_right", {
     image = "tree_root_right.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -114,7 +114,7 @@ terrarium.register_block("default:tree_trunk", {
     image = "tree_trunk.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -135,7 +135,7 @@ terrarium.register_block("default:tree_trunk_branch_both", {
     image = "tree_trunk_branch_both.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -156,7 +156,7 @@ terrarium.register_block("default:tree_trunk_branch_left", {
     image = "tree_trunk_branch_left.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -177,7 +177,7 @@ terrarium.register_block("default:tree_trunk_branch_right", {
     image = "tree_trunk_branch_right.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -200,7 +200,7 @@ terrarium.register_block("default:tree_top", {
     multiblock_size = { x = 3, y = 3 },
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -221,7 +221,7 @@ terrarium.register_block("default:tree_branch_left", {
     image = "tree_branch_left.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,
@@ -242,7 +242,7 @@ terrarium.register_block("default:tree_branch_right", {
     image = "tree_branch_right.png",
 
     autotile_neighbour = false,
-    is_solid = false,
+    solid = false,
 
     groups = {
         ["tree"] = 1,

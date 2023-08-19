@@ -4,7 +4,7 @@ local function register_sword(metal, damage, description)
     default.register_swing("default:"..metal.."_sword_swing", {
         image = metal.."_sword_swing.png",
 
-        size = { width = 0.6, height = 3.3, },
+        size = { x = 0.6, y = 3.3, },
 
         animations = {
             swing = {

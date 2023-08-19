@@ -9,8 +9,8 @@ terrarium.register_entity("default:ai_holo", {
     },
 
     size = {
-        width = 25/16,
-        height = 48/16,
+        x = 25/16,
+        y = 48/16,
     },
 
     image = "ai.png",

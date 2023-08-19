@@ -7,8 +7,8 @@ terrarium.register_entity("slime:slime_ball", {
     image = "slime_ball.png",
 
     size = {
-        width = 0.25,
-        height = 0.25,
+        x = 0.25,
+        y = 0.25,
     },
 
     on_create = function(self, data)
