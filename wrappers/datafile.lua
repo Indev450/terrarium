@@ -94,7 +94,15 @@ function datafile.new(data)
         end,
 
         to_file = function(self, filename, indent, list_sep)
-            datafile._to_file(filename, rawget(self, "data"), indent, list_sep)
+            local file = terrarium.open(filename, "w")
+
+            if not file then return false end
+
+            file:write(self:to_string(indent or "    ", list_sep or ','))
+
+            file:close()
+
+            return true
         end,
 
         to_string = function(self, indent, list_sep)
@@ -118,7 +126,15 @@ function datafile.new(data)
 end
 
 function datafile.from_file(filename, list_sep)
-    return datafile.new(datafile._from_file(filename, list_sep))
+    local file = terrarium.open(filename, "r")
+
+    if not file then return datafile.new(), false end
+
+    local str = file:read("a")
+
+    file:close()
+
+    return datafile.from_string(str, list_sep), true
 end
 
 function datafile.from_string(str, list_sep)

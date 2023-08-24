@@ -47,8 +47,8 @@ namespace Terrarium {
         void initMapgen(MapgenBase &mapgen) override;
         void onPlayerJoin(std::shared_ptr<Player> player) override;
         void onMapgenFinish() override;
-        void load(const fs::path &save_dir_path) override;
-        void save(const fs::path &save_dir_path) override;
+        void load() override;
+        void save() override;
 
         // Makes closure with 1 upvalue - `this` pointer and leaves it on stack top
         void pushClosure(lua_CFunction fn);

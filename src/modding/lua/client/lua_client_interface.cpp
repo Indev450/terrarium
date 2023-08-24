@@ -23,6 +23,7 @@
 #include "lua_client_interface.hpp"
 
 #include "../common/lua_util.hpp"
+#include "../common/lua_sandbox.hpp"
 #include "../common/lua_datafile.hpp"
 
 #include "lua_cmd.hpp"
@@ -34,8 +35,7 @@ namespace Terrarium {
     LuaClientModdingInterface::LuaClientModdingInterface(std::shared_ptr<GameState> game):
         ClientModdingInterface(game), L(luaL_newstate())
     {
-        // TODO - open only safe libs
-        luaL_openlibs(L);
+        LuaSandbox::openlibs(L);
 
         lua_newtable(L);
         lua_setglobal(L, "core");
@@ -45,6 +45,9 @@ namespace Terrarium {
         LuaClientCmdAPI::init(*this);
         LuaClientRenderingAPI::init(*this);
         LuaClientUIAPI::init(*this);
+
+        // Maybe change it to wrappers path later
+        LuaSandbox::set_dofile_path(L, fs::current_path());
 
         if (!LuaUtil::run_script(L, "client_wrappers/init.lua")) {
             throw std::runtime_error("could not initialize client lua wrappers");
@@ -73,6 +76,11 @@ namespace Terrarium {
     }
 
     void LuaClientModdingInterface::loadScript(const fs::path &path) {
+        fs::path dofile_path = path;
+        dofile_path.remove_filename();
+
+        LuaSandbox::set_dofile_path(L, dofile_path);
+
         if (!LuaUtil::run_script(L, path.string().c_str())) {
             throw std::runtime_error("LuaClientModdingInterface::loadMod: unexpected error when loading client mod");
         }

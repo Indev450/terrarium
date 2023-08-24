@@ -20,31 +20,34 @@
  *
  */
 
+#include <optional>
+#include <filesystem>
+
 #include <lua.hpp>
 
-#include "../../../utils/datafile.hpp"
+namespace fs = std::filesystem;
 
 namespace Terrarium {
 
-    namespace LuaDatafileAPI {
+    namespace LuaSandbox {
 
-        void init(lua_State *L);
+        // Index in registry with currently allowed path for dofile
+        extern const char *DOFILE_PATH;
 
-        // table datafile._from_string(string str)
-        int from_string(lua_State *L);
+        // Returns absolute path to requiested file in specified parent
+        // directory. Returns std::nullopt if resulting path points outside of
+        // parent_dir. Note that parent dir should be absolute path.
+        std::optional<fs::path> securepath(const fs::path &parent_dir, const fs::path &relpath);
 
-        // string datafile._to_string(table data)
-        int to_string(lua_State *L);
+        // Set currently legal dofile path
+        void set_dofile_path(lua_State *L, const fs::path &path);
 
-        // Functions to call from C++
+        // Open only trusted libs
+        void openlibs(lua_State *L);
 
-        // Convert datafile object to lua table. Note that it has same structure
-        // as C++ version, you'll need a wrapper to actually use this table
-        // properly.
-        void datafile_to_table(lua_State *L, const Datafile &datafile);
+        void sandbox_base(lua_State *L);
 
-        // Converts lua table to datafile object.
-        void table_to_datafile(lua_State *L, int idx, Datafile &datafile);
+        int dofile(lua_State *L);
 
     }
 

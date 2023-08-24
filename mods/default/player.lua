@@ -1,6 +1,6 @@
 default_player_saver = {
-    load = function(self, save_dir_path)
-        local save = datafile.from_file(save_dir_path.."/default_save.txt")
+    load = function(self)
+        local save = datafile.from_file("default_save.txt")
 
         for pname, pdata in save:iter_children() do
             self.data[pname] = {
@@ -16,7 +16,7 @@ default_player_saver = {
         end
     end,
 
-    save = function(self, save_dir_path)
+    save = function(self)
         local save = datafile.new()
 
         for name, save_data in pairs(self.data) do
@@ -35,7 +35,7 @@ default_player_saver = {
             end
         end
 
-        save:to_file(save_dir_path.."/default_save.txt")
+        save:to_file("default_save.txt")
     end,
 
     get_save_data = function(self, playername)

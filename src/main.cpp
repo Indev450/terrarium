@@ -186,7 +186,7 @@ int main(int argc, char **argv)
     if (save_exists) {
         saves_mgr.loadPlayerData(*game, save_name);
         saves_mgr.loadInventoriesData(*game, save_name);
-        game->modding_interface->load(saves_mgr.getSavePath(save_name));
+        game->modding_interface->load();
 
         am.setActivity(std::make_unique<Terrarium::GameActivity>(am, game, save_name));
     } else {

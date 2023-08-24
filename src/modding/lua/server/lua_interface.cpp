@@ -31,6 +31,7 @@
 #include "lua_mod_config.hpp"
 #include "../common/lua_util.hpp"
 #include "../common/lua_datafile.hpp"
+#include "../common/lua_sandbox.hpp"
 #include "lua_entity.hpp"
 #include "lua_item.hpp"
 #include "lua_crafting.hpp"
@@ -42,6 +43,7 @@
 #include "lua_mapgen.hpp"
 #include "lua_hud_bar.hpp"
 #include "lua_sound.hpp"
+#include "lua_save.hpp"
 #include "../../../utils/path_guard.hpp"
 
 namespace Terrarium {
@@ -49,13 +51,14 @@ namespace Terrarium {
     LuaModdingInterface::LuaModdingInterface(std::shared_ptr<GameState> game):
         ModdingInterface(game), L(luaL_newstate())
     {
-        luaL_openlibs(L);
+        LuaSandbox::openlibs(L);
 
         lua_newtable(L);
         lua_setglobal(L, "core");
 
         LuaDatafileAPI::init(L);
 
+        LuaSaveAPI::init(*this);
         LuaEntityAPI::init(*this);
         LuaItemAPI::init(*this);
         LuaCraftingAPI::init(*this);
@@ -67,6 +70,9 @@ namespace Terrarium {
         LuaChatAPI::init(*this);
         LuaHudBarAPI::init(*this);
         LuaSoundAPI::init(*this);
+
+        // Maybe change it to wrappers path later
+        LuaSandbox::set_dofile_path(L, fs::current_path());
 
         if (!LuaUtil::run_script(L, "wrappers/init.lua")) {
             throw std::runtime_error("could not initialize lua wrappers");
@@ -244,15 +250,13 @@ namespace Terrarium {
         lua_pop(L, 1);
     }
 
-    void LuaModdingInterface::load(const fs::path &save_dir_path) {
+    void LuaModdingInterface::load() {
         lua_getglobal(L, "core");
 
         lua_getfield(L, -1, "_load");
 
         if (lua_isfunction(L, -1)) {
-            lua_pushstring(L, save_dir_path.string().c_str());
-
-            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
+            if (LuaUtil::pcall(L, 0, 0) != LUA_OK) {
                 LuaUtil::error(L, "core._load() generated a lua error");
             }
         } else {
@@ -262,15 +266,13 @@ namespace Terrarium {
         lua_pop(L, 1);
     }
 
-    void LuaModdingInterface::save(const fs::path &save_dir_path) {
+    void LuaModdingInterface::save() {
         lua_getglobal(L, "core");
 
         lua_getfield(L, -1, "_save");
 
         if (lua_isfunction(L, -1)) {
-            lua_pushstring(L, save_dir_path.string().c_str());
-
-            if (LuaUtil::pcall(L, 1, 0) != LUA_OK) {
+            if (LuaUtil::pcall(L, 0, 0) != LUA_OK) {
                 LuaUtil::error(L, "core._save() generated a lua error");
             }
         } else {
@@ -299,9 +301,6 @@ namespace Terrarium {
 
         std::vector<LuaModConfig> mods_unsorted;
 
-        // Separate state for configs
-        lua_State *L_conf = luaL_newstate();
-
         // Load configs
         for (const auto &entry: fs::directory_iterator(mods_path)) {
             if (entry.is_directory(ec)) {
@@ -314,8 +313,6 @@ namespace Terrarium {
                 }
             }
         }
-
-        lua_close(L_conf);
 
         // This dependency resolving algorithm is pretty much copy of one from
         // minetest.
@@ -437,12 +434,10 @@ namespace Terrarium {
 
                 // If there is scripts directory, load it
                 if (fs::is_directory(client_scripts_dir, ec)) {
-                    PathGuard guard(mod.root);
-
-                    fs::current_path(client_scripts_dir);
-
-                    game->client_modding_interface->loadScript("init.lua");
+                    game->client_modding_interface->loadScript(client_scripts_dir / "init.lua");
                 }
+
+                LuaSandbox::set_dofile_path(L, fs::absolute(mod.root));
 
                 if (!LuaUtil::run_script(L, (mod.root / "init.lua").string().c_str())) {
                     throw std::runtime_error("Terrarium::LuaModdingInterface::loadMods: unexpected error when loading mod");

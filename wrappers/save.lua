@@ -7,10 +7,12 @@ function terrarium.register_saver(saver)
     table.insert(core._savers, saver)
 end
 
-function core._save(save_dir_path)
-    for _, saver in ipairs(core._savers) do saver:save(save_dir_path) end
+terrarium.open = core._open
+
+function core._save()
+    for _, saver in ipairs(core._savers) do saver:save() end
 end
 
-function core._load(save_dir_path)
-    for _, saver in ipairs(core._savers) do saver:load(save_dir_path) end
+function core._load()
+    for _, saver in ipairs(core._savers) do saver:load() end
 end

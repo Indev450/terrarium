@@ -22,30 +22,16 @@
 
 #include <lua.hpp>
 
-#include "../../../utils/datafile.hpp"
-
 namespace Terrarium {
 
-    namespace LuaDatafileAPI {
+    class LuaModdingInterface;
 
-        void init(lua_State *L);
+    namespace LuaSaveAPI {
 
-        // table datafile._from_string(string str)
-        int from_string(lua_State *L);
+        void init(LuaModdingInterface &lua_interface);
 
-        // string datafile._to_string(table data)
-        int to_string(lua_State *L);
-
-        // Functions to call from C++
-
-        // Convert datafile object to lua table. Note that it has same structure
-        // as C++ version, you'll need a wrapper to actually use this table
-        // properly.
-        void datafile_to_table(lua_State *L, const Datafile &datafile);
-
-        // Converts lua table to datafile object.
-        void table_to_datafile(lua_State *L, int idx, Datafile &datafile);
+        // file core._open(string path)
+        int open(lua_State *L);
 
     }
-
 }

@@ -49,8 +49,8 @@ namespace Terrarium {
         virtual void initMapgen(MapgenBase &mapgen) {};
         virtual void onPlayerJoin(std::shared_ptr<Player> player) {};
         virtual void onMapgenFinish() {};
-        virtual void load(const fs::path &save_dir_path) {};
-        virtual void save(const fs::path &save_dir_path) {};
+        virtual void load() {};
+        virtual void save() {};
     };
 
 } // namespace Terrarium

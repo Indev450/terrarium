@@ -32,39 +32,13 @@ namespace Terrarium {
         void init(lua_State *L) {
             lua_newtable(L);
 
-            lua_pushcfunction(L, from_file);
-            lua_setfield(L, -2, "_from_file");
-
             lua_pushcfunction(L, from_string);
             lua_setfield(L, -2, "_from_string");
-
-            lua_pushcfunction(L, to_file);
-            lua_setfield(L, -2, "_to_file");
 
             lua_pushcfunction(L, to_string);
             lua_setfield(L, -2, "_to_string");
 
             lua_setglobal(L, "datafile");
-        }
-
-        int from_file(lua_State *L) {
-            const char *filename = luaL_checkstring(L, 1);
-
-            char listSep = ',';
-
-            if (lua_isstring(L, 2) && luaL_len(L, 2) > 0) {
-                listSep = lua_tostring(L, 2)[0];
-            }
-
-            Datafile datafile;
-
-            if (datafile.loadFromFile(filename, listSep)) {
-                datafile_to_table(L, datafile);
-            } else {
-                lua_pushnil(L);
-            }
-
-            return 1;
         }
 
         int from_string(lua_State *L) {
@@ -85,30 +59,6 @@ namespace Terrarium {
             datafile_to_table(L, datafile);
 
             return 1;
-        }
-
-        int to_file(lua_State *L) {
-            const char *filename = luaL_checkstring(L, 1);
-
-            Datafile datafile;
-
-            table_to_datafile(L, 2, datafile);
-
-            const char *indent = "    ";
-
-            if (lua_isstring(L, 3)) {
-                indent = lua_tostring(L, 3);
-            }
-
-            char listSep = ',';
-
-            if (lua_isstring(L, 4) && luaL_len(L, 4) > 0) {
-                listSep = lua_tostring(L, 4)[0];
-            }
-
-            datafile.saveToFile(filename, indent, listSep);
-
-            return 0;
         }
 
         int to_string(lua_State *L) {
