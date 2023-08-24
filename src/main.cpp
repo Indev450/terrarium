@@ -73,21 +73,21 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
 
     auto &perlin = mapgen["perlin"];
 
-    perlin["ground_gen_scale"].setReal(0.035);
-    perlin["ground_height_amp"].setReal(0.35);
+    perlin["ground_gen_scale"].setReal(0.02);
+    perlin["ground_height_amp"].setReal(0.7);
 
-    perlin["cave_gen_scale"].setReal(0.03, 0);
-    perlin["cave_gen_scale"].setReal(0.04, 1);
+    perlin["cave_gen_scale"].setReal(0.05, 0);
+    perlin["cave_gen_scale"].setReal(0.07, 1);
 
     perlin["biome_gen_scale"].setReal(0.003, 0);
     perlin["biome_gen_scale"].setReal(0.005, 1);
 
-    perlin["min_block_density"].setReal(0.4);
-    perlin["max_block_density"].setReal(0.55);
+    perlin["min_block_density"].setReal(0.2);
+    perlin["max_block_density"].setReal(0.4);
 
-    perlin["min_density_factor"].setReal(0.5);
+    perlin["min_density_factor"].setReal(0.6);
 
-    perlin["min_cave_scale_factor"].setReal(0.5);
+    perlin["min_cave_scale_factor"].setReal(0.6);
     perlin["max_cave_scale_factor"].setReal(0.85);
 }
 
