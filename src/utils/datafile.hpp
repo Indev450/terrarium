@@ -41,10 +41,30 @@ namespace Terrarium {
     class Datafile {
         std::vector<std::string> content;
 
-        std::vector<std::pair<std::string, Datafile>> children;
+        std::vector<std::pair<std::string, std::shared_ptr<Datafile>>> children;
         std::unordered_map<std::string, size_t> children_ids;
 
     public:
+        Datafile() = default;
+
+        // Do deep copy of other datafile object.
+        Datafile &operator=(const Datafile &other) {
+            // Content can be copied just like that.
+            content = other.content;
+
+            for (auto &pair: other.children) {
+                // We don't want to copy pointers, we want to copy objects
+                // themselves.
+                operator[](pair.first) = *pair.second;
+            }
+
+            return *this;
+        }
+
+        Datafile(const Datafile &other) {
+            *this = other;
+        }
+
         void setString(const std::string &value, size_t i = 0) {
             if (content.size() <= i) content.resize(i+1);
 
@@ -93,17 +113,17 @@ namespace Terrarium {
             return content.empty() && children.empty();
         }
 
-        const std::vector<std::pair<std::string, Datafile>> &getChildren() const {
+        const std::vector<std::pair<std::string, std::shared_ptr<Datafile>>> &getChildren() const {
             return children;
         }
 
         Datafile &operator[](const std::string &child_name) {
             if (!childExists(child_name)) {
                 children_ids[child_name] = children.size();
-                children.push_back({ child_name, Datafile() });
+                children.push_back({ child_name, std::make_unique<Datafile>() });
             }
 
-            return children[children_ids[child_name]].second;
+            return *children[children_ids[child_name]].second;
         }
 
         bool saveToFile(const fs::path &filename,
@@ -146,7 +166,7 @@ namespace Terrarium {
                 };
 
                 for (auto const& property: data.children) {
-                    const auto &child = property.second;
+                    const auto &child = *property.second;
 
                     if (child.children.empty()) {
                         output<<mkindent(indent, indent_level)<<property.first<<" = ";

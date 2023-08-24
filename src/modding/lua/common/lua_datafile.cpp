@@ -109,7 +109,7 @@ namespace Terrarium {
                 lua_createtable(L, 2, 0); // { "field_name", data }
                 lua_pushstring(L, pair.first.c_str());
                 lua_rawseti(L, -2, 1);
-                datafile_to_table(L, pair.second);
+                datafile_to_table(L, *pair.second);
                 lua_rawseti(L, -2, 2);
                 lua_rawseti(L, -2, i+1);
                 lua_pop(L, 1);
