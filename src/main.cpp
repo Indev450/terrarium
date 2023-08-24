@@ -52,7 +52,7 @@
 // Those were in terrarium_config.hpp, but i anyway wasn't using any configuration
 // in cmake other than version, so maybe it is not bad to set version here?
 #define TERRARIUM_VERSION_MAJOR 0
-#define TERRARIUM_VERSION_MINOR 6
+#define TERRARIUM_VERSION_MINOR 7
 #define TERRARIUM_VERSION_PATCH 0
 
 #define SETTINGS_VERSION 1
