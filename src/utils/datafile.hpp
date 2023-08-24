@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef UTIL_DATAFILE_HPP
+#define UTIL_DATAFILE_HPP
+
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -261,3 +264,5 @@ namespace Terrarium {
         }
     };
 }
+
+#endif

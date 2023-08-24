@@ -51,6 +51,7 @@
 #include "utils/saves.hpp"
 #include "utils/cell_def_holder.hpp"
 #include "utils/chat.hpp"
+#include "utils/datafile.hpp"
 #include "modding/interface.hpp"
 #include "modding/client_interface.hpp"
 
@@ -80,6 +81,8 @@ namespace Terrarium {
 
         SavesManager saves;
         std::string save_name;
+
+        Datafile settings;
 
         std::vector<DayNightCycleEntry> day_night_cycle;
         float time = 0;

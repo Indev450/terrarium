@@ -40,6 +40,8 @@ namespace Terrarium {
         tip_text("", game->gfx.font, 16),
         def_view()
     {
+        light_calc.setSmooth(game->settings["video"]["smooth_lighting"].getBool());
+
         sf::Vector2u win_size_pixels = am.getWindow().getSize();
 
         onResize(win_size_pixels.x, win_size_pixels.y);

@@ -66,6 +66,8 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
     video["resolution"].setInt(800, 0);
     video["resolution"].setInt(640, 1);
 
+    video["smooth_lighting"].setBool(true);
+
     auto &mapgen = settings["mapgen"];
 
     mapgen["world_size"].setInt(2000, 0);
@@ -144,6 +146,8 @@ int main(int argc, char **argv)
     }
 
     std::shared_ptr<Terrarium::GameState> game = Terrarium::GameState::create(save_name);
+
+    game->settings = settings;
 
     game->day_length = 60*16;
 

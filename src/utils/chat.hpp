@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef UTIL_CHAT_HPP
+#define UTIL_CHAT_HPP
+
 #include <deque>
 
 #include <SFML/System.hpp>
@@ -62,3 +65,5 @@ namespace Terrarium {
     };
 
 }
+
+#endif

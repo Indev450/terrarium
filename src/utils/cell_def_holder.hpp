@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef UTIL_CELL_DEF_HOLDER_HPP
+#define UTIL_CELL_DEF_HOLDER_HPP
+
 #include "auto_id_map.hpp"
 
 namespace Terrarium {
@@ -98,3 +101,5 @@ namespace Terrarium {
     };
 
 }
+
+#endif

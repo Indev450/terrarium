@@ -36,7 +36,6 @@ namespace Terrarium {
         input(width, height)
     {
         shadow.create(width, height);
-        shadow.setSmooth(true);
 
         shadow_rect.setTexture(&shadow);
         shadow_rect.setSize({ float(width), float(height) });
@@ -227,7 +226,7 @@ namespace Terrarium {
         }
 
         setMaxLight(calc, intensity);
-        calc.a = 255 - getMaxLight(intensity);
+        calc.a = 255 - getMaxLight(calc);
 
         for (int nx = -1; nx <= 1; ++nx) {
             for (int ny = -1; ny <= 1; ++ny) {
@@ -256,6 +255,10 @@ namespace Terrarium {
         states.blendMode = sf::BlendMultiply;
 
         target.draw(shadow_rect, states);
+    }
+
+    void LightCalculator::setSmooth(bool smooth) {
+        shadow.setSmooth(smooth);
     }
 
 }

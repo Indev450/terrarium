@@ -65,6 +65,10 @@ namespace Terrarium {
         return std::max(std::max(from.x, from.y), from.z);
     }
 
+    inline int getMaxLight(const sf::Color &from) {
+        return std::max(std::max(from.r, from.g), from.b);
+    }
+
     inline bool hasLight(const sf::Vector3i &val) {
         return val.x || val.y || val.z;
     }
@@ -136,6 +140,8 @@ namespace Terrarium {
         void updateLightInput(std::shared_ptr<GameState> game);
 
         void addDynamicLight(const DynamicLightInput &inp);
+
+        void setSmooth(bool smooth);
 
     private:
         void calculateLight();

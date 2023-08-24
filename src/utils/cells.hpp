@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef UTIL_CELLS_HPP
+#define UTIL_CELLS_HPP
+
 #include <vector>
 
 template <class T>
@@ -78,3 +81,5 @@ struct Cells {
         return &cells[y*width + x];
     }
 };
+
+#endif
