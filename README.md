@@ -21,7 +21,7 @@ Dependencies
 ------------
 
 * Lua 5.4
-* SFML 2.5
+* SFML 2.6
 
 Building
 --------
