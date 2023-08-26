@@ -24,6 +24,7 @@
 #define UI_CHAT_HPP
 
 #include <list>
+#include <deque>
 #include <memory>
 
 #include <SFML/Graphics.hpp>
@@ -47,6 +48,9 @@ namespace Terrarium {
 
         // Small gap between messages
         static const unsigned GAP = 2;
+
+        // Should be enough hopefully
+        static const unsigned HISTORY_MAXCOMMANDS = 100;
 
     private:
         // Scroll progress in chat log
@@ -78,6 +82,9 @@ namespace Terrarium {
         // Used to check if there are new messages appeared
         unsigned last_total_messages = 0;
 
+        std::deque<sf::String> cmd_history;
+        int history_scroll = -1;
+
     private:
         bool preHandleEvent(GameState &game, const sf::Event &event) override;
 
@@ -85,6 +92,8 @@ namespace Terrarium {
         void onPosUpdated(GameState &game) override;
 
         void updateInputText(GameState &game);
+
+        void addToHistory(const sf::String &command);
 
     public:
         ChatUI(GameState &game);

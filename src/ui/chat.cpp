@@ -87,10 +87,13 @@ namespace Terrarium {
             sf::String input = takeString();
             visual_pos = 0;
             updateInputText(game);
+            history_scroll = -1;
 
             if (input.getSize() != 0) {
                 // Handle chat commands
                 if (input[0] == '/' && input.getSize() > 1 && input[1] != ' ') {
+                    addToHistory(input);
+
                     ModCmdEvent *event = new ModCmdEvent();
 
                     event->user = game.player;
@@ -99,7 +102,6 @@ namespace Terrarium {
 
                     for (size_t i = 1; i < input.getSize() && input[i] != ' '; ++cmd_name_len, ++i) {}
 
-                    // Notice that cmd_name_end is "length" in this context.
                     event->name = input.substring(1, cmd_name_len).toAnsiString();
 
                     size_t cmd_arg_start = cmd_name_len+2;
@@ -132,6 +134,33 @@ namespace Terrarium {
             }
 
             return true;
+        } else if (event.type == sf::Event::KeyPressed && buffer.getSize() != 0 && buffer[0] == '/') {
+            switch (event.key.code) {
+                case sf::Keyboard::Up:
+                {
+                    if (!cmd_history.empty() && history_scroll < int(cmd_history.size()) - 1) {
+                        ++history_scroll;
+                        buffer = cmd_history[history_scroll];
+                        pos = buffer.getSize();
+                        updateInputText(game);
+                    }
+                }
+                break;
+
+                case sf::Keyboard::Down:
+                {
+                    if (!cmd_history.empty() && history_scroll > 0) {
+                        --history_scroll;
+                        buffer = cmd_history[history_scroll];
+                        pos = buffer.getSize();
+                        updateInputText(game);
+                    }
+                }
+                break;
+
+                default:
+                break;
+            }
         }
 
         return false;
@@ -158,6 +187,14 @@ namespace Terrarium {
         size_t substring_end = std::min(substring_start+game.chat.max_width, buffer.getSize());
 
         input_text.setString(buffer.substring(substring_start, substring_end-substring_start));
+    }
+
+    void ChatUI::addToHistory(const sf::String &command) {
+        if (cmd_history.size() == HISTORY_MAXCOMMANDS) {
+            cmd_history.pop_back();
+        }
+
+        cmd_history.push_front(command);
     }
 
     void ChatUI::update(GameState &game, float dtime) {
