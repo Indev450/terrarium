@@ -39,8 +39,9 @@ namespace Terrarium {
 
         void FieldChecker::checkself() {
             if (!lua_istable(L, idx)) {
-                char errormsg[64];
-                snprintf(errormsg, 64, "expected table for %s, got %s", structname, luaL_typename(L, idx));
+                static const size_t BUFSIZE = 64;
+                char errormsg[BUFSIZE];
+                snprintf(errormsg, BUFSIZE, "expected table for %s, got %s", structname, luaL_typename(L, idx));
                 throw std::invalid_argument(errormsg);
             }
         }
@@ -48,8 +49,9 @@ namespace Terrarium {
         void FieldChecker::fielderror(const char *field, const char *extramsg) {
             // Uh i think thats enough in case we will get really long error
             // messages.
-            char errormsg[1024];
-            snprintf(errormsg, 512, "bad field '%s' in %s (%s)", field, structname, extramsg);
+            static const size_t BUFSIZE = 1024;
+            char errormsg[BUFSIZE];
+            snprintf(errormsg, BUFSIZE, "bad field '%s' in %s (%s)", field, structname, extramsg);
 
             throw std::invalid_argument(errormsg);
         }
@@ -57,8 +59,9 @@ namespace Terrarium {
         void FieldChecker::rfielderror(const char *field, const char *extramsg) {
             // Uh i think thats enough in case we will get really long error
             // messages.
-            char errormsg[1024];
-            snprintf(errormsg, 512, "%s\n\tIn field '%s' of %s", extramsg, field, structname);
+            static const size_t BUFSIZE = 1024;
+            char errormsg[BUFSIZE];
+            snprintf(errormsg, BUFSIZE, "%s\n\tIn field '%s' of %s", extramsg, field, structname);
 
             throw std::invalid_argument(errormsg);
         }
@@ -68,8 +71,9 @@ namespace Terrarium {
         }
 
         void FieldChecker::typeerror(const char *field, const char *tname, const char *tname2) {
-            char extramsg[128];
-            snprintf(extramsg, 128, "%s expected, got %s", tname, tname2);
+            static const size_t BUFSIZE = 128;
+            char extramsg[BUFSIZE];
+            snprintf(extramsg, BUFSIZE, "%s expected, got %s", tname, tname2);
 
             fielderror(field, extramsg);
         }
@@ -138,8 +142,9 @@ namespace Terrarium {
                 }
             }
 
-            char extramsg[40];
-            snprintf(extramsg, 40, "invalid option '%.22s'", str);
+            static const size_t BUFSIZE = 40;
+            char extramsg[BUFSIZE];
+            snprintf(extramsg, BUFSIZE, "invalid option '%.22s'", str);
 
             fielderror(field, extramsg);
 
@@ -171,8 +176,9 @@ namespace Terrarium {
             lua_Number num = checknumber(field);
 
             if (num < min || num > max) {
-                char extramsg[64];
-                snprintf(extramsg, 64, "should be in range from %.5lf to %.5lf", min, max);
+                static const size_t BUFSIZE = 64;
+                char extramsg[BUFSIZE];
+                snprintf(extramsg, BUFSIZE, "should be in range from %.5lf to %.5lf", min, max);
                 fielderror(field, extramsg);
             }
 
@@ -472,8 +478,9 @@ namespace Terrarium {
                             frame.scale_center = frame_checker.checkvector<float>("scale_center");
                         }
                     } catch (const std::invalid_argument &e) {
-                        char arrpos[20];
-                        snprintf(arrpos, 20, "frames[%d]", i);
+                        static const size_t BUFSIZE = 20;
+                        char arrpos[BUFSIZE];
+                        snprintf(arrpos, BUFSIZE, "frames[%d]", i);
                         checker.rfielderror(arrpos, e.what());
                     }
 
