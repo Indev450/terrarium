@@ -26,6 +26,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <algorithm>
 
 #include "item_stack.hpp"
 
@@ -65,15 +66,7 @@ namespace Terrarium {
 
         // Returns amount of non-empty slots in inventory
         unsigned int countUsedSlots() {
-            unsigned int count = 0;
-
-            for (auto &item: items) {
-                if (!item->empty()) {
-                    ++count;
-                }
-            }
-
-            return count;
+            return std::count_if(items.cbegin(), items.cend(), [] (const auto &item) { return !item->empty(); });
         }
 
         // Add new_item into inventory. If possible, it will merge with existing

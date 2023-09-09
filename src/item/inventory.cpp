@@ -21,6 +21,7 @@
  */
 
 #include <algorithm>
+#include <numeric>
 
 #include "inventory.hpp"
 #include "../utils/binary_io.hpp"
@@ -48,11 +49,10 @@ namespace Terrarium {
 
         // If new_item is still not empty, try to merge it with empty
         // item stacks
-        for (auto &item: items) {
-            if (item->empty()) {
-                item->swap(new_item);
-                break;
-            }
+        auto it = std::find_if(items.begin(), items.end(), [] (auto &item) { return item->empty(); });
+
+        if (it != items.end()) {
+            (*it)->swap(new_item);
         }
     }
 
@@ -73,25 +73,13 @@ namespace Terrarium {
     }
 
     unsigned int Inventory::countItems(std::shared_ptr<ItemDef> type) const {
-        unsigned int result = 0;
-
-        for (auto &item: items) {
-            if (item->getDef() == type) {
-                result += item->getCount();
-            }
-        }
-
-        return result;
+        return std::accumulate(items.cbegin(), items.cend(), 0, [&] (size_t acc, auto &item) { return acc + (item->getDef() == type ? item->getCount() : 0); } );
     }
 
     std::shared_ptr<ItemStack> Inventory::find(std::shared_ptr<ItemDef> type) {
-        for (auto &item: items) {
-            if (item->getDef() == type && !item->empty()) {
-                return item;
-            }
-        }
+        auto it = std::find_if(items.begin(), items.end(), [&] (auto &item) { return item->getDef() == type && item->empty(); });
 
-        return nullptr;
+        return it == items.cend() ? nullptr : *it;
     }
 
     void Inventory::load(std::istream &s, GameState &game) {
