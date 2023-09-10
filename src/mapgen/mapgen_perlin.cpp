@@ -47,7 +47,7 @@ namespace Terrarium {
             column_height += base_height * (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
 
             for (int y = column_height; y < static_cast<int>(world.getHeight()); ++y) {
-                world.setWall(x, y, settings.filler.bg);
+                world.setWall(x, y, settings.filler.bg.id);
 
                 // Makes caves less common on surface
                 float density_check_factor = float(y)/world.getHeight();
@@ -76,7 +76,7 @@ namespace Terrarium {
                 // Is the condition non-intuitive? Maybe, dunno how do i rename
                 // settings then...
                 if (density < min_density || density > max_density) {
-                    world.setBlock(x, y, settings.filler.fg);
+                    world.setBlock(x, y, settings.filler.fg.id);
                 }
             }
         }

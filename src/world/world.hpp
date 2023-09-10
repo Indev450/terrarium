@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include <list>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -47,7 +48,25 @@ namespace Terrarium {
         // Store updated block positions to redraw them
         std::unordered_set<sf::Vector2i> updated_blocks;
 
+        double game_time = 0;
+
+        bool tickBlockInternal(Block &block);
+
+        inline void startTimerInternal(Block &block, double timer) {
+            block.timer = timer;
+            block.timer_start = game_time;
+        }
+
     public:
+        struct TickedBlock {
+            int x;
+            int y;
+
+            blockid id;
+
+            bool is_wall;
+        };
+
         World& operator=(World &&moved);
 
         World(World &&moved);
@@ -80,7 +99,7 @@ namespace Terrarium {
                 return 0;
             }
 
-            return tiles.get(x, y)->fg;
+            return tiles.get(x, y)->fg.id;
         }
 
         inline sf::Vector2i getMultiblockOrigin(int x, int y) const {
@@ -98,10 +117,10 @@ namespace Terrarium {
                 return 0;
             }
 
-            return tiles.get(x, y)->bg;
+            return tiles.get(x, y)->bg.id;
         }
 
-        inline void setBlock(int x, int y, blockid block) {
+        inline void setBlock(int x, int y, Block block) {
             if (!tiles.isInRange(x, y)) {
                 return;
             }
@@ -146,7 +165,7 @@ namespace Terrarium {
             }
         }
 
-        inline void setWall(int x, int y, blockid block) {
+        inline void setWall(int x, int y, Block block) {
             if (!tiles.isInRange(x, y)) {
                 return;
             }
@@ -165,6 +184,24 @@ namespace Terrarium {
                 updated_blocks.emplace(x+1, y-1);
             }
         }
+
+        inline void startBlockTimer(int x, int y, double timer) {
+            if (!tiles.isInRange(x, y)) {
+                return;
+            }
+
+            startTimerInternal(tiles.get(x, y)->fg, timer);
+        }
+
+        inline void startWallTimer(int x, int y, double timer) {
+            if (!tiles.isInRange(x, y)) {
+                return;
+            }
+
+            startTimerInternal(tiles.get(x, y)->bg, timer);
+        }
+
+        void tickArea(sf::IntRect rect, std::list<TickedBlock> &ticked);
 
         // To be used in mapgen (mapgen usually changes EVERY world block)
         // so saving every change is huge waste of memory
@@ -195,6 +232,14 @@ namespace Terrarium {
 
         inline uint16_t getHeight() const {
             return tiles.height;
+        }
+
+        inline double getTime() const {
+            return game_time;
+        }
+
+        inline void tick(float dtime) {
+            game_time += dtime;
         }
     };
 

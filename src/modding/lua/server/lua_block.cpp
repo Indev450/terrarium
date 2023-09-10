@@ -43,6 +43,8 @@ namespace Terrarium {
             lua_interface.registerFunction("_set_wall", set_wall);
             lua_interface.registerFunction("_set_multiblock_offset", set_multiblock_offset);
             lua_interface.registerFunction("_set_multiblock", set_multiblock);
+            lua_interface.registerFunction("_start_block_timer", start_block_timer);
+            lua_interface.registerFunction("_start_wall_timer", start_wall_timer);
             lua_interface.registerFunction("_get_block_inventory", get_block_inventory);
         }
 
@@ -215,6 +217,30 @@ namespace Terrarium {
             blockid block_id = LuaUtil::checkinteger_ranged<blockid>(L, 5);
 
             lua_interface->game->world.setMultiblock(x, y, width, height, block_id);
+
+            return 0;
+        }
+
+        int start_block_timer(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            int x = luaL_checkinteger(L, 1);
+            int y = luaL_checkinteger(L, 2);
+            double timer = luaL_checknumber(L, 3);
+
+            lua_interface->game->world.startBlockTimer(x, y, timer);
+
+            return 0;
+        }
+
+        int start_wall_timer(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            int x = luaL_checkinteger(L, 1);
+            int y = luaL_checkinteger(L, 2);
+            double timer = luaL_checknumber(L, 3);
+
+            lua_interface->game->world.startWallTimer(x, y, timer);
 
             return 0;
         }

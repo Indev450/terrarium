@@ -96,13 +96,13 @@ namespace Terrarium {
 
         bool satisfied(const Tile &tile) const {
             if (fg != nullptr) {
-                if (!fg->satisfied(tile.fg)) {
+                if (!fg->satisfied(tile.fg.id)) {
                     return false;
                 }
             }
 
             if (bg != nullptr) {
-                if (!bg->satisfied(tile.bg)) {
+                if (!bg->satisfied(tile.bg.id)) {
                     return false;
                 }
             }
@@ -200,12 +200,12 @@ namespace Terrarium {
 
                     switch (where) {
                         case FOREGROUND:
-                            if (tile->fg == 0)
+                            if (tile->fg.id == 0)
                                 return true;
                         break;
 
                         case BACKGROUND:
-                            if (tile->bg == 0)
+                            if (tile->bg.id == 0)
                                 return true;
                         break;
                     }

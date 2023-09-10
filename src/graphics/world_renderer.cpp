@@ -111,7 +111,7 @@ namespace Terrarium {
                 int x, int y, int world_x, int world_y,
                 const Tile &tile) {
         if (tile.bg) {
-            BlockDef &def = game.block_defs.getOrUnknown(tile.bg);
+            BlockDef &def = game.block_defs.getOrUnknown(tile.bg.id);
 
             if (def.draw_type != BlockDef::DrawType::None) {
                 switch (def.draw_type) {
@@ -196,7 +196,7 @@ namespace Terrarium {
         }
 
         if (tile.fg) {
-            BlockDef &def = game.block_defs.getOrUnknown(tile.fg);
+            BlockDef &def = game.block_defs.getOrUnknown(tile.fg.id);
 
             if (def.draw_type != BlockDef::DrawType::None) {
                 switch (def.draw_type) {

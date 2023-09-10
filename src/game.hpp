@@ -57,7 +57,7 @@
 
 namespace Terrarium {
 
-    const uint32_t WORLD_SAVE_VERSION = 3;
+    const uint32_t WORLD_SAVE_VERSION = 4;
     const uint32_t INVENTORIES_SAVE_VERSION = 1;
     const uint32_t PLAYER_SAVE_VERSION = 1;
 
@@ -85,7 +85,6 @@ namespace Terrarium {
         Datafile settings;
 
         std::vector<DayNightCycleEntry> day_night_cycle;
-        float time = 0;
         float day_length = 60*12;
         uint8_t natural_light = 255;
 

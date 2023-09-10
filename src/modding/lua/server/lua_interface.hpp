@@ -46,6 +46,7 @@ namespace Terrarium {
         void handleEvent(Event &event) override;
         void initMapgen(MapgenBase &mapgen) override;
         void onPlayerJoin(std::shared_ptr<Player> player) override;
+        void onBlocksTicked(const std::list<World::TickedBlock> &ticked) override;
         void onMapgenFinish() override;
         void load() override;
         void save() override;

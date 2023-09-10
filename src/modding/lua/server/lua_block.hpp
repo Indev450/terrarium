@@ -62,6 +62,12 @@ namespace Terrarium {
         // void core._set_multiblock(int x, int y, int width, int height, int block_id)
         int set_multiblock(lua_State *L);
 
+        // void core._start_block_timer(int x, int y, double timer)
+        int start_block_timer(lua_State *L);
+
+        // void core._start_wall_timer(int x, int y, double timer)
+        int start_wall_timer(lua_State *L);
+
         // InventoryRef core._get_block_inventory(int x, int y)
         int get_block_inventory(lua_State *L);
 

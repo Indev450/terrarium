@@ -134,28 +134,28 @@ namespace Terrarium {
                 }
 
                 // No blocks, use natural light
-                if (tile->fg == 0 && tile->bg == 0) {
+                if (tile->fg.id == 0 && tile->bg.id == 0) {
                     inp.blocks_light = false;
                     inp.light = natural_light;
                     continue;
                 }
 
-                BlockDef &fg = block_defs.getOrUnknown(tile->fg);
-                BlockDef &bg = block_defs.getOrUnknown(tile->bg);
+                BlockDef &fg = block_defs.getOrUnknown(tile->fg.id);
+                BlockDef &bg = block_defs.getOrUnknown(tile->bg.id);
 
                 // Background doesn't block natural light, but we can't be sure
                 // about foreground yet
-                if (tile->bg == 0 || !bg.blocks_light) {
+                if (!tile->bg.id || !bg.blocks_light) {
                     setMaxLight(inp.light, natural_light);
                 }
 
                 // Background might emit light itself
-                if (tile->bg != 0) {
+                if (tile->bg) {
                     setMaxLight(inp.light, bg.light);
                 }
 
                 // There is foreground block...
-                if (tile->fg != 0) {
+                if (tile->fg) {
                     if (!fg.blocks_light) {
                         setMaxLight(inp.light, fg.light);
                     } else {

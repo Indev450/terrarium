@@ -63,11 +63,11 @@ namespace Terrarium {
                     return false;
                 }
 
-                if (place_tile.fg != 0 && tile->fg != 0) {
+                if (place_tile.fg.id != 0 && tile->fg.id != 0) {
                     return false;
                 }
 
-                if (place_tile.bg != 0 && tile->bg != 0) {
+                if (place_tile.bg.id != 0 && tile->bg.id != 0) {
                     return false;
                 }
             }
@@ -85,15 +85,15 @@ namespace Terrarium {
                 // Here we are sure that getLocalTile called with correct index
                 Tile place_tile = *getLocalTile(off_x, off_y);
 
-                if (place_tile.fg != 0) {
+                if (place_tile.fg.id != 0) {
                     world.setBlock(place_x, place_y, place_tile.fg);
                     world.setMultiblockOffset(
                             place_x, place_y,
                             place_tile.multiblock_offset.x, place_tile.multiblock_offset.y);
                 }
 
-                if (place_tile.bg != 0) {
-                    world.setWall(place_x, place_y, place_tile.bg);
+                if (place_tile.bg.id != 0) {
+                    world.setWall(place_x, place_y, place_tile.bg.id);
                 }
             }
         }

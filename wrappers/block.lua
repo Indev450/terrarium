@@ -75,6 +75,8 @@ local block_defaults = {
 
     on_interact = nil,
 
+    on_timer = nil,
+
     multiblock_size = nil,
 
     -- Block item
@@ -184,7 +186,7 @@ function terrarium.set_block(x, y, block_name, nocall)
     core._set_block(x, y, block_id)
 
     if def ~= nil and not nocall then
-        def.on_place({ x = x, y = y })
+        def.on_place({ x = x, y = y, is_wall = false })
     end
 end
 
@@ -198,7 +200,7 @@ function terrarium.set_wall(x, y, block_name, nocall)
     core._set_wall(x, y, block_id)
 
     if not nocall then
-        def.on_place({ x = x, y = y })
+        def.on_place({ x = x, y = y, is_wall = true })
     end
 end
 
@@ -222,7 +224,7 @@ function terrarium.set_multiblock(x, y, block_name, nocall)
     core._set_multiblock(x, y, width, height, block_id)
 
     if not nocall then
-        def.on_place({ x = x, y = y })
+        def.on_place({ x = x, y = y, is_wall = false })
     end
 end
 
@@ -281,7 +283,7 @@ function terrarium.place_multiblock(x, y, block_name, user, nosound)
     -- Change that block
     core._set_multiblock(x, y, def.multiblock_size.x, def.multiblock_size.y, def.block_id)
 
-    def.on_place({ x = x, y = y }, user)
+    def.on_place({ x = x, y = y, is_wall = false }, user)
 
     if def.place_sound ~= nil and not nosound then
         core._play_sound({
@@ -429,7 +431,7 @@ function terrarium._place(x, y, block_name, user, nosound, fg)
     -- Change that block
     _set(x, y, terrarium.get_block_id(block_name))
 
-    def.on_place({ x = x, y = y }, user)
+    def.on_place({ x = x, y = y, is_wall = not fg }, user)
 
     if def.place_sound ~= nil and not nosound then
         core._play_sound({
@@ -447,6 +449,13 @@ function terrarium._place(x, y, block_name, user, nosound, fg)
     return true
 end
 
+function terrarium.start_block_timer(x, y, timer)
+    local origin = core._get_multiblock_origin(x, y)
+    core._start_block_timer(origin.x, origin.y, timer)
+end
+
+terrarium.start_wall_timer = core._start_wall_timer
+
 function terrarium.get_block_inventory(x, y)
     return core._get_block_inventory(x, y)
 end
@@ -457,4 +466,12 @@ core._event_handlers["BlockActivate"] = function(event)
     local block_def = terrarium.registered_blocks[terrarium.block_names[block_id]]
 
     block_def.on_interact(event.block_event.position, core.get_user(event.block_event.user))
+end
+
+core._on_block_timer = function(x, y, id, is_wall)
+    local block_def = terrarium.registered_blocks[terrarium.block_names[id]]
+
+    if block_def.on_timer then
+        block_def.on_timer({ x = x, y = y, is_wall = is_wall })
+    end
 end

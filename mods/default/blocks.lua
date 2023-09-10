@@ -1109,6 +1109,8 @@ terrarium.register_block("default:lab_monitor_on", {
 
     image = "lab_monitor_on.png",
 
+    drop = "default:lab_monitor",
+
     multiblock_size = { x = 2, y = 1, },
 
     autotile_neighbour = false,

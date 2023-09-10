@@ -29,11 +29,30 @@
 
 namespace Terrarium {
 
+    struct Block {
+        blockid id = 0;
+        double timer_start = 0;
+        double timer = 0;
+
+        Block() = default;
+
+        Block(blockid _id): id(_id), timer(0) {}
+
+        inline void set(blockid newid) {
+            id = newid;
+            timer = 0;
+        }
+
+        inline operator bool() const {
+            return id != 0;
+        }
+    };
+
     struct Tile {
         static const int SIZE = 16;
 
-        blockid fg;
-        blockid bg;
+        Block fg;
+        Block bg;
 
         sf::Vector2<uint8_t> multiblock_offset;
     };

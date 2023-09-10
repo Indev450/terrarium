@@ -1,5 +1,37 @@
-terrarium.register_item("default:sapling", {
+terrarium.register_block("default:sapling", {
     description = "Sapling",
+
+    image = "sapling_block.png",
+
+    autotile_neighbour = false,
+    solid = false,
+
+    groups = {
+        ["ground"] = 1,
+    },
+
+    dig_sound = {
+        name = "dig_wood.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
+    on_place = function(position)
+        if position.is_wall then return false end
+
+        -- Takes from 3 to 6 minutes to grow (would probably adjust that later)
+        terrarium.start_block_timer(position.x, position.y, math.random()*60*3 + 60*3)
+    end,
+
+    on_timer = function(position)
+        if not default.try_place_random_tree(position.x, position.y) then
+            -- 30-60 seconds to try to grow again
+            terrarium.start_block_timer(position.x, position.y, math.random()*30 + 30)
+        end
+    end,
+
+    on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
+
     inventory_image = "sapling.png",
 
     max_count = 999,
@@ -258,6 +290,91 @@ terrarium.register_block("default:tree_branch_right", {
 
     on_neighbour_destroy = terrarium.connected_to_blocks({"left"}),
 })
+
+local function is_replacable(x, y)
+    local name = terrarium.get_block(x, y)
+
+    if not name then return true end
+
+    local def = terrarium.registered_blocks[name]
+
+    return def == nil or def.replacable
+end
+
+function default.try_place_random_tree(x, y)
+    if terrarium.get_block(x, y+1) == nil then return false end
+
+    local root = nil
+    local root_left = false
+    local root_right = false
+
+    if terrarium.get_block(x-1, y+1) and is_replacable(x-1, y) then
+        root = "default:tree_trunk_root_left"
+        root_left = true
+    end
+
+    if terrarium.get_block(x+1, y+1) and is_replacable(x+1, y) then
+        root = root and "default:tree_trunk_root_both" or "default:tree_trunk_root_right"
+        root_right = true
+    end
+
+    if root == nil then return false end
+
+    local height = math.random(10, 14)
+
+    for check_y = y-height+3, y-1 do
+        if not is_replacable(x, check_y) then return false end
+    end
+
+    for check_x = x-1, x+1 do
+        for check_y = y - height, y - height + 2 do
+            if not is_replacable(x, check_y) then return false end
+        end
+    end
+
+    terrarium.set_block(x, y, root)
+
+    if root_left then terrarium.set_block(x-1, y, "default:tree_root_left") end
+    if root_right then terrarium.set_block(x+1, y, "default:tree_root_right") end
+
+    -- Don't place branches right next to tree top...
+    local prev_placed_branches = true
+    for place_y = y-height+3, y-1 do
+        local trunk = "default:tree_trunk"
+
+        -- ...and next to roots too.
+        if place_y == y-1 then prev_placed_branches = true end
+
+        if not prev_placed_branches and math.random() < 0.75 then
+            local branch_left = is_replacable(x-1, place_y) and math.random() < 0.5
+            local branch_right = is_replacable(x+1, place_y) and math.random() < 0.5
+
+            prev_placed_branches = true
+
+            if branch_left and branch_right then
+                trunk = "default:tree_trunk_branch_both"
+                terrarium.set_block(x-1, place_y, "default:tree_branch_left")
+                terrarium.set_block(x+1, place_y, "default:tree_branch_right")
+            elseif branch_left then
+                trunk = "default:tree_trunk_branch_left"
+                terrarium.set_block(x-1, place_y, "default:tree_branch_left")
+            elseif branch_right then
+                trunk = "default:tree_trunk_branch_right"
+                terrarium.set_block(x+1, place_y, "default:tree_branch_right")
+            else
+                prev_placed_branches = false
+            end
+        else
+            prev_placed_branches = false
+        end
+
+        terrarium.set_block(x, place_y, trunk)
+    end
+
+    terrarium.set_multiblock(x-1, y-height, "default:tree_top")
+
+    return true
+end
 
 function default.random_tree(place_chance)
     local tile_aliases = {

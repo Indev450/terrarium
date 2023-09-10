@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <filesystem>
+#include <list>
 
 #include "../player/player.hpp"
 #include "../mapgen/mapgen_base.hpp"
@@ -48,6 +49,7 @@ namespace Terrarium {
         virtual void handleEvent(Event &event) {};
         virtual void initMapgen(MapgenBase &mapgen) {};
         virtual void onPlayerJoin(std::shared_ptr<Player> player) {};
+        virtual void onBlocksTicked(const std::list<World::TickedBlock> &ticked) {};
         virtual void onMapgenFinish() {};
         virtual void load() {};
         virtual void save() {};

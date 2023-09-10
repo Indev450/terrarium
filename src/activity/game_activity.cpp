@@ -65,7 +65,7 @@ namespace Terrarium {
     void GameActivity::update(ActivityManager &am, float dtime) {
         auto &window = am.getWindow();
 
-        game->time += dtime;
+        game->world.tick(dtime);
 
         game->entity_mgr.update(*game, dtime);
 
@@ -141,6 +141,19 @@ namespace Terrarium {
         game->modding_interface->update(dtime);
         game->client_modding_interface->update(dtime);
 
+        std::list<World::TickedBlock> ticked;
+
+        // Extend tick area a bit
+        sf::IntRect tick_area(game->camera);
+        tick_area.left -= 4;
+        tick_area.top -= 4;
+        tick_area.width += 8;
+        tick_area.height += 8;
+
+        game->world.tickArea(tick_area, ticked);
+
+        game->modding_interface->onBlocksTicked(ticked);
+
         game->sfx.update(*game, dtime);
 
         game->hud.update(dtime);
@@ -163,7 +176,7 @@ namespace Terrarium {
         game->hud.hover(sf::Vector2f(mouse_pos_pixels));
 
         game->debug_info.updateFps(dtime);
-        game->debug_info.time_of_day = game->time;
+        game->debug_info.time_of_day = game->world.getTime();
     }
 
     void GameActivity::render(sf::RenderTarget &target) {
@@ -173,8 +186,10 @@ namespace Terrarium {
 
         sf::Color sky_color = sf::Color(90, 120, 240);
 
+        double time = game->world.getTime();
+
         if (!game->day_night_cycle.empty()) {
-            float daytime = game->time - std::floor(game->time / game->day_length) * game->day_length;
+            double daytime = time - std::floor(time / game->day_length) * game->day_length;
             unsigned phases = game->day_night_cycle.size();
 
             game->debug_info.total_phases = phases;

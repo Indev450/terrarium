@@ -45,6 +45,7 @@
 #include "lua_sound.hpp"
 #include "lua_save.hpp"
 #include "../../../utils/path_guard.hpp"
+#include "../../../world/world.hpp"
 
 namespace Terrarium {
 
@@ -230,6 +231,31 @@ namespace Terrarium {
         } else {
             lua_pop(L, 1); // pops _on_player_join
         }
+
+        lua_pop(L, 1); // pops core
+    }
+
+    void LuaModdingInterface::onBlocksTicked(const std::list<World::TickedBlock> &ticked) {
+        lua_getglobal(L, "core");
+
+        lua_getfield(L, -1, "_on_block_timer");
+
+        if (lua_isfunction(L, -1)) {
+            for (const auto &block: ticked) {
+                lua_pushvalue(L, -1);
+                lua_pushinteger(L, block.x);
+                lua_pushinteger(L, block.y);
+                lua_pushinteger(L, block.id);
+                lua_pushboolean(L, block.is_wall);
+
+                // Pops function and arguments
+                if (LuaUtil::pcall(L, 4, 0) != LUA_OK) {
+                    LuaUtil::error(L, "core._on_block_timer() generated a lua error");
+                }
+            }
+        }
+
+        lua_pop(L, 1); // pops _on_block_timer
 
         lua_pop(L, 1); // pops core
     }
