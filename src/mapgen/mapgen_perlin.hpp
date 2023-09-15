@@ -34,35 +34,36 @@ namespace Terrarium {
         // Each x coordinate multiplied by this value when passed into
         // noise function (usually it very small value, like 1/world_width.
         // Scale depending on world size isn't very good though)
-        float ground_gen_scale = 1.0;
+        double ground_gen_scale = 1.0;
 
         // Distance from world top
-        float base_ground_height = 0.1;
+        double base_ground_height = 0.1;
 
-        // Each x column Base height is multiplied by value from -height_amp
-        // to height_amp, depending from perlin value.
-        float height_amp = 0.2;
+        // Each column of blocks height is offset by this value multiplied by
+        // perlin noise value
+        int height_amp = 50;
 
         // Same as ground_gen_scale, but for caves
-        float cave_gen_scale_x = 1.0;
-        float cave_gen_scale_y = 1.0;
+        double cave_gen_scale_x = 1.0;
+        double cave_gen_scale_y = 1.0;
 
         // ...and for biomes
-        float biome_gen_scale_x = 1.0;
-        float biome_gen_scale_y = 1.0;
+        double biome_gen_scale_x = 1.0;
+        double biome_gen_scale_y = 1.0;
 
         // If density value is outside of this range, solid block is placed
-        float min_block_density = 0.0;
-        float max_block_density = 0.2;
+        double min_block_density = 0.0;
+        double max_block_density = 0.2;
 
         // Minimal value for density factor. Density factor increases with
         // depth, so at surface level it is quite small, so to avoid 1-block
         // caves, this minimum value picked if actual value is too small.
-        float min_density_factor = 0.5;
+        double min_density_factor = 0.5;
+        double max_density_factor = 0.5;
 
         // Same, but for scaling caves
-        float min_cave_scale_factor = 0.5;
-        float max_cave_scale_factor = 1.0;
+        double min_cave_scale_factor = 0.5;
+        double max_cave_scale_factor = 1.0;
 
         // Default filler for world, usually this is regular stone
         Tile filler = { 0, 0 };
@@ -76,7 +77,7 @@ namespace Terrarium {
 
         std::default_random_engine rng;
 
-        std::uniform_real_distribution<float> place_decor_dist;
+        std::uniform_real_distribution<double> place_decor_dist;
 
         static const int DENSITY;
         static const int HUMIDITY;

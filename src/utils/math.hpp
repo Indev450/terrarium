@@ -30,9 +30,21 @@ inline float stepify(float x, float step) {
     return floor(x / step) * step;
 }
 
-template <class T>
-inline T lerp(T a, T b, float t) {
+template <class TL, class TR, class TT>
+constexpr auto lerp(const TL a, const TR b, const TT t) {
     return a + (b - a) * t;
+}
+
+// Scales value to new min-max range
+template <class T>
+constexpr auto rescale(const T value, const T oldmin, const T oldmax, const T newmin, const T newmax) {
+    return newmin + (value-oldmin)/oldmax*(newmax-newmin);
+}
+
+// Takes 2 values from -1 to 1, combines them and returns new value that is
+// still from -1 to 1
+constexpr double combine_noise(const double value1, const double value2) {
+    return (value1 + value2) / 2;
 }
 
 #endif

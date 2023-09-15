@@ -20,6 +20,8 @@
  *
  */
 
+#include <SFML/Graphics.hpp>
+
 #include <chrono>
 
 #include "mapgen_activity.hpp"
@@ -40,10 +42,40 @@ namespace Terrarium {
         auto game_ptr_copy = game;
 
         future = std::async(
-            [mapgen = std::move(mapgen), world_ptr_copy, game_ptr_copy]() {
+            [mapgen = std::move(mapgen), world_ptr_copy, game_ptr_copy, save_name = save_name]() {
                 mapgen->run(*world_ptr_copy);
                 game_ptr_copy->world = std::move(*world_ptr_copy);
                 game_ptr_copy->modding_interface->onMapgenFinish();
+
+                // TODO - move this somewhere or idk. Minimap sure sounds useful
+                // but idk where to move it atm.
+                /*
+                sf::Image image;
+
+                World &w = game_ptr_copy->world;
+
+                image.create(w.getWidth(), w.getHeight(), sf::Color::White);
+
+                for (int x = 0; x < w.getWidth(); ++x) {
+                    for (int y = 0; y < w.getHeight(); ++y) {
+                        blockid block = w.getBlock(x, y);
+                        blockid wall = w.getWall(x, y);
+
+                        sf::Color pixel = sf::Color::Blue;
+
+                        if (block) {
+                            pixel = game_ptr_copy->block_defs.getOrUnknown(block).getAverageColor();
+                        } else if (wall) {
+                            pixel = game_ptr_copy->block_defs.getOrUnknown(wall).getAverageColor();
+                            pixel *= sf::Color(127, 127, 127);
+                        }
+
+                        image.setPixel(x, y, pixel);
+                    }
+                }
+
+                image.saveToFile(game_ptr_copy->saves.getSavePath(save_name, true) / "minimap.png");
+                */
             });
 
         text.setFont(game->gfx.font);

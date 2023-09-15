@@ -55,7 +55,7 @@
 #define TERRARIUM_VERSION_MINOR 7
 #define TERRARIUM_VERSION_PATCH 0
 
-#define SETTINGS_VERSION 1
+#define SETTINGS_VERSION 2
 
 void applyDefaultSettings(Terrarium::Datafile &settings) {
     auto &video = settings["video"];
@@ -76,21 +76,23 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
     auto &perlin = mapgen["perlin"];
 
     perlin["ground_gen_scale"].setReal(0.02);
-    perlin["ground_height_amp"].setReal(0.7);
+    perlin["ground_height_amp"].setInt(50);
+    perlin["base_ground_height"].setReal(0.05);
 
-    perlin["cave_gen_scale"].setReal(0.05, 0);
-    perlin["cave_gen_scale"].setReal(0.07, 1);
+    perlin["cave_gen_scale"].setReal(0.025, 0);
+    perlin["cave_gen_scale"].setReal(0.03, 1);
 
-    perlin["biome_gen_scale"].setReal(0.003, 0);
-    perlin["biome_gen_scale"].setReal(0.005, 1);
+    perlin["biome_gen_scale"].setReal(0.0035, 0);
+    perlin["biome_gen_scale"].setReal(0.004, 1);
 
-    perlin["min_block_density"].setReal(0.2);
-    perlin["max_block_density"].setReal(0.4);
+    perlin["min_block_density"].setReal(0.01);
+    perlin["max_block_density"].setReal(0.31);
 
-    perlin["min_density_factor"].setReal(0.6);
+    perlin["min_density_factor"].setReal(0.25);
+    perlin["max_density_factor"].setReal(0.8);
 
     perlin["min_cave_scale_factor"].setReal(0.6);
-    perlin["max_cave_scale_factor"].setReal(0.85);
+    perlin["max_cave_scale_factor"].setReal(0.8);
 }
 
 const char *TITLE = "TerrariumEngine";
@@ -201,7 +203,9 @@ int main(int argc, char **argv)
 
         mapgen->settings.ground_gen_scale = perlin["ground_gen_scale"].getReal();
 
-        mapgen->settings.height_amp = perlin["ground_height_amp"].getReal();
+        mapgen->settings.height_amp = perlin["ground_height_amp"].getInt();
+
+        mapgen->settings.base_ground_height = perlin["base_ground_height"].getReal();
 
         mapgen->settings.cave_gen_scale_x = perlin["cave_gen_scale"].getReal(0);
         mapgen->settings.cave_gen_scale_y = perlin["cave_gen_scale"].getReal(1);
@@ -213,6 +217,7 @@ int main(int argc, char **argv)
         mapgen->settings.max_block_density = perlin["max_block_density"].getReal();
 
         mapgen->settings.min_density_factor = perlin["min_density_factor"].getReal();
+        mapgen->settings.max_density_factor = perlin["max_density_factor"].getReal();
 
         mapgen->settings.min_cave_scale_factor = perlin["min_cave_scale_factor"].getReal();
         mapgen->settings.max_cave_scale_factor = perlin["max_cave_scale_factor"].getReal();

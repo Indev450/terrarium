@@ -142,9 +142,9 @@ end
 terrarium.register_biome("default:grassland", grassland_biome)
 
 terrarium.register_biome("default:grassland_overgrowth", {
-    humidity_min = 0.6,
+    humidity_min = 0,
 
-    heat_min = 0.4,
+    heat_min = 0,
 
     top = {
         block = "default:overgrowth_grass",
@@ -164,6 +164,8 @@ terrarium.register_biome("default:grassland_overgrowth", {
         block = "default:dirt",
         wall = "default:overgrowth_grass",
     },
+
+    min_depth = 0.05,
 
     max_depth = 0.2,
 
@@ -279,9 +281,7 @@ terrarium.register_biome("default:grassland_overgrowth", {
 })
 
 terrarium.register_biome("default:desert", {
-    humidity_max = 0.4,
-
-    heat_min = -0.2,
+    humidity_max = -0.2,
 
     top = {
         block = "default:sand",
@@ -304,7 +304,7 @@ terrarium.register_biome("default:desert", {
 
     priority = 2,
 
-    max_depth = 0.2,
+    max_depth = 0.1,
 
     decorations = {
         cactus = {
@@ -366,9 +366,7 @@ terrarium.register_biome("default:desert", {
 })
 
 terrarium.register_biome("default:underground_desert", {
-    humidity_max = 0.4,
-
-    heat_min = -0.2,
+    humidity_max = -0.2,
 
     top = {
         block = "default:sand",
@@ -391,7 +389,9 @@ terrarium.register_biome("default:underground_desert", {
 
     priority = 2,
 
-    min_depth = 0.2,
+    min_depth = 0.1,
+
+    max_depth = 0.8,
 
     decorations = {
         cactus = {
@@ -453,7 +453,9 @@ terrarium.register_biome("default:underground_desert", {
 })
 
 terrarium.register_biome("default:frozen_surface", {
-    heat_max = 0.4,
+    heat_max = -0.1,
+
+    humidity_min = 0.2,
 
     top = {
         block = "default:snow",
@@ -478,7 +480,9 @@ terrarium.register_biome("default:frozen_surface", {
 })
 
 terrarium.register_biome("default:frozen_caves", {
-    heat_max = 0.4,
+    heat_max = 0,
+
+    humidity_min = 0.2,
 
     top = {
         block = "default:ice",
@@ -548,8 +552,7 @@ for _, name in ipairs(crystals) do
 end
 
 terrarium.register_biome("default:crystal_caves", {
-    humidity_min = 0.2,
-    heat_min = 0.6,
+    humidity_min = 0.4,
 
     top = {
         block = "default:stone",

@@ -25,6 +25,7 @@
 #include <optional>
 
 #include "mapgen_perlin.hpp"
+#include "../utils/math.hpp"
 
 namespace Terrarium {
 
@@ -44,31 +45,37 @@ namespace Terrarium {
         // First, generate ground with caves
         for (int x = 0; x < static_cast<int>(world.getWidth()); ++x) {
             int column_height = base_height;
-            column_height += base_height * (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
+            column_height += base_height + (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
 
             for (int y = column_height; y < static_cast<int>(world.getHeight()); ++y) {
                 world.setWall(x, y, settings.filler.bg.id);
 
                 // Makes caves less common on surface
-                float density_check_factor = float(y)/world.getHeight();
-
-                // Make it squared so it doesn't grow too fast
-                density_check_factor *= density_check_factor;
+                double density_check_factor = double(y)/world.getHeight();
 
                 // Don't make it way too small so we don't have 1 block size
                 // caves or around that
-                float cave_scale_factor = std::max(std::min(density_check_factor, settings.min_cave_scale_factor), settings.min_cave_scale_factor);
-                density_check_factor = std::max(density_check_factor, settings.min_density_factor);
+                double cave_scale_factor = rescale(density_check_factor, 0., 1., settings.min_cave_scale_factor, settings.max_cave_scale_factor);
+                density_check_factor = rescale(density_check_factor, 0., 1., settings.min_density_factor, settings.max_density_factor);
 
-                float density = perlin.noise(
-                    x*settings.cave_gen_scale_x*cave_scale_factor,
+                double density = combine_noise(perlin.noise(
+                            x*settings.cave_gen_scale_x,
+                            y*settings.cave_gen_scale_y*cave_scale_factor,
+                            DENSITY),
+                        perlin.noise(
+                            x*settings.cave_gen_scale_x,
+                            y*settings.cave_gen_scale_y*cave_scale_factor,
+                            HEAT));
+
+                density = combine_noise(density, perlin.noise(
+                    x*settings.cave_gen_scale_x,
                     y*settings.cave_gen_scale_y*cave_scale_factor,
-                    DENSITY);
+                    HUMIDITY));
 
-                float density_space = settings.max_block_density - settings.min_block_density;
-                float density_avg = (settings.max_block_density + settings.min_block_density) / 2;
-                float min_density = density_avg - density_space/2*density_check_factor;
-                float max_density = density_avg + density_space/2*density_check_factor;
+                double density_space = settings.max_block_density - settings.min_block_density;
+                double density_avg = (settings.max_block_density + settings.min_block_density) / 2;
+                double min_density = density_avg - density_space/2*density_check_factor;
+                double max_density = density_avg + density_space/2*density_check_factor;
 
 
                 // Depending on density, place walls and blocks
@@ -88,15 +95,15 @@ namespace Terrarium {
 
         for (int x = 0; x < static_cast<int>(world.getWidth()); ++x) {
             int column_height = base_height;
-            column_height += base_height * (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
+            column_height += base_height + (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
 
             for (int y = 0; y < static_cast<int>(world.getHeight()); ++y) {
-                float humidity = perlin.noise(
+                double humidity = perlin.noise(
                     x*settings.biome_gen_scale_x,
                     y*settings.biome_gen_scale_y,
                     HUMIDITY);
 
-                float heat = perlin.noise(
+                double heat = perlin.noise(
                     x*settings.biome_gen_scale_x,
                     y*settings.biome_gen_scale_y,
                     HEAT);

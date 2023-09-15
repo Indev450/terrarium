@@ -138,6 +138,56 @@ namespace Terrarium {
 
         sf::Vector3i light;
         bool blocks_light = true;
+
+        sf::Color average_color;
+        bool avg_color_calculated = false;
+
+        sf::Color getAverageColor() {
+            if (avg_color_calculated) {
+                return average_color;
+            }
+
+            if (sprite.getTexture() != nullptr) {
+                sf::Image image = sprite.getTexture()->copyToImage();
+
+                sf::Vector2u size = image.getSize();
+
+                bool first_pixel = true;
+
+                long unsigned r = 0, g = 0, b = 0;
+                unsigned numpixels = 0;
+
+                for (unsigned x = 0; x < size.x; ++x) {
+                    for (unsigned y = 0; y < size.y; ++y) {
+                        sf::Color pixel = image.getPixel(x, y);
+
+                        if (!pixel.a) continue;
+
+                        if (first_pixel) {
+                            average_color = pixel;
+                            first_pixel = false;
+                            continue;
+                        }
+
+                        r += pixel.r;
+                        g += pixel.g;
+                        b += pixel.b;
+                        ++numpixels;
+                    }
+                }
+
+                if (numpixels) {
+                    average_color.r = r / numpixels;
+                    average_color.g = g / numpixels;
+                    average_color.b = b / numpixels;
+                }
+
+            }
+
+            avg_color_calculated = true;
+
+            return average_color;
+        }
     };
 
 } // namespace Terrarium
