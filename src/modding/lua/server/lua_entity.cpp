@@ -125,7 +125,7 @@ namespace Terrarium {
         const CollisionInfo &LuaEntityUD::getCollisionInfo() {
             std::shared_ptr<Entity> entity = checkedLock();
 
-            return entity->collision_info;
+            return entity->getCollisionInfo();
         }
 
         bool LuaEntityUD::isCollide(LuaEntityUD &other_ref) {

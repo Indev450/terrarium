@@ -20,50 +20,53 @@
  *
  */
 
-#ifndef ENTITY_HPP
-#define ENTITY_HPP
-
-#include <cstdint>
-#include <memory>
+#ifndef PHYSICAL_BODY_HPP
+#define PHYSICAL_BODY_HPP
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include "../graphics/animation_map.hpp"
-#include "physical_body.hpp"
-
 namespace Terrarium {
 
-    typedef uint16_t entityid;
+    class GameState;
 
-    class Entity;
-
-    struct Parent {
-        std::weak_ptr<Entity> ref;
-        sf::Vector2f local_position;
+    struct CollisionInfo {
+        bool blocku = false;
+        bool blockd = false;
+        bool blockl = false;
+        bool blockr = false;
     };
 
-    class Entity: public PhysicalBody {
+    struct PhysicsParams {
+        float gravity = 40;
+        float slippery = 0;
+
+        bool enable_collision = true;
+        bool ignore_platforms = false;
+    };
+
+    class PhysicalBody {
+        sf::FloatRect hitbox_prev;
+
+    protected:
+        CollisionInfo collision_info;
+
+        void collide(GameState &game, bool by_x);
+        bool isCollide(GameState &game);
+
     public:
-        sf::FloatRect sprite_rect = {0, 0, 0, 0};
+        sf::FloatRect hitbox;
+        sf::Vector2f speed;
 
-        sf::Vector3i light;
+        PhysicsParams physics;
 
-        entityid id = 0;
+        virtual void update(GameState &game, float dtime);
 
-        AnimationMap anims;
-
-        sf::Text text; // Text for names/damage indicators/etc
-        bool have_text = false;
-        sf::Vector2f text_offset;
-
-        Parent parent;
-
-        void update(GameState &game, float dtime) override;
-
-        virtual void draw(GameState &game, sf::RenderTarget &target);
+        const CollisionInfo &getCollisionInfo() const {
+            return collision_info;
+        }
     };
 
-} // namespace Terrarium
+}
 
 #endif
