@@ -1,3 +1,22 @@
+local particle_heavy = {
+    physics = { gravity = 20, enable_collision = true },
+    minspeed = { x = -4, y = -4 },
+    maxspeed = { x = 4, y = 4 },
+    minlifetime = 2,
+    maxlifetime = 4,
+}
+
+local particle_dust = {
+    physics = { gravity = 10, enable_collision = false },
+    minspeed = { x = -2, y = -2 },
+    maxspeed = { x = 2, y = 2 },
+    minlifetime = 2,
+    maxlifetime = 2,
+}
+
+default.particle_heavy = particle_heavy
+default.particle_dust = particle_dust
+
 terrarium.register_block("default:stone", {
     description = "Stone",
 
@@ -11,6 +30,8 @@ terrarium.register_block("default:stone", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     inventory_image = "stone_item.png",
 })
@@ -29,6 +50,17 @@ terrarium.register_block("default:ice", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = {
+        amount = 40,
+        physics = { gravity = 20, enable_collision = true },
+        texture_rect = { x = 0, y = 0, width = 1, height = 1, },
+        color = color.new(255, 255, 255),
+        minspeed = { x = -4, y = -4 },
+        maxspeed = { x = 4, y = 4 },
+        minlifetime = 2,
+        maxlifetime = 4,
+    },
+
     inventory_image = "ice_item.png",
 })
 
@@ -44,6 +76,8 @@ terrarium.register_block("default:obsidian", {
     groups = {
         ["ground"] = 3,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:copper_ore", {
@@ -59,6 +93,8 @@ terrarium.register_block("default:copper_ore", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     dig_sound = {
         name = "dig_metal.wav",
@@ -84,6 +120,8 @@ terrarium.register_block("default:iron_ore", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     dig_sound = {
         name = "dig_metal.wav",
         volume = 1.0,
@@ -107,6 +145,8 @@ terrarium.register_block("default:silver_ore", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     dig_sound = {
         name = "dig_metal.wav",
@@ -132,6 +172,8 @@ terrarium.register_block("default:gold_ore", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     dig_sound = {
         name = "dig_metal.wav",
         volume = 1.0,
@@ -155,6 +197,8 @@ terrarium.register_block("default:dirt", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_dust,
 
     dig_sound = {
         name = "dig_soil.wav",
@@ -188,6 +232,8 @@ terrarium.register_block("default:grass", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_dust,
+
     dig_sound = {
         name = "dig_soil.wav",
         volume = 1.0,
@@ -214,6 +260,8 @@ terrarium.register_block("default:snow", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_dust,
 
     dig_sound = {
         name = "dig_soil.wav",
@@ -243,6 +291,8 @@ terrarium.register_block("default:overgrowth_grass", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_dust,
 
     inventory_image = "grass_block_item.png",
 
@@ -275,6 +325,8 @@ for i = 0, 3 do
             ["ground"] = 1,
         },
 
+        dig_particles_def = particle_dust,
+
         on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
     })
 end
@@ -296,6 +348,8 @@ terrarium.register_block("default:bush", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_dust,
+
     on_neighbour_destroy = terrarium.connected_to_blocks({"down"}),
 })
 
@@ -310,6 +364,8 @@ terrarium.register_block("default:cactus", {
     groups = {
         ["tree"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -340,6 +396,8 @@ terrarium.register_block("default:glow_cactus", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -366,6 +424,8 @@ terrarium.register_block("default:wood", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     inventory_image = "wood.png",
 
@@ -399,6 +459,8 @@ terrarium.register_block("default:wood_platform", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     inventory_image = "wood_platform_item.png",
 
     dig_sound = {
@@ -431,6 +493,8 @@ terrarium.register_block("default:old_bricks_platform", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     inventory_image = "old_bricks_platform_item.png",
 })
 
@@ -447,6 +511,8 @@ terrarium.register_block("default:sand", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_dust,
 
     dig_sound = {
         name = "dig_soil.wav",
@@ -479,6 +545,8 @@ terrarium.register_block("default:glass", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     inventory_image = "glass_item.png",
 })
 
@@ -495,6 +563,8 @@ terrarium.register_block("default:stone_bricks", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     inventory_image = "stone_bricks_item.png",
 })
@@ -513,6 +583,8 @@ terrarium.register_block("default:old_bricks", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     inventory_image = "old_bricks_item.png",
 })
 
@@ -530,6 +602,8 @@ terrarium.register_block("default:old_broken_bricks", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     inventory_image = "old_broken_bricks_item.png",
 })
 
@@ -546,6 +620,8 @@ terrarium.register_block("default:roof_tiles", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     inventory_image = "roof_tiles_item.png",
 })
@@ -565,6 +641,8 @@ terrarium.register_block("default:metal_block", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:metal_beam", {
@@ -583,6 +661,8 @@ terrarium.register_block("default:metal_beam", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:lab_bricks", {
@@ -600,6 +680,8 @@ terrarium.register_block("default:lab_bricks", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:glow_metal_block", {
@@ -619,6 +701,8 @@ terrarium.register_block("default:glow_metal_block", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:metal_platform", {
@@ -640,6 +724,8 @@ terrarium.register_block("default:metal_platform", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:chest", {
@@ -655,6 +741,8 @@ terrarium.register_block("default:chest", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -714,6 +802,8 @@ terrarium.register_block("default:workbench", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -745,6 +835,8 @@ terrarium.register_block("default:furnace", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     on_interact = function(position, user)
         user:show_crafting_ui("furnace")
     end,
@@ -763,6 +855,8 @@ terrarium.register_block("default:anvil", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     dig_sound = {
         name = "dig_metal.wav",
@@ -796,6 +890,8 @@ local function register_door(name, def)
         groups = def.groups or {
             ["ground"] = 1,
         },
+
+        dig_particles_def = particle_heavy,
 
         on_interact = function(position)
             local origin = terrarium.get_multiblock_origin(position.x, position.y)
@@ -883,6 +979,8 @@ terrarium.register_block("default:picture_sungarden", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -908,6 +1006,8 @@ terrarium.register_block("default:picture_starbound", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -935,6 +1035,8 @@ terrarium.register_block("default:picture_fediverse", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -960,6 +1062,8 @@ terrarium.register_block("default:vine", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_dust,
+
     on_neighbour_destroy = terrarium.connected_to_blocks({"up"}),
 })
 
@@ -975,6 +1079,13 @@ terrarium.register_block("default:torch", {
 
     groups = {
         ["ground"] = 1,
+    },
+
+    dig_particles_def = {
+        physics = { gravity = -20, enable_collision = false, },
+        minlifetime = 4,
+        maxlifetime = 8,
+        accel = -4,
     },
 
     on_select = function(user)
@@ -1010,6 +1121,8 @@ for _, crystal in ipairs(crystals) do
             ["ground"] = 1,
         },
 
+        dig_particles_def = particle_dust,
+
         inventory_image = crystal.name:lower().."_crystal.png",
     })
 end
@@ -1027,6 +1140,8 @@ terrarium.register_block("default:alarm_lamp", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:lab_lamp", {
@@ -1042,6 +1157,8 @@ terrarium.register_block("default:lab_lamp", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:lamp", {
@@ -1057,6 +1174,8 @@ terrarium.register_block("default:lamp", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:ai_projector", {
@@ -1081,6 +1200,8 @@ terrarium.register_block("default:ai_projector", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:lab_monitor", {
@@ -1102,6 +1223,8 @@ terrarium.register_block("default:lab_monitor", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 })
 
 terrarium.register_block("default:lab_monitor_on", {
@@ -1126,6 +1249,8 @@ terrarium.register_block("default:lab_monitor_on", {
         ["ground"] = 1,
     },
 
+    dig_particles_def = particle_heavy,
+
     light = color.new(120, 170, 230),
 })
 
@@ -1142,6 +1267,8 @@ terrarium.register_block("default:lab_weapon_container_vm", {
     groups = {
         ["ground"] = 1,
     },
+
+    dig_particles_def = particle_heavy,
 
     light = color.new(120, 170, 230),
 

@@ -24,7 +24,6 @@
 
 #include "lua_entity.hpp"
 #include "../common/lua_util.hpp"
-#include "../common/lua_field_checker.hpp"
 #include "lua_interface.hpp"
 
 namespace Terrarium {
@@ -905,19 +904,10 @@ namespace Terrarium {
             LuaUtil::FieldChecker checker(L, "EntityPrefab", idx);
 
             try {
-                checker.typecheck("physics", LUA_TTABLE, lua_getfield(L, idx, "physics")); // push physics table
-
-                LuaUtil::FieldChecker physics_checker(L, "PhysicsParams", -1);
-
-                try {
-                    prefab->physics.gravity = physics_checker.checknumber("gravity");
-
-                    prefab->physics.enable_collision = physics_checker.checkboolean("enable_collision");
-                } catch (const std::invalid_argument &e) {
-                    checker.rfielderror("physics", e.what());
-                }
-
-                lua_pop(L, 1); // Pop physics table
+                checker.rfield("physics", [&] () {
+                    LuaUtil::FieldChecker physics_checker(L, "PhysicsParams", -1);
+                    prefab->physics = checkphysicsparams(physics_checker);
+                });
 
                 prefab->sprite_size = checker.checkvector<float>("size");
 
@@ -957,6 +947,15 @@ namespace Terrarium {
             }
 
             return prefab;
+        }
+
+        PhysicsParams checkphysicsparams(LuaUtil::FieldChecker &checker) {
+            PhysicsParams params;
+
+            params.gravity = checker.checknumber("gravity");
+            params.enable_collision = checker.checkboolean("enable_collision");
+
+            return params;
         }
 
     } // namespace LuaEntityAPI

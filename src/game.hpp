@@ -28,6 +28,7 @@
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <vector>
 #include <stdexcept>
 #include <memory>
 
@@ -46,6 +47,7 @@
 #include "ui/text_input.hpp"
 #include "graphics/gfx.hpp"
 #include "graphics/debug_overlay.hpp"
+#include "graphics/particles.hpp"
 #include "sounds/sfx.hpp"
 #include "utils/binary_io.hpp"
 #include "utils/saves.hpp"
@@ -74,6 +76,7 @@ namespace Terrarium {
         ItemDefManager item_defs;
         CraftManager crafts;
         InventoryStorage inventories;
+        ParticleManager particles;
 
         Chat chat;
 

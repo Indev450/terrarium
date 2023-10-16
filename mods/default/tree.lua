@@ -47,6 +47,8 @@ terrarium.register_block("default:tree_trunk_root_both", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -67,6 +69,8 @@ terrarium.register_block("default:tree_trunk_root_left", {
     groups = {
         ["tree"] = 1,
     },
+
+    dig_particles_def = default.particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -89,6 +93,8 @@ terrarium.register_block("default:tree_trunk_root_right", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -109,6 +115,8 @@ terrarium.register_block("default:tree_root_left", {
     groups = {
         ["tree"] = 1,
     },
+
+    dig_particles_def = default.particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -131,6 +139,8 @@ terrarium.register_block("default:tree_root_right", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -151,6 +161,8 @@ terrarium.register_block("default:tree_trunk", {
     groups = {
         ["tree"] = 1,
     },
+
+    dig_particles_def = default.particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -173,6 +185,8 @@ terrarium.register_block("default:tree_trunk_branch_both", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -194,6 +208,8 @@ terrarium.register_block("default:tree_trunk_branch_left", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_heavy,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -214,6 +230,8 @@ terrarium.register_block("default:tree_trunk_branch_right", {
     groups = {
         ["tree"] = 1,
     },
+
+    dig_particles_def = default.particle_heavy,
 
     dig_sound = {
         name = "dig_wood.wav",
@@ -238,6 +256,8 @@ terrarium.register_block("default:tree_top", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_dust,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -259,6 +279,8 @@ terrarium.register_block("default:tree_branch_left", {
         ["tree"] = 1,
     },
 
+    dig_particles_def = default.particle_dust,
+
     dig_sound = {
         name = "dig_wood.wav",
         volume = 1.0,
@@ -279,6 +301,8 @@ terrarium.register_block("default:tree_branch_right", {
     groups = {
         ["tree"] = 1,
     },
+
+    dig_particles_def = default.particle_dust,
 
     dig_sound = {
         name = "dig_wood.wav",

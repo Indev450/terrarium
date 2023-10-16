@@ -27,6 +27,8 @@ dofile("wrappers/save.lua")
 dofile("wrappers/mapgen.lua")
 dofile("wrappers/crafting.lua")
 
+dofile("wrappers/particles.lua")
+
 function core._on_event(event)
     core._event_handlers[event.name](event)
 end

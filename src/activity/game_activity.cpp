@@ -155,6 +155,7 @@ namespace Terrarium {
         game->modding_interface->onBlocksTicked(ticked);
 
         game->sfx.update(*game, dtime);
+        game->particles.update(*game, dtime);
 
         game->hud.update(dtime);
 
@@ -235,6 +236,8 @@ namespace Terrarium {
         game->world_interact.highlightInteractive(*game, target);
 
         game->entity_mgr.draw(*game, target);
+
+        game->particles.draw(*game, target);
 
         target.draw(light_calc);
 

@@ -79,12 +79,32 @@ local block_defaults = {
 
     multiblock_size = nil,
 
+    dig_particles_def = {
+        time = 0,
+        amount = 20,
+        physics = {
+            gravity = 10,
+            enable_collision = false,
+        },
+        texture_rect = { x = 0, y = 0, width = 2, height = 2, },
+        minoffset = vec2.new(0, 0),
+        maxoffset = vec2.new(1-2/16, 1-2/16),
+        minspeed = vec2.new(-0.5, -0.5),
+        maxspeed = vec2.new(0.5, 0.5),
+        minlifetime = 2,
+        maxlifetime = 4,
+        accel = 0,
+        speed_mult = 0.6,
+    },
+
     -- Block item
     description = "Block",
     max_count = 999,
 }
 
 function terrarium.register_block(name, def)
+    def = deep_copy(def)
+
     if def.multiblock_size ~= nil and def.draw_type == nil then
         def.draw_type = "Multiblock"
     end
@@ -104,6 +124,10 @@ function terrarium.register_block(name, def)
     def.drop = def.drop or name
 
     def.block_id = core._register_block(name, def)
+
+    if def.dig_particles_def.color == nil and def.dig_particles_def.texture == nil then
+        def.dig_particles_def.color = core._average_block_color(def.block_id)
+    end
 
     terrarium.registered_blocks[name] = def
     terrarium.block_names[def.block_id] = name
@@ -344,7 +368,7 @@ function terrarium._dig(x, y, user, nosound, fg)
     end
 
     -- Multiblock handling... Is just a mess :(
-    if fg and def.multiblock_size then
+    if fg and def and def.multiblock_size then
         for xoff = 0, def.multiblock_size.x-1 do
             trigger_neighbour_callback({
                 x = x + xoff, y = y - 1, where = "down",
@@ -381,8 +405,19 @@ function terrarium._dig(x, y, user, nosound, fg)
     _set(x, y, 0)
 
     -- Remove multiblock
-    if fg and def.multiblock_size then
+    if fg and def and def.multiblock_size then
         core._set_multiblock(x, y, def.multiblock_size.x, def.multiblock_size.y, 0)
+    end
+
+    if def then
+        local w = def.multiblock_size and def.multiblock_size.x or 1
+        local h = def.multiblock_size and def.multiblock_size.y or 1
+
+        for px = x, x + w-1 or 0 do
+            for py = y, y + h-1 or 0 do
+                core._add_particle_spawner(def.dig_particles_def, { x = px, y = py })
+            end
+        end
     end
 
     if def ~= nil and def.drop ~= "" then

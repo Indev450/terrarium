@@ -45,6 +45,7 @@ namespace Terrarium {
             lua_interface.registerFunction("_set_multiblock", set_multiblock);
             lua_interface.registerFunction("_start_block_timer", start_block_timer);
             lua_interface.registerFunction("_start_wall_timer", start_wall_timer);
+            lua_interface.registerFunction("_average_block_color", average_block_color);
             lua_interface.registerFunction("_get_block_inventory", get_block_inventory);
         }
 
@@ -243,6 +244,29 @@ namespace Terrarium {
             lua_interface->game->world.startWallTimer(x, y, timer);
 
             return 0;
+        }
+
+        int average_block_color(lua_State *L) {
+            LuaModdingInterface *lua_interface = reinterpret_cast<LuaModdingInterface*>(lua_touserdata(L, lua_upvalueindex(1)));
+
+            blockid block_id = LuaUtil::checkinteger_ranged<blockid>(L, 1);
+
+            sf::Color color = lua_interface->game->block_defs.getOrUnknown(block_id).getAverageColor();
+
+            // TODO - create LuaUtil::pushcolor or something
+
+            lua_createtable(L, 0, 3);
+
+            lua_pushinteger(L, color.r);
+            lua_setfield(L, -2, "r");
+
+            lua_pushinteger(L, color.g);
+            lua_setfield(L, -2, "g");
+
+            lua_pushinteger(L, color.b);
+            lua_setfield(L, -2, "b");
+
+            return 1;
         }
 
         int get_block_inventory(lua_State *L) {

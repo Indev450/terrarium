@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef LUA_FIELD_CHECKER_HPP
+#define LUA_FIELD_CHECKER_HPP
+
 #include <string>
 
 #include <lua.hpp>
@@ -156,3 +159,5 @@ namespace Terrarium {
 
     }
 }
+
+#endif

@@ -33,6 +33,7 @@
 #include "../../../entity/entity.hpp"
 #include "../../../entity/entity_manager.hpp"
 #include "../../../entity/entity_prefab.hpp"
+#include "../common/lua_field_checker.hpp"
 
 namespace Terrarium {
 
@@ -242,6 +243,8 @@ namespace Terrarium {
         void push_entity(lua_State *L, std::weak_ptr<Entity> entity);
 
         std::shared_ptr<EntityPrefab> checkentityprefab(LuaModdingInterface &lua_interface, int idx);
+
+        PhysicsParams checkphysicsparams(LuaUtil::FieldChecker &checker);
 
     }; // namespace LuaEntityAPI
 
