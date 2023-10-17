@@ -1,4 +1,14 @@
-Terrarium
+Legacy?
+=========
+
+So, after more than year of development, code base became quite messy.
+This is why i decided to discontinue this repository and restart project from scratch.
+Don't worry, it will still be FLOSS, and will still have lua modding support, however
+a lot of things are going to be redone, including modding API.
+
+Whenever i end up making first working version, i will probably add link here.
+
+Terrarium Legacy
 =========
 
 2d sandbox game engine with modding support
