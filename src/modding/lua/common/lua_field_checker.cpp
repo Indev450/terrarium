@@ -244,8 +244,9 @@ namespace Terrarium {
 
                 // If `__name` starts with `base`
                 if (name.rfind(base, 0) == 0) {
+                    void* result = lua_touserdata(L, -1);
                     lua_pop(L, 1); // Pop field
-                    return lua_touserdata(L, -1);
+                    return result;
                 }
             }
 
