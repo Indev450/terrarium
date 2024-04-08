@@ -39,7 +39,7 @@ namespace Terrarium {
 
     struct PlayerStats {
         float jump_force = 25;
-        float acceleration = 16;
+        float acceleration = 32;
 
         float max_speed = 16;
     };
