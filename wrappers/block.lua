@@ -506,7 +506,7 @@ end
 core._on_block_timer = function(x, y, id, is_wall)
     local block_def = terrarium.registered_blocks[terrarium.block_names[id]]
 
-    if block_def.on_timer then
+    if block_def and block_def.on_timer then
         block_def.on_timer({ x = x, y = y, is_wall = is_wall })
     end
 end
