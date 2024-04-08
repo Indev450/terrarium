@@ -55,7 +55,7 @@
 #define TERRARIUM_VERSION_MINOR 8
 #define TERRARIUM_VERSION_PATCH 0
 
-#define SETTINGS_VERSION 2
+#define SETTINGS_VERSION 3
 
 void applyDefaultSettings(Terrarium::Datafile &settings) {
     auto &video = settings["video"];
@@ -67,6 +67,10 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
     video["resolution"].setInt(640, 1);
 
     video["smooth_lighting"].setBool(true);
+
+    auto &audio = settings["audio"];
+    audio["music_volume"].setReal(0.6);
+    audio["sounds_volume"].setReal(0.6);
 
     auto &mapgen = settings["mapgen"];
 
@@ -160,6 +164,9 @@ int main(int argc, char **argv)
         { sf::Color(130, 80, 180), 60.0*1, 100 },
         { sf::Color(20, 10, 70),   60.0*4, 40  },
     };
+
+    game->sfx.music_volume = settings["audio"]["music_volume"].getReal();
+    game->sfx.sounds_volume = settings["audio"]["sounds_volume"].getReal();
 
     game->hud.setScreenSize(sf::Vector2f(video["resolution"].getInt(0), video["resolution"].getInt(1)));
 

@@ -16,4 +16,5 @@ end
 
 -- Unchanged, currently
 terrarium.play_music = core._play_music
+terrarium.is_music_playing = core._is_music_playing
 terrarium.stop_music = core._stop_music

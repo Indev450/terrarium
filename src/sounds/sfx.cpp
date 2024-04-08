@@ -43,21 +43,21 @@ namespace Terrarium {
             playing_sounds.del(handle);
         }
 
-        if (music_volume < 100.0) {
-            music_volume += 100.0*dtime;
+        if (fade_volume < 100.0) {
+            fade_volume += 100.0*dtime;
 
-            if (music_volume > 100.0) {
-                music_volume = 100.0;
+            if (fade_volume > 100.0) {
+                fade_volume = 100.0;
 
                 if (music_fading) {
                     music_fading->stop();
                 }
             } else if (music_fading) {
-                music_fading->setVolume(100.0 - music_volume);
+                music_fading->setVolume((100.0 - fade_volume)*music_volume);
             }
 
             if (music_playing) {
-                music_playing->setVolume(music_volume);
+                music_playing->setVolume(fade_volume*music_volume);
             }
         }
     }
@@ -77,18 +77,22 @@ namespace Terrarium {
         // while previous one is fading
         if (music_playing) {
             music_playing->setVolume(0);
-            music_playing->setLoop(true);
+            music_playing->setLoop(false);
             music_playing->play();
         }
 
-        music_volume = 0.0;
+        fade_volume = 0.0;
+    }
+
+    bool Sfx::isMusicPlaying() {
+        return music_playing && music_playing->getStatus() == sf::Music::Playing;
     }
 
     void Sfx::stopMusic() {
         music_fading = music_playing;
         music_playing = nullptr;
 
-        music_volume = 0.0;
+        fade_volume = 0.0;
     }
 
     sound_handle Sfx::playSound(
@@ -101,7 +105,7 @@ namespace Terrarium {
         sound->setPitch(pitch);
 
         auto sound_ctl = std::make_shared<SoundController>(std::move(sound));
-        sound_ctl->setVolume(volume);
+        sound_ctl->setVolume(volume*sounds_volume);
 
         sound_handle handle = playing_sounds.add(sound_ctl);
 
@@ -123,7 +127,7 @@ namespace Terrarium {
         sound->setPitch(pitch);
 
         auto sound_ctl = std::make_shared<SoundAtSpot>(std::move(sound), position);
-        sound_ctl->setVolume(volume);
+        sound_ctl->setVolume(volume*sounds_volume);
 
         sound_handle handle = playing_sounds.add(sound_ctl);
 
@@ -145,7 +149,7 @@ namespace Terrarium {
         sound->setPitch(pitch);
 
         auto sound_ctl = std::make_shared<SoundAtEntity>(std::move(sound), entity_ref);
-        sound_ctl->setVolume(volume);
+        sound_ctl->setVolume(volume*sounds_volume);
 
         sound_handle handle = playing_sounds.add(sound_ctl);
 
