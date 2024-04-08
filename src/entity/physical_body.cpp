@@ -39,7 +39,7 @@ namespace Terrarium {
 
         speed.y += physics.gravity * dtime;
 
-        if (collision_info.blockd) {
+        if (collision_info.blockd && speed.y >= 0) {
             speed.x *= physics.slippery;
         }
 
