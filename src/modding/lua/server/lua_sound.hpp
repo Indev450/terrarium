@@ -35,7 +35,7 @@ namespace Terrarium {
 
         // Sound-related core module functions
 
-        // void core._play_music(string music_name, string player_name)
+        // void core._play_music(string music_name, bool loop)
         int play_music(lua_State *L);
 
         // bool core._is_music_playing()

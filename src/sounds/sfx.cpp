@@ -62,7 +62,7 @@ namespace Terrarium {
         }
     }
 
-    void Sfx::playMusic(const std::string &name) {
+    void Sfx::playMusic(const std::string &name, bool loop) {
         auto music_new = &music.get(name);
 
         if (music_new == music_playing) {
@@ -77,7 +77,7 @@ namespace Terrarium {
         // while previous one is fading
         if (music_playing) {
             music_playing->setVolume(0);
-            music_playing->setLoop(false);
+            music_playing->setLoop(loop);
             music_playing->play();
         }
 

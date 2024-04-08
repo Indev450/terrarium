@@ -43,8 +43,7 @@ namespace Terrarium {
 
             const char *name = luaL_checkstring(L, 1);
 
-            // Second argument, player name, is currently ignored
-            lua_interface->game->sfx.playMusic(name);
+            lua_interface->game->sfx.playMusic(name, lua_toboolean(L, 2));
 
             return 0;
         }

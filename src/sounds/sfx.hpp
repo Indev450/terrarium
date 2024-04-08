@@ -52,7 +52,7 @@ namespace Terrarium {
 
         void update(GameState &game, float dtime);
 
-        void playMusic(const std::string &name);
+        void playMusic(const std::string &name, bool loop = false);
 
         // True if any music file is playing right now
         bool isMusicPlaying();
