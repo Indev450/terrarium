@@ -120,6 +120,10 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
                 terrarium.drop_item(ItemStack("slime:slime_heart"), self.ref:get_position())
             end
 
+            if math.random() < 0.8 then
+                terrarium.drop_item(ItemStack("slime:slime_blob", math.random(1, 2)), self.ref:get_position())
+            end
+
             slimes = slimes - 1
         end,
 
@@ -176,6 +180,7 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
 
             if collision.blockd then
                 self.jump_timer = self.jump_timer - dtime
+                self.jump_dir = nil
 
                 if self.jump_timer < 0 then
                     terrarium.play_sound({
@@ -188,6 +193,8 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
                         x = target_pos.x < pos.x and -12 or 12,
                         y = -15,
                     })
+
+                    self.jump_dir = target_pos.x < pos.x and -1 or 1
                 elseif self.jump_timer < 0.4 then
                     self.ref:set_animation("jump")
                 elseif was_in_air then
@@ -201,6 +208,17 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
                 end
             else
                 self.jump_timer = self.jump_timer_max
+
+                if self.jump_dir then
+                    local speed = self.ref:get_speed()
+
+                    if speed.x == 0 then
+                        self.ref:set_speed({
+                            x = 6*self.jump_dir,
+                            y = speed.y,
+                        })
+                    end
+                end
             end
 
             for enemy in terrarium.iter_entities_with { "hurt", "team" } do
@@ -243,12 +261,12 @@ local function spawn_slime(player)
         { name = "slime:slimepur",        kind = "pur" },
         { name = "slime:slimera",         kind = "ra" },
         { name = "slime:slimeyel",        kind = "yel" },
-        { name = "slime:flying_slimeblu", kind = "blu" },
-        { name = "slime:flying_slimecin", kind = "cin" },
-        { name = "slime:flying_slimegra", kind = "gra" },
-        { name = "slime:flying_slimepur", kind = "pur" },
-        { name = "slime:flying_slimera",  kind = "ra" },
-        { name = "slime:flying_slimeyel", kind = "yel" },
+        { name = "slime:flying_slimeblu", kind = "blu", flying = true },
+        { name = "slime:flying_slimecin", kind = "cin", flying = true },
+        { name = "slime:flying_slimegra", kind = "gra", flying = true },
+        { name = "slime:flying_slimepur", kind = "pur", flying = true },
+        { name = "slime:flying_slimera",  kind = "ra",  flying = true },
+        { name = "slime:flying_slimeyel", kind = "yel", flying = true },
         { name = "slime:spiky_slimeblu",  kind = "blu" },
         { name = "slime:spiky_slimecin",  kind = "cin" },
         { name = "slime:spiky_slimegra",  kind = "gra" },
@@ -266,13 +284,14 @@ local function spawn_slime(player)
     local slimetype = types[math.random(1, #types)]
     local name = slimetype.name
     local kind = slimetype.kind
+    local flying = slimetype.flying
 
     if terrarium.try_spawn_entity_at(name, player, player, nil,
             function(position)
                 local start_x = math.floor(position.x) - 1
                 local start_y = math.floor(position.y) - 1
 
-                local slime_biome = false
+                local can_spawn = false
 
                 for x = start_x, start_x+2 do
                     for y = start_y, start_y+2 do
@@ -283,14 +302,22 @@ local function spawn_slime(player)
                         end
                     end
 
+                    if not flying then
+                        local def = terrarium.registered_blocks[terrarium.get_block(x, start_y+3)]
+
+                        if not (def and def.solid) then
+                            return false
+                        end
+                    end
+
                     local wall = terrarium.get_wall(start_x, start_y)
 
-                    if wall == "slime:stone_slime"..kind then
-                        slime_biome = true
+                    if wall == "slime:stone_slime"..kind or (not flying and math.random() < 0.1) then
+                        can_spawn = true
                     end
                 end
 
-                return slime_biome
+                return can_spawn
             end, 10
         ) ~= nil then
         slimes = slimes + 1
