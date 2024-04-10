@@ -38,18 +38,24 @@ function default.register_projectile(name, def)
             self.ref:set_rotation(speed:direction())
 
             if collision_info.blockl or collision_info.blockr or collision_info.blocku or collision_info.blockd then
+                if def.on_collide and def.on_collide(self) then return end
+
                 if def.hit_ground_sound ~= nil then
                     terrarium.play_sound(def.hit_ground_sound)
                 end
+
                 return self:kill()
             end
 
             for enemy in terrarium.iter_entities_with { "hurt", "team" } do
                 if enemy.team ~= self.target_team and enemy.ref:is_collide(self.ref) then
+                    if def.on_collide and def.on_collide(self, enemy) then return end
+
                     damagelib.hurt(enemy, self.damage, self.source, self)
                     if def.hit_entity_sound ~= nil then
                         terrarium.play_sound(def.hit_entity_sound)
                     end
+
                     return self:kill()
                 end
             end
