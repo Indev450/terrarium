@@ -23,7 +23,7 @@ terrarium.register_block("default:stone", {
     draw_type = "Autotile",
     image = "stone.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -69,7 +69,7 @@ terrarium.register_block("default:obsidian", {
 
     image = "obsidian.png",
 
-    slippery = 0.2,
+    slippery = 0.6,
 
     solid = true,
 
@@ -112,7 +112,7 @@ terrarium.register_block("default:iron_ore", {
     draw_type = "Autotile",
     image = "iron.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -138,7 +138,7 @@ terrarium.register_block("default:silver_ore", {
     draw_type = "Autotile",
     image = "silver.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -164,7 +164,7 @@ terrarium.register_block("default:gold_ore", {
     draw_type = "Autotile",
     image = "gold.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -504,7 +504,7 @@ terrarium.register_block("default:sand", {
     draw_type = "Autotile",
     image = "sand.png",
 
-    slippery = 0.4,
+    slippery = 0.7,
 
     solid = true,
 
@@ -556,7 +556,7 @@ terrarium.register_block("default:stone_bricks", {
     draw_type = "Autotile",
     image = "stone_bricks.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -575,7 +575,7 @@ terrarium.register_block("default:old_bricks", {
     draw_type = "Autotile",
     image = "old_bricks.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -594,7 +594,7 @@ terrarium.register_block("default:old_broken_bricks", {
     draw_type = "Autotile",
     image = "old_broken_bricks.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -613,7 +613,7 @@ terrarium.register_block("default:roof_tiles", {
     draw_type = "Autotile",
     image = "roof_tiles.png",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -634,7 +634,7 @@ terrarium.register_block("default:metal_block", {
 
     draw_type = "Autotile",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -654,7 +654,7 @@ terrarium.register_block("default:metal_beam", {
     draw_type = "Autotile",
     autotile_single = true,
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -673,7 +673,7 @@ terrarium.register_block("default:lab_bricks", {
 
     draw_type = "Autotile",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -692,7 +692,7 @@ terrarium.register_block("default:glow_metal_block", {
 
     draw_type = "Autotile",
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
 
@@ -716,7 +716,7 @@ terrarium.register_block("default:metal_platform", {
     autotile_neighbour = false,
     blocks_light = false,
 
-    slippery = 0.2,
+    slippery = 0.7,
 
     solid = true,
     platform = true,
