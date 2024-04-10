@@ -23,7 +23,7 @@
 #ifndef AUTO_ID_MAP_HPP
 #define AUTO_ID_MAP_HPP
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 
 namespace Terrarium {
@@ -47,7 +47,7 @@ namespace Terrarium {
         }
 
     protected:
-        std::unordered_map<Key, std::shared_ptr<Value>> map;
+        std::map<Key, std::shared_ptr<Value>> map;
 
         virtual bool isKeyFree(Key key) {
             return key != 0 && map.find(key) == map.end();
@@ -81,11 +81,11 @@ namespace Terrarium {
             map.erase(key);
         }
 
-        typename std::unordered_map<Key, std::shared_ptr<Value>>::iterator begin() {
+        typename std::map<Key, std::shared_ptr<Value>>::iterator begin() {
             return map.begin();
         }
 
-        typename std::unordered_map<Key, std::shared_ptr<Value>>::iterator end() {
+        typename std::map<Key, std::shared_ptr<Value>>::iterator end() {
             return map.end();
         }
     };
