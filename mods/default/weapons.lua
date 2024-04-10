@@ -66,9 +66,9 @@ local function register_sword(metal, damage, description)
     })
 end
 
-register_sword("copper", 2, "Copper sword\n2 melee damage")
-register_sword("iron", 4, "Iron sword\n4 melee damage")
-register_sword("gold", 6, "Gold sword\n6 melee damage")
+register_sword("copper", 6, "Copper sword\n6 melee damage")
+register_sword("iron", 10, "Iron sword\n10 melee damage")
+register_sword("gold", 20, "Gold sword\n20 melee damage")
 
 terrarium.register_item("default:revolver", {
     description = "Revolver",
@@ -117,7 +117,7 @@ terrarium.register_item("default:suppressor_vm_damaged", {
 
         local bullet_data = {
             speed = (position - spawn_position):resize(80):rotate((math.random()-0.5)*2*(math.pi/24)),
-            damage = { amount = 4, element = "antimagic", },
+            damage = { amount = 8, element = "antimagic", },
             fuse = 5,
             source = user,
         }

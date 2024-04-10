@@ -223,7 +223,7 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
 
             for enemy in terrarium.iter_entities_with { "hurt", "team" } do
                 if enemy.team == 0 and enemy.ref:is_collide(self.ref) then
-                    damagelib.hurt(enemy, {amount = damage or 6, knockback = 2}, self)
+                    damagelib.hurt(enemy, {amount = damage or 12, knockback = 2}, self)
                 end
             end
         end,
@@ -237,19 +237,19 @@ register_slime("slime:slimepur", "slimepur.png")
 register_slime("slime:slimera",  "slimera.png")
 register_slime("slime:slimeyel", "slimeyel.png")
 
-register_slime("slime:spiky_slimeblu", "spiky_slimeblu.png", 60, 12, 34, 38)
-register_slime("slime:spiky_slimecin", "spiky_slimecin.png", 60, 12, 34, 38)
-register_slime("slime:spiky_slimegra", "spiky_slimegra.png", 60, 12, 34, 38)
-register_slime("slime:spiky_slimepur", "spiky_slimepur.png", 60, 12, 34, 38)
-register_slime("slime:spiky_slimera",  "spiky_slimera.png",  60, 12, 34, 38)
-register_slime("slime:spiky_slimeyel", "spiky_slimeyel.png", 60, 12, 34, 38)
+register_slime("slime:spiky_slimeblu", "spiky_slimeblu.png", 60, 20, 34, 38)
+register_slime("slime:spiky_slimecin", "spiky_slimecin.png", 60, 20, 34, 38)
+register_slime("slime:spiky_slimegra", "spiky_slimegra.png", 60, 20, 34, 38)
+register_slime("slime:spiky_slimepur", "spiky_slimepur.png", 60, 20, 34, 38)
+register_slime("slime:spiky_slimera",  "spiky_slimera.png",  60, 20, 34, 38)
+register_slime("slime:spiky_slimeyel", "spiky_slimeyel.png", 60, 20, 34, 38)
 
-register_slime("slime:big_slimeblu", "big_slimeblu.png", 120, 4, 70, 60, true)
-register_slime("slime:big_slimecin", "big_slimecin.png", 120, 4, 70, 60, true)
-register_slime("slime:big_slimegra", "big_slimegra.png", 120, 4, 70, 60, true)
-register_slime("slime:big_slimepur", "big_slimepur.png", 120, 4, 70, 60, true)
-register_slime("slime:big_slimera",  "big_slimera.png",  120, 4, 70, 60, true)
-register_slime("slime:big_slimeyel", "big_slimeyel.png", 120, 4, 70, 60, true)
+register_slime("slime:big_slimeblu", "big_slimeblu.png", 120, 8, 70, 60, true)
+register_slime("slime:big_slimecin", "big_slimecin.png", 120, 8, 70, 60, true)
+register_slime("slime:big_slimegra", "big_slimegra.png", 120, 8, 70, 60, true)
+register_slime("slime:big_slimepur", "big_slimepur.png", 120, 8, 70, 60, true)
+register_slime("slime:big_slimera",  "big_slimera.png",  120, 8, 70, 60, true)
+register_slime("slime:big_slimeyel", "big_slimeyel.png", 120, 8, 70, 60, true)
 
 local function spawn_slime(player)
     if slimes == max_slimes then return end
