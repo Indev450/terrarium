@@ -71,6 +71,9 @@ namespace Terrarium {
         bool using_item = false;
         bool alt_using_item = false;
 
+        // Allows you to jump very shortly after you fall from block
+        float can_jump = 0.f;
+
     public:
         PlayerControls controls;
 

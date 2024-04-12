@@ -72,7 +72,12 @@ namespace Terrarium {
                 stats.max_speed);
         }
 
-        if (controls.jump && collision_info.blockd) {
+        if (collision_info.blockd)
+            can_jump = 0.15;
+        else
+            can_jump -= dtime;
+
+        if (controls.jump && can_jump > 0) {
             speed.y = -stats.jump_force;
         }
 
