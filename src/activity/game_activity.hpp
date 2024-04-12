@@ -49,7 +49,7 @@ namespace Terrarium {
         sf::RectangleShape tip_background;
         sf::Text tip_text;
 
-        float zoom = 0.5;
+        float zoom = 1.0;
 
         const float ZOOM_MIN = 0.25;
         const float ZOOM_MAX = 1.0;
