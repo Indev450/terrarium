@@ -210,7 +210,7 @@ namespace Terrarium {
             return 1;
         }
 
-        int itemstack_empty(lua_State *L) {
+        int itemstack_has_tag(lua_State *L) {
             LuaItemStackUD *item_stack = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));
 
             const char *tag = luaL_checkstring(L, 2);
@@ -220,7 +220,7 @@ namespace Terrarium {
             return 1;
         }
 
-        int itemstack_has_tag(lua_State *L) {
+        int itemstack_empty(lua_State *L) {
             LuaItemStackUD *item_stack = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));
 
             lua_pushboolean(L, item_stack->istack->empty());
