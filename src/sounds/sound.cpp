@@ -35,27 +35,25 @@ namespace Terrarium {
 
     SoundAtSpot::SoundAtSpot(std::unique_ptr<sf::Sound> _sound, const sf::Vector2f &_position):
         SoundController(std::move(_sound)), position(_position)
-    {}
+    {
+        // FIXME - this is needed because at the moment sound is created it doesn't have positioning
+        // info yet so it may play at full volume for 1 frame. It is fixed on next update call but
+        // it probably needs to do it the moment sound is created instead
+        sound->setVolume(0);
+    }
 
     void SoundAtSpot::update(GameState &game) {
         sf::Vector2f player_position = game.player->getPosition();
 
-        float dx = player_position.x - position.x;
-        float dy = player_position.y - position.y;
+        float dx = position.x - player_position.x;
+        float dy = position.y - player_position.y;
 
-        float dist = sqrtf(dx*dx + dy*dy);
-
-        // Very rare case
-        if (dist != 0) {
-            float dist_volume = std::min(1.f, fade_dist/dist);
-
-            if (dist_volume < 0.1) {
-                dist_volume = 0;
-            }
-
-            sound->setVolume(volume * dist_volume);
+        // TODO - configurable hear distance?
+        if (dx*dx + dy*dy >= 100*100) {
+            sound->setVolume(0);
         } else {
             sound->setVolume(volume);
+            sound->setPosition(dx, 0, dy);
         }
     }
 
