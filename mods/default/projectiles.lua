@@ -66,9 +66,21 @@ end
 default.register_projectile("default:small_bullet", {
     image = "small_bullet.png",
 
+    physics = {
+        gravity = 0,
+        enable_collision = true,
+    },
+
     size = {
         x = 9/16,
         y = 1/16,
+    },
+
+    hitbox = {
+        x = -1/16,
+        y = -1/16,
+        width = 11/16,
+        height = 3/16,
     },
 
     light = color.new(120, 30, 20),

@@ -70,65 +70,105 @@ register_sword("copper", 6, "Copper sword\n6 melee damage")
 register_sword("iron", 10, "Iron sword\n10 melee damage")
 register_sword("gold", 20, "Gold sword\n20 melee damage")
 
+local function revolver_shoot(user, position)
+    local damage = 10
+    local damagetype = nil
+    local bulletname = "default:small_bullet"
+
+    if user.ref.is_player then
+        local ammo = user.ref:get_player_inventory():find_tag("default:pistol_ammo")
+
+        if not ammo then return end
+
+        local def = terrarium.registered_items[ammo:get_item_name()]
+
+        if def then
+            damage = def.pistol_ammo_damage or damage
+            damagetype = def.pistol_ammo_damagetype or damagetype
+            bulletname = def.pistol_ammo_bulletname or bulletname
+        end
+
+        ammo:add(-1)
+    end
+
+    local spawn_position = user.ref:get_center()
+
+    local bullet_data = {
+        speed = (position - spawn_position):resize(80),
+        damage = { amount = 10 },
+        fuse = 5,
+        source = user,
+    }
+
+    terrarium.new_entity(bulletname, spawn_position, bullet_data)
+
+    terrarium.play_sound({
+        name = "pistol_shoot.wav",
+        position = spawn_position,
+        volume = 0.2,
+    })
+end
+
 terrarium.register_item("default:revolver", {
-    description = "Revolver",
+    description = "Revolver\n10 ranged damage",
     inventory_image = "revolver_item.png",
     max_count = 1,
 
     use_rate = 2,
 
-    on_start_use = function(user, itemstack, position)
-        if user.ref.is_player then
-            if user.ref:get_player_inventory():take_items("default:pistol_bullet", 1) ~= 0 then return end
+    on_start_use = function(user, itemstack, position, use_ctx)
+        revolver_shoot(user, position)
+
+        use_ctx.timer = timer.new(1/2, true)
+    end,
+
+    on_use = function(user, itemstack, position, use_ctx)
+        if use_ctx.timer:tick(use_ctx.dtime) then
+            revolver_shoot(user, position)
         end
-
-        local spawn_position = user.ref:get_center()
-
-        local bullet_data = {
-            speed = (position - spawn_position):resize(80),
-            damage = { amount = 10 },
-            fuse = 5,
-            source = user,
-        }
-
-        terrarium.new_entity("default:small_bullet", spawn_position, bullet_data)
-
-        terrarium.play_sound({
-            name = "pistol_shoot.wav",
-            position = spawn_position,
-            volume = 0.2,
-        })
     end,
 })
 
+local function suppressor_shoot(user, position)
+    if user.ref.is_player then
+        if not user:use_energy(8) then return end
+    end
+
+    local spawn_position = user.ref:get_center()
+
+    local bullet_data = {
+        speed = (position - spawn_position):resize(80):rotate((math.random()-0.5)*2*(math.pi/24)),
+        damage = { amount = 8, element = "antimagic", },
+        fuse = 5,
+        source = user,
+    }
+
+    terrarium.new_entity("default:small_energy_bullet", spawn_position, bullet_data)
+
+    terrarium.play_sound({
+        name = "energy_pistol_shoot.wav",
+        position = spawn_position,
+        volume = 0.2,
+    })
+end
+
 terrarium.register_item("default:suppressor_vm_damaged", {
-    description = "Suppressor mk1 (damaged)\n4 ranged damage\nStandard abnormality suppression weapon... Was...\nClass: VM",
+    description = "Suppressor mk1 (damaged)\n8 ranged damage\nEspecially effective against chaotic beings\nClass: VM",
     inventory_image = "suppressor_vm_damaged.png",
     max_count = 1,
 
     use_rate = 2,
 
-    on_start_use = function(user, itemstack, position)
-        if user.ref.is_player then
-            if not user:use_energy(8) then return end
+    on_start_use = function(user, itemstack, position, use_ctx)
+        suppressor_shoot(user, position)
+
+        use_ctx.timer = timer.new(1/2, true)
+    end,
+
+    on_use = function(user, itemstack, position, use_ctx)
+        if use_ctx.timer:tick(use_ctx.dtime) then
+            suppressor_shoot(user, position)
         end
-
-        local spawn_position = user.ref:get_center()
-
-        local bullet_data = {
-            speed = (position - spawn_position):resize(80):rotate((math.random()-0.5)*2*(math.pi/24)),
-            damage = { amount = 8, element = "antimagic", },
-            fuse = 5,
-            source = user,
-        }
-
-        terrarium.new_entity("default:small_energy_bullet", spawn_position, bullet_data)
-
-        terrarium.play_sound({
-            name = "energy_pistol_shoot.wav",
-            position = spawn_position,
-            volume = 0.2,
-        })
     end,
 })
 
@@ -136,4 +176,6 @@ terrarium.register_item("default:pistol_bullet", {
     description = "Pistol bullet\nUniversally fits for any kind of pistol or revolver",
     inventory_image = "pistol_bullet.png",
     max_count = 999,
+
+    tags = {"default:pistol_ammo"},
 })

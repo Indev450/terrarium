@@ -224,7 +224,7 @@ terrarium.register_block("default:grass", {
 
     drop = "default:dirt",
 
-    slippery = 0.4,
+    slippery = 0.7,
 
     solid = true,
 
