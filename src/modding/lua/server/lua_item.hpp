@@ -72,6 +72,9 @@ namespace Terrarium {
         // int ItemStack:get_item_count()
         int itemstack_get_item_count(lua_State *L);
 
+        // bool ItemStack:has_tag(string tag)
+        int itemstack_has_tag(lua_State *L);
+
         // bool ItemStack:empty()
         int itemstack_empty(lua_State *L);
 

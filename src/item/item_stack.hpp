@@ -74,6 +74,8 @@ namespace Terrarium {
             return def;
         }
 
+        bool hasTag(const std::string &tag);
+
         inline uint16_t getCount() const {
             return count;
         }

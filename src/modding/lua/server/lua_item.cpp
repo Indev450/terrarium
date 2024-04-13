@@ -68,6 +68,9 @@ namespace Terrarium {
             lua_pushcfunction(L, itemstack_get_item_count);
             lua_setfield(L, -2, "get_item_count");
 
+            lua_pushcfunction(L, itemstack_has_tag);
+            lua_setfield(L, -2, "has_tag");
+
             lua_pushcfunction(L, itemstack_empty);
             lua_setfield(L, -2, "empty");
 
@@ -208,6 +211,16 @@ namespace Terrarium {
         }
 
         int itemstack_empty(lua_State *L) {
+            LuaItemStackUD *item_stack = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));
+
+            const char *tag = luaL_checkstring(L, 2);
+
+            lua_pushboolean(L, item_stack->istack->hasTag(tag));
+
+            return 1;
+        }
+
+        int itemstack_has_tag(lua_State *L) {
             LuaItemStackUD *item_stack = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));
 
             lua_pushboolean(L, item_stack->istack->empty());

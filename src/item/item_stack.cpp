@@ -68,6 +68,12 @@ namespace Terrarium {
         count = other_count;
     }
 
+    bool ItemStack::hasTag(const std::string &tag) {
+        if (empty()) return false;
+
+        return def->tags.count(tag) != 0;
+    }
+
     void ItemStack::load(std::istream &s, GameState &game) {
         std::string item_name = read<std::string>(s);
         uint16_t item_count = read<uint16_t>(s);
