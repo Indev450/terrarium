@@ -84,6 +84,9 @@ namespace Terrarium {
         // Find any ItemStack that have required type
         std::shared_ptr<ItemStack> find(std::shared_ptr<ItemDef> type);
 
+        // Find any ItemStack that have required tag
+        std::shared_ptr<ItemStack> find(const std::string &tag);
+
         // Inventory save format:
         // u16                                         size       total size of inventory
         // u16                                         entries    non-empty slots count

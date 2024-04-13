@@ -80,6 +80,12 @@ namespace Terrarium {
             return inventory->find(type);
         }
 
+        std::shared_ptr<ItemStack> LuaInventoryUD::find(const std::string &tag) {
+            std::shared_ptr<Inventory> inventory = checkedLock();
+
+            return inventory->find(tag);
+        }
+
         void init(LuaModdingInterface &lua_interface) {
             lua_interface.registerFunction("_open_inventory_ui", open_inventory_ui);
 
@@ -112,6 +118,9 @@ namespace Terrarium {
 
             lua_interface.pushClosure(inventory_find);
             lua_setfield(L, -2, "find");
+
+            lua_interface.pushClosure(inventory_find_tag);
+            lua_setfield(L, -2, "find_tag");
 
             lua_setfield(L, -2, "__index"); // pops __index table
 
@@ -260,6 +269,26 @@ namespace Terrarium {
 
             try {
                 std::shared_ptr<ItemStack> item_stack = inventory_ref->find(type);
+
+                if (item_stack) {
+                    LuaItemAPI::push_itemstack(L, item_stack);
+                } else {
+                    lua_pushnil(L);
+                }
+            } catch (const std::invalid_argument &e) {
+                return luaL_error(L, e.what());
+            }
+
+            return 1;
+        }
+
+        int inventory_find_tag(lua_State *L) {
+            LuaInventoryUD *inventory_ref = reinterpret_cast<LuaInventoryUD*>(luaL_checkudata(L, 1, LUA_INVENTORY));
+
+            const char *tag = luaL_checkstring(L, 2);
+
+            try {
+                std::shared_ptr<ItemStack> item_stack = inventory_ref->find(tag);
 
                 if (item_stack) {
                     LuaItemAPI::push_itemstack(L, item_stack);

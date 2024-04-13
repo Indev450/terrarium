@@ -21,6 +21,7 @@
  */
 
 #include <cassert>
+#include <stdexcept>
 
 #include "lua_item.hpp"
 #include "lua_interface.hpp"
@@ -102,6 +103,24 @@ namespace Terrarium {
                 if (max_count == 0) {
                     checker.fielderror("max_count", "number should be natural");
                 }
+
+                checker.rfield("tags", [&] () {
+                    int len = luaL_len(L, -1);
+
+                    for (int i = 1; i <= len; ++i) {
+                        // TODO - add another set of functions for integer indices instead of
+                        // strings in field checker
+                        lua_geti(L, -1, i);
+
+                        if (lua_type(L, -1) == LUA_TSTRING) {
+                            item_def->tags.insert(lua_tostring(L, -1));
+                            lua_pop(L, 1);
+                        } else {
+                            lua_pop(L, 1);
+                            throw std::invalid_argument("tags must only contain strings");
+                        }
+                    }
+                }, true);
 
                 item_def->max_count = max_count;
 

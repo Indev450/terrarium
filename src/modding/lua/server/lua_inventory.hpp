@@ -59,6 +59,8 @@ namespace Terrarium {
 
             std::shared_ptr<ItemStack> find(std::shared_ptr<ItemDef> type);
 
+            std::shared_ptr<ItemStack> find(const std::string &tag);
+
             inline std::shared_ptr<Inventory> checkedLock() {
                 std::shared_ptr<Inventory> inventory = inventory_ref.lock();
 
@@ -102,6 +104,9 @@ namespace Terrarium {
 
         // ItemStack/nil InventoryRef:find(string name)
         int inventory_find(lua_State *L);
+
+        // ItemStack/nil InventoryRef:find_tag(string tag)
+        int inventory_find_tag(lua_State *L);
 
         // Functions to call from C++
 

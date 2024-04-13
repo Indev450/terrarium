@@ -25,6 +25,7 @@
 
 #include <string>
 #include <cstdint>
+#include <set>
 
 #include <SFML/Graphics.hpp>
 
@@ -33,6 +34,7 @@ namespace Terrarium {
     struct ItemDef {
         std::string name = "default:name";
         std::string description = "Default description";
+        std::set<std::string> tags;
 
         sf::Sprite inventory_image;
 

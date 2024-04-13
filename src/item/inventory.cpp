@@ -77,7 +77,18 @@ namespace Terrarium {
     }
 
     std::shared_ptr<ItemStack> Inventory::find(std::shared_ptr<ItemDef> type) {
-        auto it = std::find_if(items.begin(), items.end(), [&] (auto &item) { return item->getDef() == type && item->empty(); });
+        auto it = std::find_if(items.begin(), items.end(), [&] (auto &item) { return item->getDef() == type && !item->empty(); });
+
+        return it == items.cend() ? nullptr : *it;
+    }
+
+    std::shared_ptr<ItemStack> Inventory::find(const std::string &tag) {
+        auto it = std::find_if(items.begin(), items.end(), [&] (auto &item) {
+            if (item->empty()) return false;
+
+            auto def = item->getDef();
+            return def && def->tags.count(tag) != 0;
+        });
 
         return it == items.cend() ? nullptr : *it;
     }
