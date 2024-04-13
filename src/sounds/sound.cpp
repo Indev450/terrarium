@@ -48,12 +48,19 @@ namespace Terrarium {
         float dx = position.x - player_position.x;
         float dy = position.y - player_position.y;
 
-        // TODO - configurable hear distance?
-        if (dx*dx + dy*dy >= 100*100) {
-            sound->setVolume(0);
+        float dist = sqrtf(dx*dx + dy*dy);
+
+        // Very rare case
+        if (dist != 0) {
+            float dist_volume = std::min(1.f, fade_dist/dist);
+
+            if (dist_volume < 0.1) {
+                dist_volume = 0;
+            }
+
+            sound->setVolume(volume * dist_volume);
         } else {
             sound->setVolume(volume);
-            sound->setPosition(dx, 0, dy);
         }
     }
 
