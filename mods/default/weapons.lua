@@ -83,7 +83,7 @@ local function revolver_shoot(user, position)
         local def = terrarium.registered_items[ammo:get_item_name()]
 
         if def then
-            damage = def.pistol_ammo_damage or damage
+            damage = damage + (def.pistol_ammo_damage or 0)
             damagetype = def.pistol_ammo_damagetype or damagetype
             bulletname = def.pistol_ammo_bulletname or bulletname
         end
