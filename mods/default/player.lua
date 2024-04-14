@@ -234,6 +234,8 @@ terrarium.register_on_player_join(function(player)
     end
 
     player.heal = function(self, hp)
+        if self.hp <= 0 then return end
+
         self.hp = math.min(self.max_hp, self.hp + hp)
     end
 

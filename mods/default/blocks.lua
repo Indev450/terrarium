@@ -33,6 +33,12 @@ terrarium.register_block("default:stone", {
 
     dig_particles_def = particle_heavy,
 
+    dig_sound = {
+        name = "dig_rock.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
     inventory_image = "stone_item.png",
 })
 
@@ -61,6 +67,12 @@ terrarium.register_block("default:ice", {
         maxlifetime = 4,
     },
 
+    dig_sound = {
+        name = "dig_rock.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
+
     inventory_image = "ice_item.png",
 })
 
@@ -78,6 +90,12 @@ terrarium.register_block("default:obsidian", {
     },
 
     dig_particles_def = particle_heavy,
+
+    dig_sound = {
+        name = "dig_rock.wav",
+        volume = 1.0,
+        pitch = 1.0,
+    },
 })
 
 terrarium.register_block("default:copper_ore", {
@@ -836,6 +854,18 @@ terrarium.register_block("default:furnace", {
     },
 
     dig_particles_def = particle_heavy,
+
+    dig_sound = {
+        name = "dig_rock.wav",
+        volume = 1.0,
+        pitch = 0.6,
+    },
+
+    place_sound = {
+        name = "dig_rock.wav",
+        volume = 1.0,
+        pitch = 0.8,
+    },
 
     on_interact = function(position, user)
         user:show_crafting_ui("furnace")

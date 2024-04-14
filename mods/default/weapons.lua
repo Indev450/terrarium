@@ -105,7 +105,6 @@ local function revolver_shoot(user, position)
     terrarium.play_sound({
         name = "pistol_shoot.wav",
         position = spawn_position,
-        volume = 0.2,
     })
 end
 
