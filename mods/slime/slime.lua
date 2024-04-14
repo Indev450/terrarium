@@ -139,7 +139,7 @@ local function register_slime(name, image, hp, damage, sprite_width, sprite_heig
             local target_pos
             local target_dist
 
-            if self.target == nil then
+            if not (self.target and self.target.ref:is_valid()) then
                 for _, player in pairs(terrarium.players) do
                     local p_pos = player.ref:get_position()
                     local dist = (pos - p_pos):length()
