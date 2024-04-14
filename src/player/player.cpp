@@ -52,6 +52,33 @@ namespace Terrarium {
         }
 
         if (!controlled) {
+            if (using_item) {
+                if (!hotbar[hotbar_selected]->empty()) {
+                    ItemEvent *item_event = new ItemEvent();
+
+                    item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
+
+                    item_event->position = controls.mouse_pos;
+
+                    game.events.emplace(Event::ItemUseStop, item_event);
+
+                    using_item = false;
+                }
+            }
+            if (alt_using_item) {
+                if (!hotbar[hotbar_selected]->empty()) {
+                    ItemEvent *item_event = new ItemEvent();
+
+                    item_event->user = std::dynamic_pointer_cast<Player>(game.entity_mgr.get(id));
+
+                    item_event->position = controls.mouse_pos;
+
+                    game.events.emplace(Event::ItemAltUseStop, item_event);
+
+                    alt_using_item = false;
+                }
+            }
+
             return;
         }
 
