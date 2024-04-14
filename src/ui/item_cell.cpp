@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include "item_cell.hpp"
+#include "../utils/math.hpp"
 
 namespace Terrarium {
 
@@ -72,6 +73,22 @@ namespace Terrarium {
         cell.setPosition(cell_position);
 
         target.draw(cell, combined_transform);
+
+        if (item_stack.getWear() < 0.99) {
+            wear.setPosition(cell_position + sf::Vector2f(2, CELL_SIZE-4));
+
+            wear.setSize(sf::Vector2f((CELL_SIZE - 4), 2));
+            wear.setFillColor(sf::Color::Black);
+
+            target.draw(wear, combined_transform);
+
+            float wear_amount = item_stack.getWear();
+            wear.setSize(sf::Vector2f((CELL_SIZE - 4)*wear_amount, 2));
+            wear.setFillColor(sf::Color(lerp<float>(212, 30, wear_amount), lerp<float>(30, 212, wear_amount), 30));
+
+            target.draw(wear, combined_transform);
+        }
+
 
         if (item_stack.empty()) {
             return;

@@ -63,6 +63,12 @@ namespace Terrarium {
         // int ItemStack:add(int change)
         int itemstack_add(lua_State *L);
 
+        // void ItemStack:add_wear(float change)
+        int itemstack_add_wear(lua_State *L);
+
+        // float ItemStack:get_wear()
+        int itemstack_get_wear(lua_State *L);
+
         // void ItemStack:merge(ItemStack other)
         int itemstack_merge(lua_State *L);
 

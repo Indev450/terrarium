@@ -59,6 +59,12 @@ namespace Terrarium {
             lua_pushcfunction(L, itemstack_add);
             lua_setfield(L, -2, "add");
 
+            lua_pushcfunction(L, itemstack_add_wear);
+            lua_setfield(L, -2, "add_wear");
+
+            lua_pushcfunction(L, itemstack_get_wear);
+            lua_setfield(L, -2, "get_wear");
+
             lua_pushcfunction(L, itemstack_merge);
             lua_setfield(L, -2, "merge");
 
@@ -172,6 +178,24 @@ namespace Terrarium {
 
             return 1;
         };
+
+        int itemstack_add_wear(lua_State *L) {
+            LuaItemStackUD *item_stack = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));
+
+            float change = luaL_checknumber(L, 2);
+
+            item_stack->istack->addWear(change);
+
+            return 0;
+        }
+
+        int itemstack_get_wear(lua_State *L) {
+            LuaItemStackUD *item_stack = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));
+
+            lua_pushinteger(L, item_stack->istack->getWear());
+
+            return 1;
+        }
 
         int itemstack_merge(lua_State *L) {
             LuaItemStackUD *first = reinterpret_cast<LuaItemStackUD*>(luaL_checkudata(L, 1, LUA_ITEMSTACK));

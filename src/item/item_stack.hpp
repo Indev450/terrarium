@@ -35,6 +35,7 @@ namespace Terrarium {
     class ItemStack {
         std::shared_ptr<ItemDef> def;
         uint16_t count = 0;
+        float wear = 1.0;
 
     public:
         ItemStack() = default;
@@ -43,7 +44,7 @@ namespace Terrarium {
             set(copy.def, copy.count);
         }
 
-        void set(std::shared_ptr<ItemDef> def, uint16_t count = 1);
+        void set(std::shared_ptr<ItemDef> def, uint16_t count = 1, float wear = 1.f);
 
         int add(int change);
 
@@ -78,6 +79,17 @@ namespace Terrarium {
 
         inline uint16_t getCount() const {
             return count;
+        }
+
+        inline float getWear() const {
+            return empty() ? 1.0 : wear;
+        }
+
+        inline void addWear(float amount) {
+            wear += amount;
+
+            if (wear < 0) wear = 0;
+            if (wear > 1) wear = 1;
         }
 
         inline bool empty() const {

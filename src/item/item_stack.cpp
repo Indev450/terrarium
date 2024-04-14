@@ -26,9 +26,10 @@
 
 namespace Terrarium {
 
-    void ItemStack::set(std::shared_ptr<ItemDef> def, uint16_t count) {
+    void ItemStack::set(std::shared_ptr<ItemDef> def, uint16_t count, float wear) {
         this->def = def;
         this->count = count;
+        this->wear = wear;
 
         if (def) {
             this->count = std::min(count, def->max_count);
@@ -61,11 +62,13 @@ namespace Terrarium {
     void ItemStack::swap(ItemStack &other) {
         auto other_def = other.def;
         auto other_count = other.count;
+        auto other_wear = other.wear;
 
-        other.set(def, count);
+        other.set(def, count, wear);
 
         def = other_def;
         count = other_count;
+        wear = other_wear;
     }
 
     bool ItemStack::hasTag(const std::string &tag) {
@@ -77,8 +80,9 @@ namespace Terrarium {
     void ItemStack::load(std::istream &s, GameState &game) {
         std::string item_name = read<std::string>(s);
         uint16_t item_count = read<uint16_t>(s);
+        float wear = read<int32_t>(s)/65535.f;
 
-        set(game.item_defs.get(item_name), item_count);
+        set(game.item_defs.get(item_name), item_count, wear);
     }
 
     void ItemStack::save(std::ostream &s) {
@@ -86,6 +90,7 @@ namespace Terrarium {
 
         write<const std::string&>(s, def->name);
         write<uint16_t>(s, count);
+        write<int32_t>(s, wear*65535);
     }
 
 } // namespace Terrarium

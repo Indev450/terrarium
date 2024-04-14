@@ -70,6 +70,8 @@ namespace Terrarium {
 
         sf::RectangleShape cell;
 
+        sf::RectangleShape wear;
+
     public:
         // Constructoor takes default text, cell and background colors, as well
         // as gfx for game font
