@@ -39,19 +39,19 @@ namespace Terrarium {
     // and loadFromFile method
     template <class Resource>
     class ResourceHolder {
-        std::unordered_map<std::string, Resource> resources;
+        std::unordered_map<std::string, std::shared_ptr<Resource>> resources;
         std::vector<fs::path> search_path;
 
         // Returned if resource not found. This is usually some kind of
         // "error resource", like "unknown texture".
-        Resource default_res;
+        std::shared_ptr<Resource> default_res = std::make_shared<Resource>();
 
     public:
         void addSearchPath(const fs::path &path) {
             search_path.push_back(path);
         }
 
-        void setDefault(const Resource &resource) {
+        void setDefault(std::shared_ptr<Resource> resource) {
             default_res = resource;
         }
 
@@ -63,7 +63,7 @@ namespace Terrarium {
                 return true;
             }
 
-            resources.try_emplace(name);
+            resources.try_emplace(name, std::make_shared<Resource>());
 
             auto it = std::find_if(
                 search_path.begin(),
@@ -78,7 +78,7 @@ namespace Terrarium {
                 return false;
             }
 
-            if (!resources[name].openFromFile((*it / name).string())) {
+            if (!resources[name]->openFromFile((*it / name).string())) {
                 // File exists, but failed to load
 
                 resources.erase(name);
@@ -94,7 +94,7 @@ namespace Terrarium {
                 return true;
             }
 
-            resources.try_emplace(name);
+            resources.try_emplace(name, std::make_shared<Resource>());
 
             auto it = std::find_if(
                 search_path.begin(),
@@ -109,7 +109,7 @@ namespace Terrarium {
                 return false;
             }
 
-            if (!resources[name].loadFromFile((*it / name).string())) {
+            if (!resources[name]->loadFromFile((*it / name).string())) {
                 // File exists, but failed to load
 
                 resources.erase(name);
@@ -122,11 +122,19 @@ namespace Terrarium {
 
         Resource &get(const std::string &name) {
             if (resources.count(name) != 0) {
-                return resources[name];
+                return *resources[name];
             }
 
             std::cerr<<"Terrarium::ResourceHolder::get: resource '"<<name<<"' not found"<<std::endl;
-            return default_res;
+            return *default_res;
+        }
+
+        bool exists(const std::string &name) {
+            return resources.count(name) != 0;
+        }
+
+        void insert(const std::string &name, std::shared_ptr<Resource> resource) {
+            resources[name] = resource;
         }
     };
 

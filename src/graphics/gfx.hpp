@@ -29,11 +29,20 @@
 
 namespace Terrarium {
 
+    class TextureHolder: public ResourceHolder<sf::Texture> {
+        sf::RenderTexture combine_temp;
+        sf::Sprite combine_temp_sprite;
+
+    public:
+        // For textures that have + in name will create a "combine texture"
+        sf::Texture &get(const std::string &desc);
+    };
+
     // Structure with data required to draw stuff
     struct Gfx {
         sf::Font font;
 
-        ResourceHolder<sf::Texture> textures;
+        TextureHolder textures;
     };
 
 }
