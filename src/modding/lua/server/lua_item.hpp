@@ -57,7 +57,7 @@ namespace Terrarium {
 
         // ItemStack userdata methods
 
-        // void ItemStack:set(string item_name[, uint16_t count])
+        // void ItemStack:set(string item_name[, uint16_t count[, float wear]])
         int itemstack_set(lua_State *L);
 
         // int ItemStack:add(int change)

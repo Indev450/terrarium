@@ -160,11 +160,17 @@ namespace Terrarium {
 
             uint16_t count = 1;
 
-            if (lua_gettop(L) != 2) {
+            float wear = item_stack->istack->getWear();
+
+            if (lua_gettop(L) > 2) {
                 count = LuaUtil::checkinteger_ranged<uint16_t>(L, 3);
             }
 
-            item_stack->istack->set(lua_interface->game->item_defs.get(name), count);
+            if (lua_gettop(L) > 3) {
+                wear = luaL_checknumber(L, 4);
+            }
+
+            item_stack->istack->set(lua_interface->game->item_defs.get(name), count, wear);
 
             return 0;
         }

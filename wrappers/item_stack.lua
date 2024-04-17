@@ -20,7 +20,7 @@ end
 local function table_to_itemstack(t)
     local istack = core._new_item_stack()
 
-    istack:set(t.item_type, t.item_count)
+    istack:set(t.name, t.count or 1, t.wear or 1.0)
 
     return istack
 end
@@ -30,7 +30,7 @@ local function itemstack_copy(istack)
     local new_istack = core._new_item_stack()
 
     if not istack:empty() then
-        new_istack:set(istack:get_item_name(), istack:get_item_count())
+        new_istack:set(istack:get_item_name(), istack:get_item_count(), istack:get_wear())
     end
 
     return new_istack
