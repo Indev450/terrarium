@@ -68,6 +68,8 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
 
     video["smooth_lighting"].setBool(true);
 
+    video["dither_lighting"].setBool(true);
+
     auto &audio = settings["audio"];
     audio["music_volume"].setReal(0.6);
     audio["sounds_volume"].setReal(0.6);

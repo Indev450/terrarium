@@ -39,6 +39,13 @@ namespace Terrarium {
 
         shadow_rect.setTexture(&shadow);
         shadow_rect.setSize({ float(width), float(height) });
+
+        shadow_shader = std::make_unique<sf::Shader>();
+
+        if (!shadow_shader->loadFromFile("assets/dither.frag", sf::Shader::Fragment))
+            shadow_shader.reset();
+        else
+            std::cout<<"Dither shader loaded successfully"<<std::endl;
     }
 
     void LightCalculator::resize(int width, int height) {
@@ -254,11 +261,21 @@ namespace Terrarium {
         states.transform.scale(sf::Vector2f(Tile::SIZE, Tile::SIZE));
         states.blendMode = sf::BlendMultiply;
 
+        if (dither_enabled && shadow_shader)
+            states.shader = shadow_shader.get();
+
         target.draw(shadow_rect, states);
     }
 
     void LightCalculator::setSmooth(bool smooth) {
         shadow.setSmooth(smooth);
+    }
+
+    void LightCalculator::setDither(bool dither) {
+        dither_enabled = dither;
+
+        if (dither && !shadow_shader)
+            std::cout<<"Warning: dither shader is not available"<<std::endl;
     }
 
 }

@@ -41,6 +41,7 @@ namespace Terrarium {
         def_view()
     {
         light_calc.setSmooth(game->settings["video"]["smooth_lighting"].getBool());
+        light_calc.setDither(game->settings["video"]["dither_lighting"].getBool());
 
         sf::Vector2u win_size_pixels = am.getWindow().getSize();
 

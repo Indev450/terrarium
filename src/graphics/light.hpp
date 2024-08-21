@@ -121,6 +121,9 @@ namespace Terrarium {
         sf::Texture shadow;
         sf::RectangleShape shadow_rect;
 
+        bool dither_enabled = true;
+        std::unique_ptr<sf::Shader> shadow_shader;
+
         sf::Vector2i in_world_pos = { 0, 0 };
         bool needs_update = true;
 
@@ -142,6 +145,8 @@ namespace Terrarium {
         void addDynamicLight(const DynamicLightInput &inp);
 
         void setSmooth(bool smooth);
+
+        void setDither(bool dither);
 
     private:
         void calculateLight();
