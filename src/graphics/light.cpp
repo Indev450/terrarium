@@ -248,7 +248,7 @@ namespace Terrarium {
 
                 new_intensity *= LIGHT_DROPOFF_DEFAULT;
                 if (inp.blocks_light) new_intensity *= LIGHT_DROPOFF_BLOCK;
-                if (nx && ny) new_intensity *= LIGHT_DROPOFF_DEFAULT;
+                if (nx && ny) new_intensity *= LIGHT_DROPOFF_DIAGONAL;
 
                 if (ox*nx >= 0 && oy*ny >= 0)
                     lightSource(x, y, sf::Vector3i(new_intensity), ox+nx, oy+ny, true);
