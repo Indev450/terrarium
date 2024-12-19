@@ -148,6 +148,9 @@ namespace Terrarium {
 
         void setDither(bool dither);
 
+        // Only required for shader
+        void setZoom(float zoom);
+
     private:
         void calculateLight();
 

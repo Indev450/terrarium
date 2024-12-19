@@ -316,8 +316,8 @@ namespace Terrarium {
 
         // Same about transform, as in renderTile
         sprite.setPosition(
-            stepify(camera.left*Tile::SIZE, Tile::SIZE*step) - camera.left*Tile::SIZE,
-            stepify(camera.top*Tile::SIZE, Tile::SIZE*step) - camera.top*Tile::SIZE);
+            std::floor(stepify(camera.left*Tile::SIZE, Tile::SIZE*step) - camera.left*Tile::SIZE),
+            std::floor(stepify(camera.top*Tile::SIZE, Tile::SIZE*step) - camera.top*Tile::SIZE));
     }
 
     void WorldRenderer::render(sf::RenderTarget &target) {

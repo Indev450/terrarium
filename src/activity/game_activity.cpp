@@ -42,6 +42,7 @@ namespace Terrarium {
     {
         light_calc.setSmooth(game->settings["video"]["smooth_lighting"].getBool());
         light_calc.setDither(game->settings["video"]["dither_lighting"].getBool());
+        light_calc.setZoom(zoom);
 
         sf::Vector2u win_size_pixels = am.getWindow().getSize();
 
@@ -361,10 +362,12 @@ namespace Terrarium {
 
                     case sf::Keyboard::Hyphen:
                         zoom = std::min(ZOOM_MAX, zoom * 2);
+                        light_calc.setZoom(zoom);
                     break;
 
                     case sf::Keyboard::Equal:
                         zoom = std::max(ZOOM_MIN, zoom / 2);
+                        light_calc.setZoom(zoom);
                     break;
 
                     case sf::Keyboard::B:

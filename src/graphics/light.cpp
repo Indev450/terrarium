@@ -42,7 +42,7 @@ namespace Terrarium {
 
         shadow_shader = std::make_unique<sf::Shader>();
 
-        if (!shadow_shader->loadFromFile("assets/dither.frag", sf::Shader::Fragment))
+        if (!shadow_shader->loadFromFile("assets/dither.vert", "assets/dither.frag"))
             shadow_shader.reset();
         else
             std::cout<<"Dither shader loaded successfully"<<std::endl;
@@ -57,6 +57,10 @@ namespace Terrarium {
         shadow.create(width, height);
         shadow_rect.setTexture(&shadow, true);
         shadow_rect.setSize({ float(width), float(height) });
+
+        if (dither_enabled && shadow_shader) {
+            shadow_shader->setUniform("size", sf::Vector2i(width, height));
+        }
     }
 
     void LightCalculator::update(DebugInfo &debug_info, bool force) {
@@ -68,7 +72,11 @@ namespace Terrarium {
 
             auto end = std::chrono::steady_clock::now();
 
-            debug_info.light_calc_time = std::chrono::duration<double, std::milli>(end-start).count();
+            double time = std::chrono::duration<double, std::milli>(end-start).count();
+
+            //std::cout<<"Light calculation for "<<(input.width*input.height)<<" tiles took "<<time<<" ms"<<std::endl;
+
+            debug_info.light_calc_time = time;
 
             calculated_static = calculated;
 
@@ -97,9 +105,12 @@ namespace Terrarium {
             needs_update = true;
         }
 
-        setPosition(
-            stepify((camera.left-step)*Tile::SIZE, step*Tile::SIZE) - camera.left*Tile::SIZE + step/2*Tile::SIZE,
-            stepify((camera.top-step)*Tile::SIZE, step*Tile::SIZE) - camera.top*Tile::SIZE + step/2*Tile::SIZE);
+        sf::Vector2 newpos(
+            std::floor(stepify((camera.left-step)*Tile::SIZE, step*Tile::SIZE) - camera.left*Tile::SIZE + step/2*Tile::SIZE),
+            std::floor(stepify((camera.top-step)*Tile::SIZE, step*Tile::SIZE) - camera.top*Tile::SIZE + step/2*Tile::SIZE)
+        );
+
+        setPosition(newpos);
 
         return needs_update;
     }
@@ -198,12 +209,11 @@ namespace Terrarium {
         for (int y = 0; y < input.height; ++y) {
             for (int x = 0; x < input.width; ++x) {
                 auto &inp = input.at(x, y);
-                auto &calc = calculated.at(x, y);
 
                 // ...But do that if previously calculated light value is lower
                 // than light source from input. Again, this greatly improves
                 // perfomance.
-                if (hasLight(inp.light) && isBrighter(calc, inp.light)) {
+                if (hasLight(inp.light)) {
                     lightSource(x, y, inp.light);
                 }
             }
@@ -235,6 +245,12 @@ namespace Terrarium {
         setMaxLight(calc, intensity);
         calc.a = 255 - getMaxLight(calc);
 
+        // New intensity is lower. If light spreads through blocks that
+        // block light or it spreads diagonally, it becomes even lower
+        sf::Vector3f new_intensity(intensity);
+        new_intensity *= LIGHT_DROPOFF_DEFAULT;
+        if (inp.blocks_light) new_intensity *= LIGHT_DROPOFF_BLOCK;
+
         for (int nx = -1; nx <= 1; ++nx) {
             for (int ny = -1; ny <= 1; ++ny) {
                 // Don't re-run algorithm for same block
@@ -242,16 +258,8 @@ namespace Terrarium {
                     continue;
                 }
 
-                // New intensity is lower. If light spreads through blocks that
-                // block light or it spreads diagonally, it becomes even lower
-                sf::Vector3f new_intensity(intensity);
-
-                new_intensity *= LIGHT_DROPOFF_DEFAULT;
-                if (inp.blocks_light) new_intensity *= LIGHT_DROPOFF_BLOCK;
-                if (nx && ny) new_intensity *= LIGHT_DROPOFF_DIAGONAL;
-
                 if (ox*nx >= 0 && oy*ny >= 0)
-                    lightSource(x, y, sf::Vector3i(new_intensity), ox+nx, oy+ny, true);
+                    lightSource(x, y, sf::Vector3i(new_intensity * (nx && ny ? LIGHT_DROPOFF_DIAGONAL : 1.f)), ox+nx, oy+ny, true);
             }
         }
     }
@@ -261,8 +269,9 @@ namespace Terrarium {
         states.transform.scale(sf::Vector2f(Tile::SIZE, Tile::SIZE));
         states.blendMode = sf::BlendMultiply;
 
-        if (dither_enabled && shadow_shader)
+        if (dither_enabled && shadow_shader) {
             states.shader = shadow_shader.get();
+        }
 
         target.draw(shadow_rect, states);
     }
@@ -276,6 +285,11 @@ namespace Terrarium {
 
         if (dither && !shadow_shader)
             std::cout<<"Warning: dither shader is not available"<<std::endl;
+    }
+
+    void LightCalculator::setZoom(float zoom) {
+        if (dither_enabled && shadow_shader)
+            shadow_shader->setUniform("zoom", zoom);
     }
 
 }
