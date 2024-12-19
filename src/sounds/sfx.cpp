@@ -167,4 +167,16 @@ namespace Terrarium {
             sound_ctl->stop();
         }
     }
+
+    Sfx::~Sfx() {
+        if (music_playing)
+            music_playing->stop();
+
+        if (music_fading)
+            music_fading->stop();
+
+        for (auto &pair: playing_sounds) {
+            pair.second->stop();
+        }
+    }
 }

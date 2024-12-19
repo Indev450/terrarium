@@ -78,6 +78,7 @@ namespace Terrarium {
 
         void stopSound(sound_handle handle);
 
+        ~Sfx();
     };
 
 }
