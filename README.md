@@ -40,7 +40,7 @@ Install dependencies with your package manager
 
 Clone this repository:
 
-    git clone https://git.phreedom.club/indev/terrarium
+    git clone https://github.com/Indev450/terrarium
     cd terrarium
 
 Create build directory and run build:
