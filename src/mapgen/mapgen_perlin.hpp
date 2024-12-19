@@ -66,7 +66,7 @@ namespace Terrarium {
         double max_cave_scale_factor = 1.0;
 
         // Default filler for world, usually this is regular stone
-        Tile filler = { 0, 0 };
+        Tile filler = { 0, 0, { 0, 0 }, };
 
     };
 
@@ -82,6 +82,15 @@ namespace Terrarium {
         static const int DENSITY;
         static const int HUMIDITY;
         static const int HEAT;
+
+        // Eee world doesn't get stored but some functions bellow need world size, so i do this
+        // workaround for now ><
+        float width = 0, height = 0;
+
+        float sampleSurface(float x);
+        float sampleDensity(float x, float y);
+        float sampleHumidity(float x, float y);
+        float sampleHeat(float x, float y);
 
         void generate(World &world) override;
 

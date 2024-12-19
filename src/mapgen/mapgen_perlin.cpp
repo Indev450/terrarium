@@ -39,13 +39,58 @@ namespace Terrarium {
         perlin(seed), rng(seed), place_decor_dist(0, 1)
     {}
 
+    float MapgenPerlin::sampleSurface(float x) {
+        float result = perlin.noise(x*settings.ground_gen_scale, 0, DENSITY);
+
+        for (unsigned i = 1; i < 8; ++i) {
+            result = combine_noise(result, perlin.noise(x*settings.ground_gen_scale/i, 0, DENSITY-i));
+        }
+
+        return perlin.noise(x*settings.ground_gen_scale, 0, DENSITY);
+    }
+
+    float MapgenPerlin::sampleDensity(float x, float y) {
+        // Makes caves less common on surface
+        double density_check_factor = double(y)/height;
+
+        // Don't make it way too small so we don't have 1 block size
+        // caves or around that
+        double cave_scale_factor = rescale(density_check_factor, 0., 1., settings.min_cave_scale_factor, settings.max_cave_scale_factor);
+        density_check_factor = rescale(density_check_factor, 0., 1., settings.min_density_factor, settings.max_density_factor);
+
+        double result = perlin.noise(x*settings.cave_gen_scale_x, y*settings.cave_gen_scale_y*cave_scale_factor, DENSITY);
+
+        for (unsigned i = 1; i < 4; ++i) {
+            result = combine_noise(result, perlin.noise(x*settings.cave_gen_scale_x/i, y*settings.cave_gen_scale_y*cave_scale_factor/i, DENSITY-i));
+        }
+
+        return result;
+    }
+
+    float MapgenPerlin::sampleHumidity(float x, float y) {
+        return perlin.noise(
+                    x*settings.biome_gen_scale_x,
+                    y*settings.biome_gen_scale_y,
+                    HUMIDITY);
+    }
+
+    float MapgenPerlin::sampleHeat(float x, float y) {
+        return perlin.noise(
+                    x*settings.biome_gen_scale_x,
+                    y*settings.biome_gen_scale_y,
+                    HEAT);
+    }
+
     void MapgenPerlin::generate(World &world) {
+        width = world.getWidth();
+        height = world.getHeight();
+
         int base_height = world.getHeight() * settings.base_ground_height;
 
         // First, generate ground with caves
         for (int x = 0; x < static_cast<int>(world.getWidth()); ++x) {
             int column_height = base_height;
-            column_height += base_height + (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
+            column_height += base_height + sampleSurface(x) * settings.height_amp;
 
             for (int y = column_height; y < static_cast<int>(world.getHeight()); ++y) {
                 world.setWall(x, y, settings.filler.bg.id);
@@ -55,22 +100,9 @@ namespace Terrarium {
 
                 // Don't make it way too small so we don't have 1 block size
                 // caves or around that
-                double cave_scale_factor = rescale(density_check_factor, 0., 1., settings.min_cave_scale_factor, settings.max_cave_scale_factor);
                 density_check_factor = rescale(density_check_factor, 0., 1., settings.min_density_factor, settings.max_density_factor);
 
-                double density = combine_noise(perlin.noise(
-                            x*settings.cave_gen_scale_x,
-                            y*settings.cave_gen_scale_y*cave_scale_factor,
-                            DENSITY),
-                        perlin.noise(
-                            x*settings.cave_gen_scale_x,
-                            y*settings.cave_gen_scale_y*cave_scale_factor,
-                            HEAT));
-
-                density = combine_noise(density, perlin.noise(
-                    x*settings.cave_gen_scale_x,
-                    y*settings.cave_gen_scale_y*cave_scale_factor,
-                    HUMIDITY));
+                double density = sampleDensity(x, y);
 
                 double density_space = settings.max_block_density - settings.min_block_density;
                 double density_avg = (settings.max_block_density + settings.min_block_density) / 2;
@@ -95,18 +127,12 @@ namespace Terrarium {
 
         for (int x = 0; x < static_cast<int>(world.getWidth()); ++x) {
             int column_height = base_height;
-            column_height += base_height + (perlin.noise(x*settings.ground_gen_scale, 0, DENSITY) * settings.height_amp);
+            column_height += base_height + sampleSurface(x) * settings.height_amp;
 
             for (int y = 0; y < static_cast<int>(world.getHeight()); ++y) {
-                double humidity = perlin.noise(
-                    x*settings.biome_gen_scale_x,
-                    y*settings.biome_gen_scale_y,
-                    HUMIDITY);
+                double humidity = sampleHumidity(x, y);
 
-                double heat = perlin.noise(
-                    x*settings.biome_gen_scale_x,
-                    y*settings.biome_gen_scale_y,
-                    HEAT);
+                double heat = sampleHeat(x, y);
 
                 int depth = y - column_height;
 
