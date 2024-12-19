@@ -52,7 +52,7 @@
 // Those were in terrarium_config.hpp, but i anyway wasn't using any configuration
 // in cmake other than version, so maybe it is not bad to set version here?
 #define TERRARIUM_VERSION_MAJOR 0
-#define TERRARIUM_VERSION_MINOR 8
+#define TERRARIUM_VERSION_MINOR 9
 #define TERRARIUM_VERSION_PATCH 0
 
 #define SETTINGS_VERSION 3
@@ -101,7 +101,7 @@ void applyDefaultSettings(Terrarium::Datafile &settings) {
     perlin["max_cave_scale_factor"].setReal(0.8);
 }
 
-const char *TITLE = "TerrariumEngine";
+const char *TITLE = "TerrariumEngine Legacy";
 
 int main(int argc, char **argv)
 {
