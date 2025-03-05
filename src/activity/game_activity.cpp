@@ -529,6 +529,11 @@ namespace Terrarium {
     }
 
     void GameActivity::onResize(unsigned width, unsigned height) {
+        if (width % 2 == 1)
+            width += 1;
+        if (height % 2 == 1)
+            height += 1;
+
         sf::FloatRect visible_area(0, 0, width, height);
         def_view = sf::View(visible_area);
 
